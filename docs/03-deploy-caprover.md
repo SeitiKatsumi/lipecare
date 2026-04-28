@@ -47,11 +47,34 @@ GitHub Actions deve:
 O monorepo possui Dockerfiles separados:
 
 ```text
+preview/Dockerfile
 apps/web/Dockerfile
 apps/api/Dockerfile
 ```
 
-No CapRover, usar apps separados para web e API. Isso facilita escala, logs, variaveis e rollback independente.
+Para o primeiro staging visual, o `captain-definition` da raiz aponta para `preview/Dockerfile`.
+
+No deploy real, usar apps separados para web e API. Isso facilita escala, logs, variaveis e rollback independente.
+
+## Primeiro Deploy: Preview
+
+App CapRover recomendado:
+
+```text
+lipecare-preview-staging
+```
+
+Formulario GitHub/Bitbucket/GitLab no CapRover:
+
+```text
+Repository: https://github.com/SeitiKatsumi/lipecare
+Branch: main
+Username: deixar vazio se o repositorio continuar publico
+Password: deixar vazio se o repositorio continuar publico
+SSH Key: deixar vazio se usar repositorio publico por HTTPS
+```
+
+Se o repositorio ficar privado, use uma chave SSH de deploy ou um GitHub Personal Access Token com permissao minima de leitura do repositorio. Nao use sua senha do GitHub.
 
 ## Variaveis
 
