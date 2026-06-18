@@ -10,8 +10,7 @@
     "resolveJsonModule": true,
     "baseUrl": ".",
     "paths": {
-      "@lipecare/shared": ["packages/shared/src/index.ts"]
+      "@lipecare/shared": ["packages/shared/dist/index.d.ts"]
     }
   }
 }
-
