@@ -1,6 +1,6 @@
 {
   "name": "@lipecare/web",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "private": true,
   "type": "module",
   "scripts": {
@@ -9,7 +9,7 @@
     "start": "next start -p 3003",
     "start:local": "next start -p 3003",
     "start:container": "next start -p 3003",
-    "lint": "next lint",
+    "lint": "tsc -p tsconfig.json --noEmit",
     "test": "node -e \"console.log('web tests pending')\""
   },
   "dependencies": {

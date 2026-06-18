@@ -1,13 +1,13 @@
 {
   "name": "@lipecare/portal",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "next dev -p 3000",
     "build": "next build",
     "start": "next start -p 3000",
-    "lint": "next lint",
+    "lint": "tsc -p tsconfig.json --noEmit",
     "test": "node -e \"console.log('portal tests pending')\""
   },
   "dependencies": {
