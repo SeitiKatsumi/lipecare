@@ -864,7 +864,8 @@
     <script src="config.js"></script>
     <script>
       const BUILD_INFO = {
-        version: window.LIPECARE_APP_VERSION || "0.1.2",
+        version: window.LIPECARE_APP_VERSION || "0.1.3",
+        deployNumber: window.LIPECARE_DEPLOY_NUMBER || "7",
         deploy: window.LIPECARE_DEPLOY_VERSION || "local",
         commit: window.LIPECARE_COMMIT_SHA || "sem-commit"
       };
@@ -1393,7 +1394,7 @@
         return `
           <div class="deploy-meta" aria-label="Versao do deploy">
             <span>versao <b>v${BUILD_INFO.version}</b></span>
-            <span>deploy <b>${BUILD_INFO.deploy}</b></span>
+            <span>deploy <b>#${BUILD_INFO.deployNumber}</b></span>
             <span>commit <b>${shortCommit(BUILD_INFO.commit)}</b></span>
           </div>
         `;
