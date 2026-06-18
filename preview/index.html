@@ -492,6 +492,10 @@
         content: "-";
       }
 
+      .nav-details:not([open]) .nav-submenu {
+        display: none;
+      }
+
       .user-box {
         border-top: 1px solid var(--line);
         color: var(--muted);
@@ -805,14 +809,237 @@
       }
 
       .timeline-item {
-        border-left: 3px solid var(--primary);
+        border-left: 1px solid var(--primary);
         padding-left: 12px;
       }
 
       .timeline-board {
         display: grid;
         gap: 16px;
-        grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+        grid-template-columns: minmax(0, 1.2fr) minmax(340px, 0.8fr);
+      }
+
+      .timeline-kpis,
+      .clinical-kpis {
+        display: grid;
+        gap: 12px;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        margin-bottom: 16px;
+      }
+
+      .mission-card,
+      .clinical-card,
+      .assistant-strip {
+        background: none;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+      }
+
+      .mission-card,
+      .clinical-card {
+        display: grid;
+        gap: 10px;
+        padding: 14px;
+      }
+
+      .mission-card header,
+      .clinical-card header,
+      .panel-title {
+        align-items: center;
+        display: flex;
+        gap: 10px;
+        justify-content: space-between;
+      }
+
+      .mission-card strong,
+      .clinical-card strong {
+        font-size: 1.45rem;
+      }
+
+      .icon-chip {
+        align-items: center;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        color: var(--primary);
+        display: inline-flex;
+        height: 38px;
+        justify-content: center;
+        width: 38px;
+      }
+
+      .icon-chip svg {
+        height: 20px;
+        width: 20px;
+      }
+
+      .clinical-layout {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.95fr);
+      }
+
+      .assistant-strip {
+        align-items: start;
+        display: grid;
+        gap: 10px;
+        grid-template-columns: auto 1fr;
+        margin-bottom: 16px;
+        padding: 14px;
+      }
+
+      .assistant-strip p {
+        margin: 4px 0 0;
+      }
+
+      .wizard-steps {
+        display: grid;
+        gap: 8px;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        margin-bottom: 14px;
+      }
+
+      .wizard-step {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        color: var(--muted);
+        padding: 10px;
+      }
+
+      .wizard-step.active {
+        border-color: color-mix(in srgb, var(--primary) 70%, transparent);
+        color: var(--text);
+      }
+
+      .clinical-timeline {
+        display: grid;
+        gap: 10px;
+      }
+
+      .clinical-event {
+        align-items: center;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        display: grid;
+        gap: 12px;
+        grid-template-columns: auto 1fr auto;
+        padding: 12px;
+      }
+
+      .event-score {
+        align-items: center;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        color: var(--accent);
+        display: inline-flex;
+        font-weight: 900;
+        height: 48px;
+        justify-content: center;
+        width: 48px;
+      }
+
+      .timeline-lab {
+        display: grid;
+        gap: 16px;
+      }
+
+      .timeline-wave {
+        display: block;
+        min-height: 250px;
+        width: 100%;
+      }
+
+      .chart-grid-line {
+        stroke: rgb(255 255 255 / 9%);
+        stroke-width: 1;
+      }
+
+      .chart-primary-line {
+        fill: none;
+        stroke: var(--primary);
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 2;
+      }
+
+      .chart-secondary-line {
+        fill: none;
+        stroke: var(--accent);
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 1.2;
+      }
+
+      .chart-point {
+        fill: var(--surface);
+        stroke: var(--primary);
+        stroke-width: 2;
+      }
+
+      .signal-matrix {
+        display: grid;
+        gap: 12px;
+      }
+
+      .signal-row {
+        display: grid;
+        gap: 8px;
+      }
+
+      .signal-label {
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .signal-track {
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        height: 10px;
+        overflow: hidden;
+      }
+
+      .signal-fill {
+        background: var(--primary);
+        height: 100%;
+      }
+
+      .signal-fill.warn {
+        background: var(--accent);
+      }
+
+      .timeline-orbit {
+        aspect-ratio: 1;
+        border: 1px solid var(--line);
+        border-radius: 50%;
+        margin: 8px auto 18px;
+        max-width: 260px;
+        position: relative;
+      }
+
+      .timeline-orbit::before,
+      .timeline-orbit::after {
+        border: 1px solid var(--line);
+        border-radius: 50%;
+        content: "";
+        inset: 18%;
+        position: absolute;
+      }
+
+      .timeline-orbit::after {
+        inset: 34%;
+      }
+
+      .orbit-dot {
+        background: var(--primary);
+        border: 3px solid var(--surface);
+        border-radius: 50%;
+        height: 18px;
+        position: absolute;
+        width: 18px;
+      }
+
+      .orbit-dot.warn {
+        background: var(--accent);
       }
 
       .timeline-calendar {
@@ -827,6 +1054,10 @@
         border-radius: 8px;
         min-height: 78px;
         padding: 8px;
+      }
+
+      .calendar-cell.has-events {
+        border-color: color-mix(in srgb, var(--primary) 54%, var(--line));
       }
 
       .calendar-cell strong {
@@ -847,21 +1078,6 @@
       .calendar-dot.symptom { background: var(--rose); }
       .calendar-dot.measurement { background: var(--primary); }
       .calendar-dot.task { background: var(--accent); }
-
-      .signal-chart {
-        align-items: end;
-        display: grid;
-        gap: 10px;
-        grid-template-columns: repeat(8, minmax(20px, 1fr));
-        height: 190px;
-      }
-
-      .signal-bar {
-        background: none;
-        border: 1px solid rgb(255 255 255 / 28%);
-        border-radius: 999px 999px 6px 6px;
-        min-height: 28px;
-      }
 
       .task-list {
         display: grid;
@@ -1661,6 +1877,9 @@
         }
 
         .timeline-board,
+        .timeline-kpis,
+        .clinical-kpis,
+        .clinical-layout,
         .settings-grid,
         .image-bank-grid,
         .profile-summary-grid,
@@ -1717,7 +1936,14 @@
       .badge,
       .selected-row,
       .calendar-cell,
-      .signal-bar,
+      .mission-card,
+      .clinical-card,
+      .assistant-strip,
+      .wizard-step,
+      .clinical-event,
+      .event-score,
+      .signal-track,
+      .timeline-orbit,
       .task-item,
       .image-bank-card,
       .photo-card,
@@ -1744,6 +1970,13 @@
       .task-item,
       .image-bank-card,
       .calendar-cell,
+      .mission-card,
+      .clinical-card,
+      .assistant-strip,
+      .wizard-step,
+      .clinical-event,
+      .event-score,
+      .signal-track,
       .architecture-node,
       .flow-step,
       .chart-kpi {
@@ -1869,8 +2102,8 @@
     <script src="config.js"></script>
     <script>
       const BUILD_INFO = {
-        version: window.LIPECARE_APP_VERSION || "0.1.19",
-        deployNumber: window.LIPECARE_DEPLOY_NUMBER || "23",
+        version: window.LIPECARE_APP_VERSION || "0.1.20",
+        deployNumber: window.LIPECARE_DEPLOY_NUMBER || "24",
         deploy: window.LIPECARE_DEPLOY_VERSION || "local",
         commit: window.LIPECARE_COMMIT_SHA || "sem-commit"
       };
@@ -3578,6 +3811,89 @@
         `;
       }
 
+      function metricCard(icon, label, value, detail) {
+        return `
+          <article class="mission-card">
+            <header>
+              ${renderModuleIcon(icon)}
+              <span class="badge">${label}</span>
+            </header>
+            <strong>${value}</strong>
+            <p class="muted">${detail}</p>
+          </article>
+        `;
+      }
+
+      function assistantStrip(title, text, icon = "dashboard") {
+        return `
+          <div class="assistant-strip">
+            ${renderModuleIcon(icon)}
+            <div>
+              <strong>${title}</strong>
+              <p class="muted">${text}</p>
+            </div>
+          </div>
+        `;
+      }
+
+      function wizardSteps(items, activeIndex = 0) {
+        return `
+          <div class="wizard-steps">
+            ${items.map((item, index) => `
+              <div class="wizard-step ${index === activeIndex ? "active" : ""}">
+                <strong>${index + 1}. ${item.title}</strong>
+                <p class="muted">${item.detail}</p>
+              </div>
+            `).join("")}
+          </div>
+        `;
+      }
+
+      function trendSvg(values, options = {}) {
+        const width = options.width ?? 720;
+        const height = options.height ?? 250;
+        const padding = 26;
+        const safeValues = values.length ? values : [35, 42, 38, 50, 48, 62, 58];
+        const max = Math.max(...safeValues, 10);
+        const min = Math.min(...safeValues, 0);
+        const span = Math.max(1, max - min);
+        const points = safeValues.map((value, index) => {
+          const x = padding + (index * (width - padding * 2)) / Math.max(1, safeValues.length - 1);
+          const y = height - padding - ((value - min) / span) * (height - padding * 2);
+          return [Number(x.toFixed(1)), Number(y.toFixed(1)), value];
+        });
+        const line = points.map(([x, y]) => `${x},${y}`).join(" ");
+        const guide = points.map(([x, y]) => `${x},${Math.min(height - padding, y + 34)}`).join(" ");
+
+        return `
+          <svg class="timeline-wave" viewBox="0 0 ${width} ${height}" role="img" aria-label="${options.label ?? "Grafico clinico"}">
+            ${[0, 1, 2, 3].map((index) => {
+              const y = padding + index * ((height - padding * 2) / 3);
+              return `<line class="chart-grid-line" x1="${padding}" y1="${y}" x2="${width - padding}" y2="${y}" />`;
+            }).join("")}
+            <polyline class="chart-secondary-line" points="${guide}" />
+            <polyline class="chart-primary-line" points="${line}" />
+            ${points.map(([x, y, value]) => `<circle class="chart-point" cx="${x}" cy="${y}" r="5"><title>${value}</title></circle>`).join("")}
+          </svg>
+        `;
+      }
+
+      function signalRows(rows) {
+        return `
+          <div class="signal-matrix">
+            ${rows.map((row) => `
+              <div class="signal-row">
+                <div class="signal-label">
+                  <strong>${row.label}</strong>
+                  <span class="muted">${row.value}%</span>
+                </div>
+                <div class="signal-track"><div class="signal-fill ${row.warn ? "warn" : ""}" style="width: ${Math.max(4, Math.min(100, row.value))}%"></div></div>
+              </div>
+            `).join("")}
+          </div>
+        `;
+      }
+
       function renderTimeline(state, session) {
         const patients = scopedPatients(state, session);
         const patientIds = patients.map((patient) => patient.id);
@@ -3585,25 +3901,39 @@
         const measurements = state.measurements.filter((item) => patientIds.includes(item.patientId));
         const tasks = scopedTasks(state, session);
         const events = [
-          ...symptoms.map((item) => ({ date: item.date, type: "symptom", title: `Dor ${item.painLevel}/10`, detail: item.notes })),
-          ...measurements.map((item) => ({ date: item.date, type: "measurement", title: `${item.weightKg} kg`, detail: `Cintura ${item.waistCm} cm, quadril ${item.hipCm} cm` })),
-          ...tasks.map((item) => ({ date: item.dueDate, type: "task", title: item.title, detail: `${item.kind} - ${item.patient?.fullName ?? "Paciente"}` }))
+          ...symptoms.map((item) => ({ date: item.date, type: "symptom", icon: "symptoms", score: item.painLevel, title: `Dor ${item.painLevel}/10`, detail: item.notes })),
+          ...measurements.map((item) => ({ date: item.date, type: "measurement", icon: "measurements", score: Math.round(item.weightKg), title: `${item.weightKg} kg`, detail: `Cintura ${item.waistCm} cm, quadril ${item.hipCm} cm` })),
+          ...tasks.map((item) => ({ date: item.dueDate, type: "task", icon: "tasks", score: item.priority === "Alta" ? 90 : 54, title: item.title, detail: `${item.kind} - ${item.patient?.fullName ?? "Paciente"}` }))
         ].sort((a, b) => String(a.date).localeCompare(String(b.date)));
         const calendarDays = Array.from({ length: 28 }, (_, index) => {
           const day = index + 1;
           const markers = events.filter((event) => Number(String(event.date).slice(-2)) === day).slice(0, 3);
           return { day, markers };
         });
-        const chartValues = [44, 58, 36, 72, 64, 80, 54, 68];
+        const painValues = symptoms.slice(0, 8).reverse().map((item) => Number(item.painLevel) * 10);
+        const openTasks = tasks.filter((task) => task.status !== "Resolvido");
+        const highPain = symptoms.filter((item) => Number(item.painLevel) >= 7).length;
 
         return `
-          ${renderHeader("Linha do tempo", "Calendário clínico com sintomas, medidas, tarefas e alertas.", "Módulo clínico")}
+          ${renderHeader("Linha do tempo", "Calendario clinico com sintomas, medidas, tarefas e alertas.", "Modulo clinico")}
+          ${assistantStrip("Assistente Rachel", "Leitura rapida: priorize dias com dor alta, medidas recentes e tarefas abertas antes da consulta.", "timeline")}
+          <section class="timeline-kpis">
+            ${metricCard("timeline", "Eventos", events.length, "Sinais clinicos consolidados")}
+            ${metricCard("symptoms", "Dor alta", highPain, "Registros acima de 7/10")}
+            ${metricCard("measurements", "Medidas", measurements.length, "Evolucao corporal registrada")}
+            ${metricCard("tasks", "Tarefas", openTasks.length, "Pendencias em aberto")}
+          </section>
           <section class="timeline-board">
-            <article class="card section">
-              <h2>Calendário operacional</h2>
+            <article class="card section timeline-lab">
+              <div class="panel-title">
+                <h2>Mapa clinico do periodo</h2>
+                <span class="badge">Live timeline</span>
+              </div>
+              ${trendSvg(painValues.length ? painValues : [30, 44, 38, 70, 42, 60, 55, 48], { label: "Evolucao da dor" })}
+              <h2>Calendario operacional</h2>
               <div class="timeline-calendar">
                 ${calendarDays.map((cell) => `
-                  <div class="calendar-cell">
+                  <div class="calendar-cell ${cell.markers.length ? "has-events" : ""}">
                     <strong>${cell.day}</strong>
                     ${cell.markers.map((marker) => `<span class="calendar-dot ${marker.type}" title="${marker.title}"></span>`).join("")}
                   </div>
@@ -3611,17 +3941,32 @@
               </div>
             </article>
             <article class="card section">
-              <h2>Sinais do período</h2>
-              <div class="signal-chart">
-                ${chartValues.map((value) => `<div class="signal-bar" style="height: ${value}%"></div>`).join("")}
+              <div class="panel-title">
+                <h2>Sinais do periodo</h2>
+                ${renderModuleIcon("measurements")}
               </div>
+              <div class="timeline-orbit" aria-label="Mapa de intensidade clinica">
+                <span class="orbit-dot warn" style="left: 16%; top: 28%;"></span>
+                <span class="orbit-dot" style="left: 68%; top: 18%;"></span>
+                <span class="orbit-dot" style="left: 78%; top: 62%;"></span>
+                <span class="orbit-dot warn" style="left: 38%; top: 76%;"></span>
+              </div>
+              ${signalRows([
+                { label: "Dor", value: Math.min(100, 35 + highPain * 15), warn: highPain > 0 },
+                { label: "Medidas", value: Math.min(100, 40 + measurements.length * 10) },
+                { label: "Tarefas", value: Math.min(100, 35 + openTasks.length * 12), warn: openTasks.length > 2 }
+              ])}
               <div class="stack" style="margin-top: 16px;">
                 ${events.slice(0, 6).map((event) => `
-                  <div class="timeline-item">
-                    <strong>${event.date} - ${event.title}</strong>
-                    <p class="muted">${event.detail}</p>
+                  <div class="clinical-event">
+                    ${renderModuleIcon(event.icon)}
+                    <div>
+                      <strong>${event.date} - ${event.title}</strong>
+                      <p class="muted">${escapeHtml(event.detail)}</p>
+                    </div>
+                    <span class="event-score">${event.type === "symptom" ? `${event.score}/10` : event.type === "measurement" ? "kg" : "!"}</span>
                   </div>
-                `).join("")}
+                `).join("") || empty("Nenhum evento clinico no periodo.")}
               </div>
             </article>
           </section>
@@ -4194,7 +4539,6 @@
               </div>
               <label>Texto de ajuda <input name="helpText" placeholder="Orientação curta para preenchimento" /></label>
               <label>Opções, separadas por vírgula <input name="options" placeholder="Opção 1, Opção 2, Opção 3" /></label>
-              <label><input name="required" type="checkbox" value="true" /> Campo obrigatório</label>
               <button class="btn" type="submit">Criar campo personalizado</button>
             </form>
           </section>
@@ -4272,31 +4616,55 @@
       function renderSymptoms(state, session) {
         const patient = selectedPatient(state, session);
         const symptoms = patient ? state.symptoms.filter((item) => item.patientId === patient.id) : [];
+        const lastPain = symptoms[0]?.painLevel ?? 0;
+        const highPain = symptoms.filter((item) => Number(item.painLevel) >= 7).length;
+        const painValues = symptoms.slice(0, 8).reverse().map((item) => Number(item.painLevel) * 10);
 
         return `
-          ${renderHeader("Sintomas", "Registro de dor e observações clínicas.", patient ? patient.fullName : "Sem paciente")}
+          ${renderHeader("Sintomas", "Registro guiado de dor, sinais e observacoes clinicas.", patient ? patient.fullName : "Sem paciente")}
           ${patient ? `
-            <section class="grid content-grid">
+            ${assistantStrip("Assistente Rachel", "Registre o sintoma em tres passos: paciente, intensidade e contexto. A linha evolutiva ajuda a enxergar piora ou melhora rapidamente.", "symptoms")}
+            <section class="clinical-kpis">
+              ${metricCard("symptoms", "Registros", symptoms.length, "Eventos do paciente selecionado")}
+              ${metricCard("alerts", "Dor atual", lastPain ? String(lastPain) + "/10" : "0/10", "Ultimo nivel informado")}
+              ${metricCard("timeline", "Dor alta", highPain, "Pontos que exigem atencao")}
+              ${metricCard("tasks", "Proxima acao", highPain ? "Revisar" : "Monitorar", "Sugestao operacional")}
+            </section>
+            <section class="clinical-layout">
               <article class="card section">
-                <h2>Histórico de sintomas</h2>
-                ${symptoms.length ? `
-                  <div class="timeline">
-                    ${symptoms.map((item) => `
-                      <div class="timeline-item">
+                <div class="panel-title">
+                  <h2>Evolucao dos sintomas</h2>
+                  ${renderModuleIcon("symptoms")}
+                </div>
+                ${trendSvg(painValues.length ? painValues : [20, 30, 45, 50, 42, 60, 52], { label: "Evolucao da dor" })}
+                <div class="clinical-timeline">
+                  ${symptoms.length ? symptoms.map((item) => `
+                    <div class="clinical-event">
+                      ${renderModuleIcon("symptoms")}
+                      <div>
                         <strong>${item.date} - Dor ${item.painLevel}/10</strong>
-                        <p class="muted">${item.notes}</p>
+                        <p class="muted">${escapeHtml(item.notes)}</p>
                       </div>
-                    `).join("")}
-                  </div>
-                ` : empty("Nenhum sintoma registrado.")}
+                      <span class="event-score">${item.painLevel}/10</span>
+                    </div>
+                  `).join("") : empty("Nenhum sintoma registrado.")}
+                </div>
               </article>
               <article class="card section">
-                <h2>Novo registro</h2>
+                <div class="panel-title">
+                  <h2>Novo registro guiado</h2>
+                  <span class="badge">3 etapas</span>
+                </div>
+                ${wizardSteps([
+                  { title: "Paciente", detail: "Confirme quem esta relatando" },
+                  { title: "Intensidade", detail: "Marque a dor de 0 a 10" },
+                  { title: "Contexto", detail: "Descreva sinais e gatilhos" }
+                ], 1)}
                 <form id="symptom-form" class="form">
                   <label>Paciente ${renderPatientSelect(state, session)}</label>
                   <label>Data <input name="date" type="date" value="${today()}" required /></label>
-                  <label>Nivel de dor <input name="painLevel" type="number" min="0" max="10" value="5" required /></label>
-                  <label>Observacoes <textarea name="notes" required></textarea></label>
+                  <label>Nivel de dor <input name="painLevel" type="range" min="0" max="10" value="5" required /></label>
+                  <label>Observacoes <textarea name="notes" placeholder="Ex.: local da dor, gatilho, duracao, medicacao usada" required></textarea></label>
                   <button class="btn" type="submit">Salvar sintoma</button>
                 </form>
               </article>
@@ -4308,43 +4676,63 @@
       function renderMeasurements(state, session) {
         const patient = selectedPatient(state, session);
         const measurements = patient ? state.measurements.filter((item) => item.patientId === patient.id) : [];
+        const latest = measurements[0];
+        const weightValues = measurements.slice(0, 8).reverse().map((item) => Number(item.weightKg));
+        const variation = measurements.length > 1 ? Number((measurements[0].weightKg - measurements[measurements.length - 1].weightKg).toFixed(1)) : 0;
 
         return `
-          ${renderHeader("Medidas", "Acompanhamento de peso e medidas corporais.", patient ? patient.fullName : "Sem paciente")}
+          ${renderHeader("Medidas", "Acompanhamento corporal com leitura visual e registro assistido.", patient ? patient.fullName : "Sem paciente")}
           ${patient ? `
-            <section class="grid content-grid">
+            ${assistantStrip("Assistente Rachel", "Registre medidas sempre na mesma condicao e acompanhe tendencia, nao apenas o numero isolado.", "measurements")}
+            <section class="clinical-kpis">
+              ${metricCard("measurements", "Registros", measurements.length, "Medicoes realizadas")}
+              ${metricCard("timeline", "Peso atual", latest ? String(latest.weightKg) + " kg" : "--", "Ultima medicao")}
+              ${metricCard("patients", "Variacao", (variation > 0 ? "+" : "") + variation + " kg", "Desde o primeiro registro")}
+              ${metricCard("tasks", "Status", measurements.length > 2 ? "Curva ativa" : "Coletar", "Qualidade da leitura")}
+            </section>
+            <section class="clinical-layout">
               <article class="card section">
-                <h2>Histórico de medidas</h2>
-                ${measurements.length ? `
-                  <div class="table-wrap">
-                    <table>
-                      <thead>
-                        <tr><th>Data</th><th>Peso</th><th>Cintura</th><th>Quadril</th></tr>
-                      </thead>
-                      <tbody>
-                        ${measurements.map((item) => `
-                          <tr>
-                            <td>${item.date}</td>
-                            <td>${item.weightKg} kg</td>
-                            <td>${item.waistCm} cm</td>
-                            <td>${item.hipCm} cm</td>
-                          </tr>
-                        `).join("")}
-                      </tbody>
-                    </table>
-                  </div>
-                ` : empty("Nenhuma medida registrada.")}
+                <div class="panel-title">
+                  <h2>Mapa de evolucao corporal</h2>
+                  ${renderModuleIcon("measurements")}
+                </div>
+                ${trendSvg(weightValues.length ? weightValues : [68, 70, 71, 72, 71, 73, 72], { label: "Evolucao de peso" })}
+                ${signalRows([
+                  { label: "Peso", value: latest ? Math.min(100, Math.round(latest.weightKg)) : 42 },
+                  { label: "Cintura", value: latest ? Math.min(100, Math.round(latest.waistCm)) : 50 },
+                  { label: "Quadril", value: latest ? Math.min(100, Math.round(latest.hipCm)) : 55 }
+                ])}
+                <div class="clinical-timeline" style="margin-top: 16px;">
+                  ${measurements.length ? measurements.map((item) => `
+                    <div class="clinical-event">
+                      ${renderModuleIcon("measurements")}
+                      <div>
+                        <strong>${item.date} - ${item.weightKg} kg</strong>
+                        <p class="muted">Cintura ${item.waistCm} cm, quadril ${item.hipCm} cm</p>
+                      </div>
+                      <span class="event-score">kg</span>
+                    </div>
+                  `).join("") : empty("Nenhuma medida registrada.")}
+                </div>
               </article>
               <article class="card section">
-                <h2>Nova medida</h2>
+                <div class="panel-title">
+                  <h2>Nova medida guiada</h2>
+                  <span class="badge">3 etapas</span>
+                </div>
+                ${wizardSteps([
+                  { title: "Paciente", detail: "Confirme o perfil" },
+                  { title: "Data", detail: "Use a data da medicao" },
+                  { title: "Medidas", detail: "Informe peso, cintura e quadril" }
+                ], 2)}
                 <form id="measurement-form" class="form">
                   <label>Paciente ${renderPatientSelect(state, session)}</label>
                   <label>Data <input name="date" type="date" value="${today()}" required /></label>
                   <div class="two-cols">
-                    <label>Peso kg <input name="weightKg" type="number" step="0.1" required /></label>
-                    <label>Cintura cm <input name="waistCm" type="number" step="0.1" required /></label>
+                    <label>Peso kg <input name="weightKg" type="number" step="0.1" placeholder="72.4" required /></label>
+                    <label>Cintura cm <input name="waistCm" type="number" step="0.1" placeholder="83" required /></label>
                   </div>
-                  <label>Quadril cm <input name="hipCm" type="number" step="0.1" required /></label>
+                  <label>Quadril cm <input name="hipCm" type="number" step="0.1" placeholder="104" required /></label>
                   <button class="btn" type="submit">Salvar medida</button>
                 </form>
               </article>
@@ -4979,7 +5367,7 @@
               fieldType: String(data.get("fieldType")),
               placeholder: String(data.get("placeholder")),
               helpText: String(data.get("helpText")),
-              required: data.get("required") === "true",
+              required: false,
               options: String(data.get("options")).split(",").map((item) => item.trim()).filter(Boolean),
               displayOrder: Number(data.get("displayOrder")) || customTemplatesForDoctor(state, tenantId, doctorId, true, entityType).length + 1,
               active: true,
