@@ -1,0 +1,36 @@
+name: Deploy CapRover
+
+on:
+  workflow_run:
+    workflows:
+      - CI
+    types:
+      - completed
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: caprover-lipecare-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Trigger LipeCare production deploy
+    runs-on: ubuntu-latest
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
+    steps:
+      - name: Trigger CapRover webhook
+        env:
+          CAPROVER_WEBHOOK_URL: ${{ secrets.CAPROVER_LIPECARE_WEBHOOK_URL }}
+        run: |
+          if [ -z "$CAPROVER_WEBHOOK_URL" ]; then
+            echo "Missing GitHub secret: CAPROVER_LIPECARE_WEBHOOK_URL"
+            exit 1
+          fi
+
+          curl --fail --show-error --silent \
+            --request POST \
+            "$CAPROVER_WEBHOOK_URL"

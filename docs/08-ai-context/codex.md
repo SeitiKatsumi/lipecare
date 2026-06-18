@@ -21,6 +21,7 @@ O Codex pode implementar, revisar, documentar, diagnosticar e orientar operaçã
 - Ao criar ou alterar módulo, fluxo, integração, permissão ou entidade relevante, atualizar também a tela `Arquitetura do sistema` no preview para manter a visão macro do produto.
 - Manter todos os arquivos de código, configuração e documentação em UTF-8.
 - Ao criar ou alterar texto visível, labels de dados do sistema, placeholders, menus, status ou mensagens, atualizar também o dicionário de idiomas do preview para português, inglês, espanhol, japonês e alemão.
+- Deploy de produção deve ser feito automaticamente por GitHub Actions chamando o webhook do CapRover via secret `CAPROVER_LIPECARE_WEBHOOK_URL`; nunca pedir senha do CapRover no chat.
 
 ## Stack Alvo
 
