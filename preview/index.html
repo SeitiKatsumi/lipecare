@@ -934,8 +934,8 @@
     <script src="config.js"></script>
     <script>
       const BUILD_INFO = {
-        version: window.LIPECARE_APP_VERSION || "0.1.4",
-        deployNumber: window.LIPECARE_DEPLOY_NUMBER || "8",
+        version: window.LIPECARE_APP_VERSION || "0.1.5",
+        deployNumber: window.LIPECARE_DEPLOY_NUMBER || "9",
         deploy: window.LIPECARE_DEPLOY_VERSION || "local",
         commit: window.LIPECARE_COMMIT_SHA || "sem-commit"
       };
@@ -943,6 +943,7 @@
       const SAMPLE_USERS = [
         {
           id: "u-admin",
+          tenantId: "tenant-lipecare",
           name: "Ana Admin",
           email: "admin@lipecare.test",
           password: "123456",
@@ -950,6 +951,7 @@
         },
         {
           id: "u-pro",
+          tenantId: "tenant-lipecare",
           name: "Dra. Raquel Peres",
           email: "profissional@lipecare.test",
           password: "123456",
@@ -957,6 +959,7 @@
         },
         {
           id: "u-patient",
+          tenantId: "tenant-lipecare",
           name: "Marina Almeida",
           email: "paciente@lipecare.test",
           password: "123456",
@@ -971,6 +974,7 @@
         patients: [
           {
             id: "p-001",
+            tenantId: "tenant-lipecare",
             fullName: "Marina Almeida",
             cpf: "123.456.789-00",
             rg: "12.345.678-9",
@@ -1004,6 +1008,7 @@
           },
           {
             id: "p-002",
+            tenantId: "tenant-lipecare",
             fullName: "Beatriz Nogueira",
             cpf: "222.333.444-55",
             rg: "22.333.444-5",
@@ -1033,6 +1038,7 @@
           },
           {
             id: "p-003",
+            tenantId: "tenant-lipecare",
             fullName: "Carolina Mendes",
             cpf: "333.444.555-66",
             rg: "33.444.555-6",
@@ -1127,12 +1133,13 @@
         customFieldTemplates: [
           {
             id: "cf-001",
+            tenantId: "tenant-lipecare",
             doctorId: "u-pro",
             label: "Tipo sanguineo",
             fieldKey: "tipo_sanguineo",
             fieldType: "select",
             placeholder: "Selecione",
-            helpText: "Campo visivel apenas para Dra. Raquel.",
+            helpText: "Exemplo de template; pode ser substituido por qualquer campo da rotina do medico.",
             required: false,
             options: ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"],
             displayOrder: 1,
@@ -1140,6 +1147,7 @@
           },
           {
             id: "cf-002",
+            tenantId: "tenant-lipecare",
             doctorId: "u-pro",
             label: "Alergias",
             fieldKey: "alergias",
@@ -1153,6 +1161,7 @@
           },
           {
             id: "cf-003",
+            tenantId: "tenant-lipecare",
             doctorId: "d-002",
             label: "Tipo de pele",
             fieldKey: "tipo_de_pele",
@@ -1166,8 +1175,8 @@
           }
         ],
         customFieldValues: [
-          { id: "cfv-001", patientId: "p-001", doctorId: "u-pro", customFieldId: "cf-001", value: "O+" },
-          { id: "cfv-002", patientId: "p-001", doctorId: "u-pro", customFieldId: "cf-002", value: "Sem alergias medicamentosas conhecidas." }
+          { id: "cfv-001", tenantId: "tenant-lipecare", patientId: "p-001", doctorId: "u-pro", customFieldId: "cf-001", value: "O+" },
+          { id: "cfv-002", tenantId: "tenant-lipecare", patientId: "p-001", doctorId: "u-pro", customFieldId: "cf-002", value: "Sem alergias medicamentosas conhecidas." }
         ],
         clinics: [
           { id: "c-001", name: "Clinica LipeCare Jardins", city: "Sao Paulo", status: "Ativa" },
@@ -1260,6 +1269,7 @@
           ...structuredClone(INITIAL_STATE),
           ...parsed,
           patients: (parsed.patients ?? INITIAL_STATE.patients).map((patient) => ({
+            tenantId: "tenant-lipecare",
             doctorId: "u-pro",
             cpf: "",
             rg: "",
@@ -1543,15 +1553,19 @@
       }
 
       function scopedPatients(state, session) {
+        const tenantId = tenantIdForSession(session);
         if (session.role === "PATIENT") {
-          return state.patients.filter((patient) => patient.id === session.patientId);
+          return state.patients.filter((patient) => patient.id === session.patientId && patient.tenantId === tenantId);
         }
 
         if (session.role === "PROFESSIONAL") {
-          return state.patients.filter((patient) => !patient.doctorId || patient.doctorId === session.id);
+          return state.patients.filter((patient) =>
+            patient.tenantId === tenantId &&
+            (!patient.doctorId || patient.doctorId === session.id)
+          );
         }
 
-        return state.patients;
+        return state.patients.filter((patient) => patient.tenantId === tenantId);
       }
 
       function selectedPatient(state, session) {
@@ -1797,14 +1811,23 @@
         return session.role === "PROFESSIONAL" ? session.id : "u-pro";
       }
 
-      function customTemplatesForDoctor(state, doctorId, includeInactive = false) {
+      function tenantIdForSession(session) {
+        return session.tenantId ?? "tenant-lipecare";
+      }
+
+      function customTemplatesForDoctor(state, tenantId, doctorId, includeInactive = false) {
         return (state.customFieldTemplates ?? [])
-          .filter((field) => field.doctorId === doctorId && (includeInactive || field.active))
+          .filter((field) =>
+            (field.tenantId ?? "tenant-lipecare") === tenantId &&
+            field.doctorId === doctorId &&
+            (includeInactive || field.active)
+          )
           .sort((a, b) => Number(a.displayOrder) - Number(b.displayOrder));
       }
 
-      function customValueForField(state, patientId, doctorId, fieldId) {
+      function customValueForField(state, tenantId, patientId, doctorId, fieldId) {
         return (state.customFieldValues ?? []).find((value) =>
+          (value.tenantId ?? "tenant-lipecare") === tenantId &&
           value.patientId === patientId &&
           value.doctorId === doctorId &&
           value.customFieldId === fieldId
@@ -1812,19 +1835,20 @@
       }
 
       function renderCustomPatientFields(state, session, patient) {
+        const tenantId = tenantIdForSession(session);
         const doctorId = doctorIdForSession(session);
-        const fields = customTemplatesForDoctor(state, doctorId);
-        const allFields = customTemplatesForDoctor(state, doctorId, true);
+        const fields = customTemplatesForDoctor(state, tenantId, doctorId);
+        const allFields = customTemplatesForDoctor(state, tenantId, doctorId, true);
 
         return `
           <div class="stack">
             <div class="alert">
-              Campos personalizados sao exclusivos do medico logado. Campos desativados ficam ocultos, sem apagar dados antigos.
+              Campos personalizados sao templates livres deste medico neste tenant. Eles aparecem em todos os pacientes atuais e futuros deste medico, sem afetar outros medicos.
             </div>
-            ${session.role === "PROFESSIONAL" ? renderCustomFieldManager(allFields) : ""}
+            ${session.role !== "PATIENT" ? renderCustomFieldManager(allFields, session) : ""}
             <form id="patient-custom-form" class="form">
               <input name="patientId" type="hidden" value="${patient.id}" />
-              ${fields.length ? fields.map((field) => renderCustomFieldInput(field, customValueForField(state, patient.id, doctorId, field.id))).join("") : empty("Nenhum campo personalizado ativo para este medico.")}
+              ${fields.length ? fields.map((field) => renderCustomFieldInput(field, customValueForField(state, tenantId, patient.id, doctorId, field.id))).join("") : empty("Nenhum template ativo para este medico. Crie qualquer campo em Gerenciar Campos Personalizados.")}
               ${fields.length ? `<button class="btn" type="submit">Salvar dados personalizados</button>` : ""}
             </form>
           </div>
@@ -1873,6 +1897,10 @@
           return `<label><input name="custom_${field.id}" type="checkbox" value="Sim" ${value === "Sim" ? "checked" : ""} /> ${field.label}${help}</label>`;
         }
 
+        if (field.fieldType === "upload_file") {
+          return `<label>${field.label}${help}${value ? `<span class="field-help">Arquivo atual: ${value}</span>` : ""}<input name="custom_${field.id}" type="file" ${required} /></label>`;
+        }
+
         const type = {
           email: "email",
           phone: "tel"
@@ -1881,12 +1909,12 @@
         return `<label>${field.label}${help}<input name="custom_${field.id}" type="${type}" value="${value}" placeholder="${field.placeholder ?? ""}" ${required} /></label>`;
       }
 
-      function renderCustomFieldManager(fields) {
+      function renderCustomFieldManager(fields, session) {
         return `
           <div class="field-manager">
             <div>
-              <h2>Gerenciar Campos Personalizados</h2>
-              <p class="muted">Crie, ordene, obrigue ou desative campos exclusivos para seus pacientes.</p>
+              <h2>Gerenciar Templates De Campos</h2>
+              <p class="muted">Crie qualquer campo adicional para ${session.role === "ADMIN" ? "o medico selecionado" : "sua ficha de pacientes"}. O template fica salvo para pacientes atuais e futuros deste medico dentro do tenant atual.</p>
             </div>
             ${fields.length ? fields.map((field) => `
               <div class="field-row">
@@ -1902,7 +1930,7 @@
             `).join("") : empty("Nenhum campo criado para este medico.")}
             <form id="custom-field-form" class="form">
               <div class="two-cols">
-                <label>Label do campo <input name="label" placeholder="Ex.: Alergias" required /></label>
+                <label>Nome do novo campo <input name="label" placeholder="Ex.: Objetivo do tratamento, Queixa principal, Codigo interno" required /></label>
                 <label>Tipo de campo
                   <select name="fieldType" required>
                     <option value="short_text">Texto curto</option>
@@ -1913,6 +1941,7 @@
                     <option value="select">Lista suspensa</option>
                     <option value="multi_select">Multipla escolha</option>
                     <option value="checkbox">Checkbox</option>
+                    <option value="upload_file">Upload de arquivo</option>
                     <option value="phone">Telefone</option>
                     <option value="email">E-mail</option>
                   </select>
@@ -1923,7 +1952,7 @@
                 <label>Placeholder <input name="placeholder" placeholder="Texto de apoio no campo" /></label>
               </div>
               <label>Texto de ajuda <input name="helpText" placeholder="Orientacao curta para preenchimento" /></label>
-              <label>Opcoes, separadas por virgula <input name="options" placeholder="A+, A-, O+, O-" /></label>
+              <label>Opcoes, separadas por virgula <input name="options" placeholder="Opção 1, Opção 2, Opção 3" /></label>
               <label><input name="required" type="checkbox" value="true" /> Campo obrigatorio</label>
               <button class="btn" type="submit">Criar campo personalizado</button>
             </form>
@@ -2340,6 +2369,7 @@
             const state = readState();
             const patient = {
               id: crypto.randomUUID(),
+              tenantId: tenantIdForSession(session),
               ...patientPayloadFromForm(data),
               age: ageFromBirthDate(String(data.get("birthDate"))),
               doctorId: doctorIdForSession(session),
@@ -2399,9 +2429,11 @@
             if (!label) return;
 
             const state = readState();
+            const tenantId = tenantIdForSession(session);
             const doctorId = doctorIdForSession(session);
             const field = {
               id: crypto.randomUUID(),
+              tenantId,
               doctorId,
               label,
               fieldKey: slugify(label),
@@ -2410,7 +2442,7 @@
               helpText: String(data.get("helpText")),
               required: data.get("required") === "true",
               options: String(data.get("options")).split(",").map((item) => item.trim()).filter(Boolean),
-              displayOrder: Number(data.get("displayOrder")) || customTemplatesForDoctor(state, doctorId, true).length + 1,
+              displayOrder: Number(data.get("displayOrder")) || customTemplatesForDoctor(state, tenantId, doctorId, true).length + 1,
               active: true,
               createdAt: new Date().toISOString()
             };
@@ -2455,27 +2487,34 @@
             const state = readState();
             const patientId = String(data.get("patientId"));
             const patient = state.patients.find((item) => item.id === patientId);
+            const tenantId = tenantIdForSession(session);
             const doctorId = doctorIdForSession(session);
-            const fields = customTemplatesForDoctor(state, doctorId);
+            const fields = customTemplatesForDoctor(state, tenantId, doctorId);
             state.customFieldValues = state.customFieldValues ?? [];
 
             fields.forEach((field) => {
-              const raw = field.fieldType === "multi_select"
-                ? data.getAll(`custom_${field.id}`).join(", ")
-                : field.fieldType === "checkbox"
-                  ? (data.get(`custom_${field.id}`) ? "Sim" : "Nao")
-                  : String(data.get(`custom_${field.id}`) ?? "");
-              const existing = state.customFieldValues.find((value) =>
+              const uploadedFile = data.get(`custom_${field.id}`);
+              const previous = state.customFieldValues.find((value) =>
+                (value.tenantId ?? "tenant-lipecare") === tenantId &&
                 value.patientId === patientId &&
                 value.doctorId === doctorId &&
                 value.customFieldId === field.id
               );
+              const raw = field.fieldType === "upload_file"
+                ? (uploadedFile?.name || previous?.value || "")
+                : field.fieldType === "multi_select"
+                ? data.getAll(`custom_${field.id}`).join(", ")
+                : field.fieldType === "checkbox"
+                  ? (data.get(`custom_${field.id}`) ? "Sim" : "Nao")
+                  : String(data.get(`custom_${field.id}`) ?? "");
+              const existing = previous;
               if (existing) {
                 existing.value = raw;
                 existing.updatedAt = new Date().toISOString();
               } else {
                 state.customFieldValues.push({
                   id: crypto.randomUUID(),
+                  tenantId,
                   patientId,
                   doctorId,
                   customFieldId: field.id,
