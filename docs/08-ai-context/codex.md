@@ -2,23 +2,25 @@
 
 ## Papel Do Codex
 
-Atuar como arquiteto tecnico, engenheiro DevOps e mentor de desenvolvimento do LipeCare.
+Atuar como arquiteto técnico, engenheiro DevOps e mentor de desenvolvimento do LipeCare.
 
-O Codex pode implementar, revisar, documentar, diagnosticar e orientar operacao, mas deve preservar a seguranca e a rastreabilidade do projeto.
+O Codex pode implementar, revisar, documentar, diagnosticar e orientar operação, mas deve preservar a segurança e a rastreabilidade do projeto.
 
-## Regras Obrigatorias
+## Regras Obrigatórias
 
 - Nunca solicitar ou registrar secrets reais no chat.
 - Nunca commitar `.env` real.
 - Nunca criar exemplos com dados reais de pacientes.
-- Nunca expor fotos, exames ou informacoes clinicas em logs.
-- Sempre considerar `tenantId` e permissoes ao acessar dados sensiveis.
-- Sempre atualizar documentacao quando alterar arquitetura, banco, deploy ou seguranca.
-- Preferir mudancas pequenas, revisaveis e testaveis.
+- Nunca expor fotos, exames ou informações clínicas em logs.
+- Sempre considerar `tenantId` e permissões ao acessar dados sensíveis.
+- Sempre atualizar documentação quando alterar arquitetura, banco, deploy ou segurança.
+- Preferir mudanças pequenas, revisáveis e testáveis.
 - Preservar `apps/portal` como portal local na porta `3000`.
-- Nunca colocar uma aplicacao de produto nova na porta local `3000`; adicionar link e porta fixa no portal.
-- Ao criar nova aplicacao, atualizar `apps/portal/src/app/app-registry.ts` e `docs/09-portal-e-portas.md`.
-- Ao criar ou alterar modulo, fluxo, integracao, permissao ou entidade relevante, atualizar tambem a tela `Arquitetura do sistema` no preview para manter a visao macro do produto.
+- Nunca colocar uma aplicação de produto nova na porta local `3000`; adicionar link e porta fixa no portal.
+- Ao criar nova aplicação, atualizar `apps/portal/src/app/app-registry.ts` e `docs/09-portal-e-portas.md`.
+- Ao criar ou alterar módulo, fluxo, integração, permissão ou entidade relevante, atualizar também a tela `Arquitetura do sistema` no preview para manter a visão macro do produto.
+- Manter todos os arquivos de código, configuração e documentação em UTF-8.
+- Ao criar ou alterar texto visível, labels de dados do sistema, placeholders, menus, status ou mensagens, atualizar também o dicionário de idiomas do preview para português, inglês, espanhol, japonês e alemão.
 
 ## Stack Alvo
 
@@ -27,7 +29,7 @@ O Codex pode implementar, revisar, documentar, diagnosticar e orientar operacao,
 - PostgreSQL.
 - Prisma.
 - Redis + BullMQ.
-- Storage S3 compativel.
+- Storage S3 compatível.
 - n8n.
 - OpenAI API.
 - Docker + CapRover.
@@ -38,27 +40,27 @@ O Codex pode implementar, revisar, documentar, diagnosticar e orientar operacao,
 - `apps/portal`: portal local das aplicacoes, `http://localhost:3000`.
 - `apps/web`: frontend principal, `http://localhost:3003` no desenvolvimento local.
 - `apps/api`: backend NestJS, `http://localhost:4000`.
-- Cada aplicacao deployavel deve ter Dockerfile proprio para CapRover.
+- Cada aplicação deployável deve ter Dockerfile próprio para CapRover.
 - O monorepo deve continuar sendo a fonte oficial das portas e links.
 
 ## Areas Sensíveis
 
-- Auth e sessoes.
-- Permissoes e multi-tenant.
-- Dados clinicos.
+- Auth e sessões.
+- Permissões e multi-tenant.
+- Dados clínicos.
 - Fotos e exames.
 - Migrations.
 - Secrets.
-- Deploy em producao.
-- Prompts de IA com dados de saude.
+- Deploy em produção.
+- Prompts de IA com dados de saúde.
 - Webhooks de WhatsApp.
 
 ## Checklist Antes De Finalizar Uma Tarefa
 
-- Codigo compila.
+- Código compila.
 - Lint/testes relevantes foram executados ou motivo foi documentado.
 - Mudancas de banco tem migration.
-- Variaveis novas foram adicionadas ao `.env.example`.
-- Documentacao foi atualizada quando necessario.
+- Variáveis novas foram adicionadas ao `.env.example`.
+- Documentação foi atualizada quando necessário.
 - Nenhum secret foi adicionado.
 - Riscos foram informados.

@@ -371,6 +371,22 @@
         padding-top: 18px;
       }
 
+      .language-block {
+        display: grid;
+        gap: 7px;
+        margin-bottom: 16px;
+      }
+
+      .language-select {
+        background: rgb(255 255 255 / 4%);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        color: var(--text);
+        min-height: 38px;
+        padding: 8px 10px;
+        width: 100%;
+      }
+
       .main {
         padding: 30px;
       }
@@ -1074,10 +1090,399 @@
     <script src="config.js"></script>
     <script>
       const BUILD_INFO = {
-        version: window.LIPECARE_APP_VERSION || "0.1.6",
-        deployNumber: window.LIPECARE_DEPLOY_NUMBER || "10",
+        version: window.LIPECARE_APP_VERSION || "0.1.7",
+        deployNumber: window.LIPECARE_DEPLOY_NUMBER || "11",
         deploy: window.LIPECARE_DEPLOY_VERSION || "local",
         commit: window.LIPECARE_COMMIT_SHA || "sem-commit"
+      };
+
+      const LANGUAGES = {
+        pt: "Português",
+        en: "English",
+        es: "Español",
+        ja: "日本語",
+        de: "Deutsch"
+      };
+
+      const I18N = {
+        en: {
+          "Idioma / Language": "Language",
+          "Acesso de teste": "Test access",
+          "Entrar": "Sign in",
+          "Senha": "Password",
+          "Acessar MVP": "Open MVP",
+          "Administrador": "Administrator",
+          "Profissional": "Professional",
+          "Paciente": "Patient",
+          "Dashboard": "Dashboard",
+          "Alertas": "Alerts",
+          "Gestao": "Management",
+          "Gestão": "Management",
+          "Pacientes": "Patients",
+          "Sintomas": "Symptoms",
+          "Medidas": "Measurements",
+          "Fotos": "Photos",
+          "Auditoria": "Audit",
+          "Arquitetura do sistema": "System architecture",
+          "Sair": "Sign out",
+          "versao": "version",
+          "versão": "version",
+          "deploy": "deploy",
+          "commit": "commit",
+          "Pacientes acompanhados": "Monitored patients",
+          "Registros de sintomas": "Symptom records",
+          "Medidas": "Measurements",
+          "Fotos privadas": "Private photos",
+          "Fila de acompanhamento": "Follow-up queue",
+          "Alertas recentes": "Recent alerts",
+          "Lista de pacientes": "Patient list",
+          "Novo paciente": "New patient",
+          "Ficha do paciente": "Patient record",
+          "Dados Essenciais": "Essential data",
+          "Dados Personalizados": "Custom data",
+          "Histórico": "History",
+          "Historico": "History",
+          "Cadastrar paciente": "Register patient",
+          "Salvar dados essenciais": "Save essential data",
+          "Salvar dados personalizados": "Save custom data",
+          "Nome completo": "Full name",
+          "Data de nascimento": "Birth date",
+          "Sexo": "Sex",
+          "Telefone": "Phone",
+          "WhatsApp": "WhatsApp",
+          "E-mail": "Email",
+          "Endereco completo": "Full address",
+          "Endereço completo": "Full address",
+          "Cidade": "City",
+          "Estado": "State",
+          "CEP": "ZIP code",
+          "Profissao": "Profession",
+          "Profissão": "Profession",
+          "Convenio": "Insurance",
+          "Convênio": "Insurance",
+          "Numero da carteirinha": "Insurance card number",
+          "Número da carteirinha": "Insurance card number",
+          "Estado civil": "Marital status",
+          "Responsavel, se menor": "Guardian, if minor",
+          "Responsável, se menor": "Guardian, if minor",
+          "Observacoes gerais": "General notes",
+          "Observações gerais": "General notes",
+          "Selecione": "Select",
+          "Feminino": "Female",
+          "Masculino": "Male",
+          "Outro": "Other",
+          "Nao informado": "Not informed",
+          "Não informado": "Not informed",
+          "Em acompanhamento": "In follow-up",
+          "Avaliação pendente": "Pending evaluation",
+          "Gerenciar Templates De Campos": "Manage Field Templates",
+          "Criar campo personalizado": "Create custom field",
+          "Nome do novo campo": "New field name",
+          "Tipo de campo": "Field type",
+          "Texto curto": "Short text",
+          "Texto longo": "Long text",
+          "Numero": "Number",
+          "Número": "Number",
+          "Data": "Date",
+          "Sim / Nao": "Yes / No",
+          "Sim / Não": "Yes / No",
+          "Lista suspensa": "Dropdown list",
+          "Multipla escolha": "Multiple choice",
+          "Múltipla escolha": "Multiple choice",
+          "Checkbox": "Checkbox",
+          "Upload de arquivo": "File upload",
+          "Ordem": "Order",
+          "Placeholder": "Placeholder",
+          "Texto de ajuda": "Help text",
+          "Opcoes, separadas por virgula": "Options, comma-separated",
+          "Opções, separadas por vírgula": "Options, comma-separated",
+          "Campo obrigatorio": "Required field",
+          "Campo obrigatório": "Required field",
+          "Ativo": "Active",
+          "Oculto": "Hidden",
+          "Desativar": "Deactivate",
+          "Ativar": "Activate",
+          "Identidade e acesso": "Identity and access",
+          "Cadastro clinico": "Clinical registry",
+          "Cadastro clínico": "Clinical registry",
+          "Operacao assistencial": "Care operations",
+          "Operação assistencial": "Care operations",
+          "Governanca e deploy": "Governance and deploy",
+          "Governança e deploy": "Governance and deploy"
+        },
+        es: {
+          "Idioma / Language": "Idioma",
+          "Acesso de teste": "Acceso de prueba",
+          "Entrar": "Entrar",
+          "Senha": "Contraseña",
+          "Acessar MVP": "Acceder al MVP",
+          "Administrador": "Administrador",
+          "Profissional": "Profesional",
+          "Paciente": "Paciente",
+          "Alertas": "Alertas",
+          "Gestao": "Gestión",
+          "Gestão": "Gestión",
+          "Pacientes": "Pacientes",
+          "Sintomas": "Síntomas",
+          "Medidas": "Medidas",
+          "Fotos": "Fotos",
+          "Auditoria": "Auditoría",
+          "Arquitetura do sistema": "Arquitectura del sistema",
+          "Sair": "Salir",
+          "versao": "versión",
+          "versão": "versión",
+          "deploy": "deploy",
+          "commit": "commit",
+          "MVP funcional": "MVP funcional",
+          "Pacientes acompanhados": "Pacientes monitorizados",
+          "Registros de sintomas": "Registros de síntomas",
+          "Fotos privadas": "Fotos privadas",
+          "Fila de acompanhamento": "Cola de seguimiento",
+          "Alertas recentes": "Alertas recientes",
+          "Lista de pacientes": "Lista de pacientes",
+          "Novo paciente": "Nuevo paciente",
+          "Ficha do paciente": "Ficha del paciente",
+          "Dados Essenciais": "Datos esenciales",
+          "Dados Personalizados": "Datos personalizados",
+          "Histórico": "Historial",
+          "Historico": "Historial",
+          "Cadastrar paciente": "Registrar paciente",
+          "Salvar dados essenciais": "Guardar datos esenciales",
+          "Salvar dados personalizados": "Guardar datos personalizados",
+          "Nome completo": "Nombre completo",
+          "Data de nascimento": "Fecha de nacimiento",
+          "Telefone": "Teléfono",
+          "Endereco completo": "Dirección completa",
+          "Endereço completo": "Dirección completa",
+          "Cidade": "Ciudad",
+          "Estado": "Estado",
+          "Profissao": "Profesión",
+          "Profissão": "Profesión",
+          "Convenio": "Seguro",
+          "Convênio": "Seguro",
+          "Observacoes gerais": "Observaciones generales",
+          "Observações gerais": "Observaciones generales",
+          "Selecione": "Seleccione",
+          "Feminino": "Femenino",
+          "Masculino": "Masculino",
+          "Outro": "Otro",
+          "Nao informado": "No informado",
+          "Não informado": "No informado",
+          "Em acompanhamento": "En seguimiento",
+          "Avaliação pendente": "Evaluación pendiente",
+          "Gerenciar Templates De Campos": "Gestionar plantillas de campos",
+          "Criar campo personalizado": "Crear campo personalizado",
+          "Nome do novo campo": "Nombre del nuevo campo",
+          "Tipo de campo": "Tipo de campo",
+          "Texto curto": "Texto corto",
+          "Texto longo": "Texto largo",
+          "Numero": "Número",
+          "Número": "Número",
+          "Data": "Fecha",
+          "Sim / Nao": "Sí / No",
+          "Sim / Não": "Sí / No",
+          "Lista suspensa": "Lista desplegable",
+          "Multipla escolha": "Opción múltiple",
+          "Múltipla escolha": "Opción múltiple",
+          "Checkbox": "Casilla",
+          "Upload de arquivo": "Carga de archivo",
+          "Ordem": "Orden",
+          "Placeholder": "Placeholder",
+          "Texto de ajuda": "Texto de ayuda",
+          "Opcoes, separadas por virgula": "Opciones separadas por coma",
+          "Opções, separadas por vírgula": "Opciones separadas por coma",
+          "Campo obrigatorio": "Campo obligatorio",
+          "Campo obrigatório": "Campo obligatorio",
+          "Ativo": "Activo",
+          "Oculto": "Oculto",
+          "Desativar": "Desactivar",
+          "Ativar": "Activar",
+          "Identidade e acesso": "Identidad y acceso",
+          "Cadastro clinico": "Registro clínico",
+          "Cadastro clínico": "Registro clínico",
+          "Operacao assistencial": "Operación asistencial",
+          "Operação assistencial": "Operación asistencial",
+          "Governanca e deploy": "Gobernanza y deploy",
+          "Governança e deploy": "Gobernanza y deploy"
+        },
+        ja: {
+          "Idioma / Language": "言語",
+          "Acesso de teste": "テストアクセス",
+          "Entrar": "ログイン",
+          "Senha": "パスワード",
+          "Acessar MVP": "MVPを開く",
+          "Administrador": "管理者",
+          "Profissional": "医療担当者",
+          "Paciente": "患者",
+          "Pacientes": "患者",
+          "Sintomas": "症状",
+          "Medidas": "測定",
+          "Fotos": "写真",
+          "Auditoria": "監査",
+          "Arquitetura do sistema": "システム構成",
+          "Sair": "ログアウト",
+          "versao": "バージョン",
+          "versão": "バージョン",
+          "deploy": "デプロイ",
+          "commit": "コミット",
+          "MVP funcional": "機能検証MVP",
+          "Pacientes acompanhados": "フォロー中の患者",
+          "Registros de sintomas": "症状記録",
+          "Fotos privadas": "非公開写真",
+          "Fila de acompanhamento": "フォローアップ一覧",
+          "Alertas recentes": "最近のアラート",
+          "Lista de pacientes": "患者一覧",
+          "Novo paciente": "新規患者",
+          "Ficha do paciente": "患者カルテ",
+          "Dados Essenciais": "基本情報",
+          "Dados Personalizados": "カスタム情報",
+          "Histórico": "履歴",
+          "Historico": "履歴",
+          "Cadastrar paciente": "患者を登録",
+          "Salvar dados essenciais": "基本情報を保存",
+          "Salvar dados personalizados": "カスタム情報を保存",
+          "Nome completo": "氏名",
+          "Data de nascimento": "生年月日",
+          "Sexo": "性別",
+          "Telefone": "電話",
+          "Endereco completo": "住所",
+          "Endereço completo": "住所",
+          "Cidade": "市区町村",
+          "Estado": "州",
+          "Profissao": "職業",
+          "Profissão": "職業",
+          "Selecione": "選択",
+          "Feminino": "女性",
+          "Masculino": "男性",
+          "Outro": "その他",
+          "Nao informado": "未入力",
+          "Não informado": "未入力",
+          "Em acompanhamento": "フォロー中",
+          "Avaliação pendente": "評価待ち",
+          "Gerenciar Templates De Campos": "フィールドテンプレート管理",
+          "Criar campo personalizado": "カスタムフィールド作成",
+          "Nome do novo campo": "新しいフィールド名",
+          "Tipo de campo": "フィールドタイプ",
+          "Texto curto": "短文",
+          "Texto longo": "長文",
+          "Numero": "数値",
+          "Número": "数値",
+          "Data": "日付",
+          "Sim / Nao": "はい / いいえ",
+          "Sim / Não": "はい / いいえ",
+          "Lista suspensa": "ドロップダウン",
+          "Multipla escolha": "複数選択",
+          "Múltipla escolha": "複数選択",
+          "Checkbox": "チェックボックス",
+          "Upload de arquivo": "ファイルアップロード",
+          "Ordem": "順序",
+          "Placeholder": "プレースホルダー",
+          "Texto de ajuda": "ヘルプテキスト",
+          "Opcoes, separadas por virgula": "カンマ区切りの選択肢",
+          "Opções, separadas por vírgula": "カンマ区切りの選択肢",
+          "Campo obrigatorio": "必須項目",
+          "Campo obrigatório": "必須項目",
+          "Ativo": "有効",
+          "Oculto": "非表示",
+          "Desativar": "無効化",
+          "Ativar": "有効化",
+          "Identidade e acesso": "IDとアクセス",
+          "Cadastro clinico": "臨床登録",
+          "Cadastro clínico": "臨床登録",
+          "Operacao assistencial": "ケア運用",
+          "Operação assistencial": "ケア運用",
+          "Governanca e deploy": "ガバナンスとデプロイ",
+          "Governança e deploy": "ガバナンスとデプロイ"
+        },
+        de: {
+          "Idioma / Language": "Sprache",
+          "Acesso de teste": "Testzugang",
+          "Entrar": "Anmelden",
+          "Senha": "Passwort",
+          "Acessar MVP": "MVP öffnen",
+          "Administrador": "Administrator",
+          "Profissional": "Fachkraft",
+          "Paciente": "Patient",
+          "Pacientes": "Patienten",
+          "Sintomas": "Symptome",
+          "Medidas": "Messungen",
+          "Fotos": "Fotos",
+          "Auditoria": "Audit",
+          "Arquitetura do sistema": "Systemarchitektur",
+          "Sair": "Abmelden",
+          "versao": "Version",
+          "versão": "Version",
+          "deploy": "Deploy",
+          "commit": "Commit",
+          "MVP funcional": "Funktionales MVP",
+          "Pacientes acompanhados": "Betreute Patienten",
+          "Registros de sintomas": "Symptomaufzeichnungen",
+          "Fotos privadas": "Private Fotos",
+          "Fila de acompanhamento": "Betreuungsliste",
+          "Alertas recentes": "Aktuelle Warnungen",
+          "Lista de pacientes": "Patientenliste",
+          "Novo paciente": "Neuer Patient",
+          "Ficha do paciente": "Patientenakte",
+          "Dados Essenciais": "Basisdaten",
+          "Dados Personalizados": "Benutzerdefinierte Daten",
+          "Histórico": "Historie",
+          "Historico": "Historie",
+          "Cadastrar paciente": "Patient registrieren",
+          "Salvar dados essenciais": "Basisdaten speichern",
+          "Salvar dados personalizados": "Benutzerdefinierte Daten speichern",
+          "Nome completo": "Vollständiger Name",
+          "Data de nascimento": "Geburtsdatum",
+          "Sexo": "Geschlecht",
+          "Telefone": "Telefon",
+          "Endereco completo": "Vollständige Adresse",
+          "Endereço completo": "Vollständige Adresse",
+          "Cidade": "Stadt",
+          "Estado": "Bundesland",
+          "Profissao": "Beruf",
+          "Profissão": "Beruf",
+          "Selecione": "Auswählen",
+          "Feminino": "Weiblich",
+          "Masculino": "Männlich",
+          "Outro": "Andere",
+          "Nao informado": "Nicht angegeben",
+          "Não informado": "Nicht angegeben",
+          "Em acompanhamento": "In Betreuung",
+          "Avaliação pendente": "Bewertung ausstehend",
+          "Gerenciar Templates De Campos": "Feldvorlagen verwalten",
+          "Criar campo personalizado": "Benutzerdefiniertes Feld erstellen",
+          "Nome do novo campo": "Name des neuen Feldes",
+          "Tipo de campo": "Feldtyp",
+          "Texto curto": "Kurztext",
+          "Texto longo": "Langtext",
+          "Numero": "Zahl",
+          "Número": "Zahl",
+          "Data": "Datum",
+          "Sim / Nao": "Ja / Nein",
+          "Sim / Não": "Ja / Nein",
+          "Lista suspensa": "Dropdown",
+          "Multipla escolha": "Mehrfachauswahl",
+          "Múltipla escolha": "Mehrfachauswahl",
+          "Checkbox": "Checkbox",
+          "Upload de arquivo": "Dateiupload",
+          "Ordem": "Reihenfolge",
+          "Placeholder": "Platzhalter",
+          "Texto de ajuda": "Hilfetext",
+          "Opcoes, separadas por virgula": "Optionen, durch Kommas getrennt",
+          "Opções, separadas por vírgula": "Optionen, durch Kommas getrennt",
+          "Campo obrigatorio": "Pflichtfeld",
+          "Campo obrigatório": "Pflichtfeld",
+          "Ativo": "Aktiv",
+          "Oculto": "Ausgeblendet",
+          "Desativar": "Deaktivieren",
+          "Ativar": "Aktivieren",
+          "Identidade e acesso": "Identität und Zugriff",
+          "Cadastro clinico": "Klinisches Register",
+          "Cadastro clínico": "Klinisches Register",
+          "Operacao assistencial": "Versorgungsbetrieb",
+          "Operação assistencial": "Versorgungsbetrieb",
+          "Governanca e deploy": "Governance und Deploy",
+          "Governança e deploy": "Governance und Deploy"
+        }
       };
 
       const SAMPLE_USERS = [
@@ -1125,7 +1530,7 @@
             whatsapp: "(11) 90000-1001",
             email: "marina.almeida@teste.local",
             address: "Rua das Acacias, 120",
-            city: "Sao Paulo",
+            city: "São Paulo",
             stateUf: "SP",
             zipCode: "01400-000",
             insurance: "Particular",
@@ -1138,7 +1543,7 @@
             professional: "Dra. Raquel Peres",
             status: "Em acompanhamento",
             lastCheckin: "2026-04-26",
-            clinicalSummary: "Lipedema em acompanhamento, dor vespertina moderada, boa adesao a caminhadas leves.",
+            clinicalSummary: "Lipedema em acompanhamento, dor vespertina moderada, boa adesão a caminhadas leves.",
             clinicalHistory: [
               "Queixa inicial de dor e sensibilidade em membros inferiores.",
               "Relata piora apos longos periodos sentada.",
@@ -1162,18 +1567,18 @@
             city: "Rio de Janeiro",
             stateUf: "RJ",
             zipCode: "22000-000",
-            insurance: "Saude Total",
+            insurance: "Saúde Total",
             insuranceNumber: "ST-99881",
             profession: "Advogada",
             maritalStatus: "Solteira",
             guardianName: "",
-            generalNotes: "Aguardando avaliacao inicial.",
+            generalNotes: "Aguardando avaliação inicial.",
             doctorId: "u-pro",
             professional: "Dra. Raquel Peres",
             status: "Avaliação pendente",
             lastCheckin: "2026-04-18",
-            clinicalSummary: "Aguardando avaliacao inicial completa, com relato de inchaco e dor elevada.",
-            clinicalHistory: ["Primeiro contato registrado com queixa de inchaco e sensibilidade."],
+            clinicalSummary: "Aguardando avaliação inicial completa, com relato de inchaço e dor elevada.",
+            clinicalHistory: ["Primeiro contato registrado com queixa de inchaço e sensibilidade."],
             audioNotes: []
           },
           {
@@ -1279,7 +1684,7 @@
             fieldKey: "tipo_sanguineo",
             fieldType: "select",
             placeholder: "Selecione",
-            helpText: "Exemplo de template; pode ser substituido por qualquer campo da rotina do medico.",
+            helpText: "Exemplo de template; pode ser substituído por qualquer campo da rotina do médico.",
             required: false,
             options: ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"],
             displayOrder: 1,
@@ -1307,7 +1712,7 @@
             fieldKey: "tipo_de_pele",
             fieldType: "select",
             placeholder: "Selecione",
-            helpText: "Exemplo de campo de outro medico.",
+            helpText: "Exemplo de campo de outro médico.",
             required: false,
             options: ["Oleosa", "Seca", "Mista", "Sensivel"],
             displayOrder: 1,
@@ -1319,16 +1724,16 @@
           { id: "cfv-002", tenantId: "tenant-lipecare", patientId: "p-001", doctorId: "u-pro", customFieldId: "cf-002", value: "Sem alergias medicamentosas conhecidas." }
         ],
         clinics: [
-          { id: "c-001", name: "Clinica LipeCare Jardins", city: "Sao Paulo", status: "Ativa" },
+          { id: "c-001", name: "Clínica LipeCare Jardins", city: "São Paulo", status: "Ativa" },
           { id: "c-002", name: "Nucleo Integrado Rio", city: "Rio de Janeiro", status: "Homologacao" }
         ],
         doctors: [
-          { id: "d-001", name: "Dra. Raquel Peres", specialty: "Cirurgia vascular", clinic: "Clinica LipeCare Jardins" },
+          { id: "d-001", name: "Dra. Raquel Peres", specialty: "Cirurgia vascular", clinic: "Clínica LipeCare Jardins" },
           { id: "d-002", name: "Dr. Felipe Andrade", specialty: "Endocrinologia", clinic: "Nucleo Integrado Rio" }
         ],
         institutions: [
-          { id: "i-001", name: "Instituto Brasileiro de Lipedema", type: "Pesquisa e educacao", city: "Sao Paulo" },
-          { id: "i-002", name: "Rede Saude Integrada", type: "Parceiro clinico", city: "Belo Horizonte" }
+          { id: "i-001", name: "Instituto Brasileiro de Lipedema", type: "Pesquisa e educação", city: "São Paulo" },
+          { id: "i-002", name: "Rede Saúde Integrada", type: "Parceiro clínico", city: "Belo Horizonte" }
         ],
         examAlerts: [
           {
@@ -1347,7 +1752,7 @@
             dueDate: "2026-05-08",
             priority: "Media",
             status: "Aberto",
-            detail: "Paciente relatou envio de exame para primeira avaliacao."
+            detail: "Paciente relatou envio de exame para primeira avaliação."
           }
         ],
         returnAlerts: [
@@ -1367,7 +1772,7 @@
             dueDate: "2026-05-20",
             priority: "Baixa",
             status: "Pendente",
-            detail: "Confirmar evolucao de medidas e sintomas recentes."
+            detail: "Confirmar evolução de medidas e sintomas recentes."
           }
         ],
         auditLogs: [
@@ -1389,7 +1794,7 @@
         assistantMessages: [
           {
             role: "assistant",
-            text: "Oi, eu sou a assistente LipeCare. Como voce esta se sentindo hoje?",
+            text: "Oi, eu sou a assistente LipeCare. Como você está se sentindo hoje?",
             date: "agora"
           }
         ]
@@ -1456,6 +1861,89 @@
         localStorage.removeItem("lipecare-mvp-session");
       }
 
+      function readLanguage() {
+        const stored = localStorage.getItem("lipecare-language");
+        return LANGUAGES[stored] ? stored : "pt";
+      }
+
+      function setLanguage(language) {
+        if (LANGUAGES[language]) {
+          localStorage.setItem("lipecare-language", language);
+        }
+      }
+
+      function translateText(value, language = readLanguage()) {
+        const text = String(value ?? "").trim();
+        if (!text || language === "pt") return value;
+        return I18N[language]?.[text] ?? value;
+      }
+
+      function renderLanguageSelector() {
+        const currentLanguage = readLanguage();
+        return `
+          <label class="language-block">
+            <span>Idioma / Language</span>
+            <select class="language-select" data-language-select>
+              ${Object.entries(LANGUAGES).map(([code, label]) => `
+                <option value="${code}" ${currentLanguage === code ? "selected" : ""}>${label}</option>
+              `).join("")}
+            </select>
+          </label>
+        `;
+      }
+
+      function applyTranslations(root = app) {
+        const language = readLanguage();
+        if (language === "pt") return;
+
+        root.querySelectorAll("input[placeholder], textarea[placeholder]").forEach((field) => {
+          field.placeholder = translateText(field.placeholder, language);
+        });
+
+        root.querySelectorAll("[aria-label], [title]").forEach((element) => {
+          if (element.hasAttribute("aria-label")) {
+            element.setAttribute("aria-label", translateText(element.getAttribute("aria-label"), language));
+          }
+          if (element.hasAttribute("title")) {
+            element.setAttribute("title", translateText(element.getAttribute("title"), language));
+          }
+        });
+
+        const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+          acceptNode(node) {
+            const parent = node.parentElement;
+            if (!parent || ["SCRIPT", "STYLE", "TEXTAREA", "OPTION"].includes(parent.tagName)) {
+              return NodeFilter.FILTER_REJECT;
+            }
+            return node.nodeValue.trim() ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+          }
+        });
+
+        const nodes = [];
+        while (walker.nextNode()) nodes.push(walker.currentNode);
+
+        nodes.forEach((node) => {
+          const original = node.nodeValue;
+          const translated = translateText(original, language);
+          if (translated !== original) {
+            node.nodeValue = original.replace(original.trim(), translated);
+          }
+        });
+
+        root.querySelectorAll("option").forEach((option) => {
+          option.textContent = translateText(option.textContent, language);
+        });
+      }
+
+      function bindLanguageSelectors() {
+        document.querySelectorAll("[data-language-select]").forEach((select) => {
+          select.addEventListener("change", () => {
+            setLanguage(select.value);
+            render();
+          });
+        });
+      }
+
       function roleLabel(role) {
         return {
           ADMIN: "Administrador",
@@ -1480,15 +1968,15 @@
       function assistantReply(message) {
         const text = message.toLowerCase();
         if (text.includes("dor") || text.includes("inch") || text.includes("cans")) {
-          return "Entendi. Vou registrar isso como um ponto de atencao. Se a dor estiver forte ou diferente do habitual, vale avisar sua profissional e evitar se automedicar.";
+          return "Entendi. Vou registrar isso como um ponto de atenção. Se a dor estiver forte ou diferente do habitual, vale avisar sua profissional e evitar se automedicar.";
         }
         if (text.includes("bem") || text.includes("melhor") || text.includes("otim")) {
           return "Que bom saber. Mantenha sua rotina de cuidado e me conte se houve algo que ajudou hoje, como movimento leve, hidratacao ou descanso.";
         }
         if (text.includes("triste") || text.includes("ans") || text.includes("mal")) {
-          return "Sinto muito que hoje esteja pesado. Vamos por partes: respire, acolha o que voce esta sentindo e registre um sintoma simples para sua equipe acompanhar.";
+          return "Sinto muito que hoje esteja pesado. Vamos por partes: respire, acolha o que você está sentindo e registre um sintoma simples para sua equipe acompanhar.";
         }
-        return "Obrigado por me contar. Quer registrar tambem nivel de dor, inchaco, energia ou alguma observacao do dia?";
+        return "Obrigado por me contar. Quer registrar também nível de dor, inchaço, energia ou alguma observação do dia?";
       }
 
       function render() {
@@ -1506,19 +1994,20 @@
           <main class="login-shell">
             <section class="login-hero">
               <p class="eyebrow">LipeCare MVP</p>
-              <h1>Cuidado clinico continuo, seguro e humanizado.</h1>
+              <h1>Cuidado clínico contínuo, seguro e humanizado.</h1>
               <p class="muted">
                 Preview funcional para validar o fluxo inicial: login, perfis,
                 pacientes, sintomas, medidas, fotos evolutivas e auditoria.
               </p>
               <div class="alert">
-                Dados totalmente ficticios para teste. Nao inserir dados reais de pacientes neste preview.
+                Dados totalmente fictícios para teste. Não inserir dados reais de pacientes neste preview.
               </div>
             </section>
             <section class="login-panel">
               <div class="login-card card">
                 <p class="eyebrow">Acesso de teste</p>
                 <h2>Entrar</h2>
+                ${renderLanguageSelector()}
                 <form id="login-form" class="form">
                   <label>
                     E-mail
@@ -1543,6 +2032,9 @@
           </main>
         `;
 
+        applyTranslations();
+        bindLanguageSelectors();
+
         document.getElementById("login-form").addEventListener("submit", (event) => {
           event.preventDefault();
           const data = new FormData(event.currentTarget);
@@ -1551,7 +2043,7 @@
           const user = SAMPLE_USERS.find((item) => item.email === email && item.password === password);
 
           if (!user) {
-            alert("Usuario de teste nao encontrado.");
+            alert("Usuário de teste não encontrado.");
             return;
           }
 
@@ -1610,6 +2102,7 @@
                 `).join("")}
               </nav>
               <div class="user-box">
+                ${renderLanguageSelector()}
                 <strong>${session.name}</strong><br />
                 ${roleLabel(session.role)}<br />
                 ${session.email}
@@ -1623,6 +2116,9 @@
             </section>
           </main>
         `;
+
+        applyTranslations();
+        bindLanguageSelectors();
 
         document.querySelectorAll("[data-view]").forEach((button) => {
           button.addEventListener("click", () => {
@@ -1673,7 +2169,7 @@
           symptoms: "Sintomas",
           measurements: "Medidas",
           photos: "Fotos",
-          admin: "Gestao",
+          admin: "Gestão",
           alerts: "Alertas",
           audit: "Auditoria",
           architecture: "Arquitetura do sistema"
@@ -1742,8 +2238,8 @@
 
       function renderDeployMeta() {
         return `
-          <div class="deploy-meta" aria-label="Versao do deploy">
-            <span>versao <b>v${BUILD_INFO.version}</b></span>
+          <div class="deploy-meta" aria-label="Versão do deploy">
+            <span>versão <b>v${BUILD_INFO.version}</b></span>
             <span>deploy <b>#${BUILD_INFO.deployNumber}</b></span>
             <span>commit <b>${shortCommit(BUILD_INFO.commit)}</b></span>
           </div>
@@ -1758,7 +2254,7 @@
         const highPain = symptoms.filter((item) => Number(item.painLevel) >= 7).length;
 
         return `
-          ${renderHeader("Dashboard", "Resumo operacional do acompanhamento clinico.", roleLabel(session.role))}
+          ${renderHeader("Dashboard", "Resumo operacional do acompanhamento clínico.", roleLabel(session.role))}
           <section class="grid stats">
             ${statCard("Pacientes", patients.length)}
             ${statCard("Registros de sintomas", symptoms.length)}
@@ -1807,11 +2303,11 @@
           <article class="card section future-chart-card">
             <div class="future-chart">
               <div>
-                <p class="eyebrow">Radar clinico em tempo real</p>
-                <h2>Evolucao inteligente dos pacientes</h2>
-                <p class="muted">Visao animada para priorizar dor, exames, retornos e engajamento.</p>
+                <p class="eyebrow">Radar clínico em tempo real</p>
+                <h2>Evolução inteligente dos pacientes</h2>
+                <p class="muted">Visão animada para priorizar dor, exames, retornos e engajamento.</p>
               </div>
-              <div class="chart-stage" aria-label="Grafico futurista de acompanhamento">
+              <div class="chart-stage" aria-label="Gráfico futurista de acompanhamento">
                 ${series.map((item, index) => `
                   <div class="chart-column">
                     <div class="chart-bar ${item.tone}" style="height: ${item.value}%; animation-delay: ${index * 90}ms"></div>
@@ -1822,7 +2318,7 @@
               <div class="chart-kpis">
                 <div class="chart-kpi"><span>Pacientes ativos</span><strong>${patients.length}</strong></div>
                 <div class="chart-kpi"><span>Alertas abertos</span><strong>${openAlerts}</strong></div>
-                <div class="chart-kpi"><span>Indice de adesao</span><strong>69%</strong></div>
+                <div class="chart-kpi"><span>Índice de adesão</span><strong>69%</strong></div>
               </div>
             </div>
           </article>
@@ -1842,7 +2338,7 @@
                 `).join("")}
               </div>
               <form class="assistant-form" id="assistant-form">
-                <input name="message" autocomplete="off" placeholder="Como voce esta se sentindo hoje?" />
+                <input name="message" autocomplete="off" placeholder="Como você está se sentindo hoje?" />
                 <button class="btn" type="submit">Enviar</button>
               </form>
             </div>
@@ -1865,7 +2361,7 @@
         const activeTab = state.patientFormTab ?? "essential";
 
         return `
-          ${renderHeader("Pacientes", "Cadastro base com campos personalizados por medico.", "CRM")}
+          ${renderHeader("Pacientes", "Cadastro base com campos personalizados por médico.", "CRM")}
           <section class="grid content-grid">
             <article class="card section">
               <h2>Lista de pacientes</h2>
@@ -1887,7 +2383,7 @@
             <div class="tabs" role="tablist" aria-label="Abas da ficha do paciente">
               ${renderPatientTab("essential", "Dados Essenciais", activeTab)}
               ${renderPatientTab("custom", "Dados Personalizados", activeTab)}
-              ${renderPatientTab("history", "Historico", activeTab)}
+              ${renderPatientTab("history", "Histórico", activeTab)}
             </div>
             ${activeTab === "custom"
               ? renderCustomPatientFields(state, session, patient)
@@ -1916,7 +2412,7 @@
               <label>Sexo
                 <select name="sex">
                   ${["", "Feminino", "Masculino", "Outro", "Nao informado"].map((option) => `
-                    <option value="${option}" ${option === (patient.sex ?? "") ? "selected" : ""}>${option || "Selecione"}</option>
+                    <option value="${option}" ${option === (patient.sex ?? "") ? "selected" : ""}>${option === "Nao informado" ? "Não informado" : option || "Selecione"}</option>
                   `).join("")}
                 </select>
               </label>
@@ -1985,12 +2481,12 @@
         return `
           <div class="stack">
             <div class="alert">
-              Campos personalizados sao templates livres deste medico neste tenant. Eles aparecem em todos os pacientes atuais e futuros deste medico, sem afetar outros medicos.
+              Campos personalizados são templates livres deste médico neste tenant. Eles aparecem em todos os pacientes atuais e futuros deste médico, sem afetar outros médicos.
             </div>
             ${session.role !== "PATIENT" ? renderCustomFieldManager(allFields, session) : ""}
             <form id="patient-custom-form" class="form">
               <input name="patientId" type="hidden" value="${patient.id}" />
-              ${fields.length ? fields.map((field) => renderCustomFieldInput(field, customValueForField(state, tenantId, patient.id, doctorId, field.id))).join("") : empty("Nenhum template ativo para este medico. Crie qualquer campo em Gerenciar Campos Personalizados.")}
+              ${fields.length ? fields.map((field) => renderCustomFieldInput(field, customValueForField(state, tenantId, patient.id, doctorId, field.id))).join("") : empty("Nenhum template ativo para este médico. Crie qualquer campo em Gerenciar Campos Personalizados.")}
               ${fields.length ? `<button class="btn" type="submit">Salvar dados personalizados</button>` : ""}
             </form>
           </div>
@@ -2018,7 +2514,7 @@
           return `
             <label>${field.label}${help}
               <select name="custom_${field.id}" ${required}>
-                ${["", "Sim", "Nao"].map((option) => `<option value="${option}" ${option === value ? "selected" : ""}>${option || "Selecione"}</option>`).join("")}
+                ${["", "Sim", "Nao"].map((option) => `<option value="${option}" ${option === value ? "selected" : ""}>${option === "Nao" ? "Não" : option || "Selecione"}</option>`).join("")}
               </select>
             </label>
           `;
@@ -2056,32 +2552,32 @@
           <div class="field-manager">
             <div>
               <h2>Gerenciar Templates De Campos</h2>
-              <p class="muted">Crie qualquer campo adicional para ${session.role === "ADMIN" ? "o medico selecionado" : "sua ficha de pacientes"}. O template fica salvo para pacientes atuais e futuros deste medico dentro do tenant atual.</p>
+              <p class="muted">Crie qualquer campo adicional para ${session.role === "ADMIN" ? "o médico selecionado" : "sua ficha de pacientes"}. O template fica salvo para pacientes atuais e futuros deste médico dentro do tenant atual.</p>
             </div>
             ${fields.length ? fields.map((field) => `
               <div class="field-row">
                 <div>
                   <strong>${field.displayOrder}. ${field.label}</strong>
-                  <div class="field-help">${field.fieldType} ${field.required ? "- obrigatorio" : ""} ${field.active ? "" : "- inativo"}</div>
+                  <div class="field-help">${field.fieldType} ${field.required ? "- obrigatório" : ""} ${field.active ? "" : "- inativo"}</div>
                 </div>
                 <span class="pill ${field.active ? "ok" : "warn"}">${field.active ? "Ativo" : "Oculto"}</span>
                 <div class="field-row-actions">
                   <button class="btn secondary" type="button" data-toggle-custom-field="${field.id}">${field.active ? "Desativar" : "Ativar"}</button>
                 </div>
               </div>
-            `).join("") : empty("Nenhum campo criado para este medico.")}
+            `).join("") : empty("Nenhum campo criado para este médico.")}
             <form id="custom-field-form" class="form">
               <div class="two-cols">
-                <label>Nome do novo campo <input name="label" placeholder="Ex.: Objetivo do tratamento, Queixa principal, Codigo interno" required /></label>
+                <label>Nome do novo campo <input name="label" placeholder="Ex.: Objetivo do tratamento, Queixa principal, Código interno" required /></label>
                 <label>Tipo de campo
                   <select name="fieldType" required>
                     <option value="short_text">Texto curto</option>
                     <option value="long_text">Texto longo</option>
-                    <option value="number">Numero</option>
+                    <option value="number">Número</option>
                     <option value="date">Data</option>
-                    <option value="yes_no">Sim / Nao</option>
+                    <option value="yes_no">Sim / Não</option>
                     <option value="select">Lista suspensa</option>
-                    <option value="multi_select">Multipla escolha</option>
+                    <option value="multi_select">Múltipla escolha</option>
                     <option value="checkbox">Checkbox</option>
                     <option value="upload_file">Upload de arquivo</option>
                     <option value="phone">Telefone</option>
@@ -2093,9 +2589,9 @@
                 <label>Ordem <input name="displayOrder" type="number" min="1" value="${fields.length + 1}" required /></label>
                 <label>Placeholder <input name="placeholder" placeholder="Texto de apoio no campo" /></label>
               </div>
-              <label>Texto de ajuda <input name="helpText" placeholder="Orientacao curta para preenchimento" /></label>
-              <label>Opcoes, separadas por virgula <input name="options" placeholder="Opção 1, Opção 2, Opção 3" /></label>
-              <label><input name="required" type="checkbox" value="true" /> Campo obrigatorio</label>
+              <label>Texto de ajuda <input name="helpText" placeholder="Orientação curta para preenchimento" /></label>
+              <label>Opções, separadas por vírgula <input name="options" placeholder="Opção 1, Opção 2, Opção 3" /></label>
+              <label><input name="required" type="checkbox" value="true" /> Campo obrigatório</label>
               <button class="btn" type="submit">Criar campo personalizado</button>
             </form>
           </div>
@@ -2105,30 +2601,30 @@
       function renderClinicalRecord(patient) {
         return `
           <article class="card section assistant-card">
-            <h2>Historico do paciente</h2>
+            <h2>Histórico do paciente</h2>
             <div class="stack">
-              <div class="alert"><strong>Resumo clinico:</strong> ${patient.clinicalSummary}</div>
+              <div class="alert"><strong>Resumo clínico:</strong> ${patient.clinicalSummary}</div>
               <div class="timeline">
                 ${(patient.clinicalHistory ?? []).map((item) => `
                   <div class="timeline-item">${item}</div>
                 `).join("")}
                 ${(patient.audioNotes ?? []).map((note) => `
                   <div class="timeline-item">
-                    <strong>Nota por audio</strong>
+                    <strong>Nota por áudio</strong>
                     <p class="muted">${note.date}</p>
                     <p>${note.text}</p>
                   </div>
                 `).join("")}
               </div>
               <form id="audio-note-form" class="form">
-                <label>Resumo ou transcricao da nota
-                  <textarea name="note" id="audio-note-text" rows="3" placeholder="Grave ou digite a evolucao do atendimento..."></textarea>
+                <label>Resumo ou transcrição da nota
+                  <textarea name="note" id="audio-note-text" rows="3" placeholder="Grave ou digite a evolução do atendimento..."></textarea>
                 </label>
                 <div class="audio-actions">
-                  <button class="btn secondary" id="audio-record-btn" type="button">Gravar audio</button>
+                  <button class="btn secondary" id="audio-record-btn" type="button">Gravar áudio</button>
                   <span class="audio-status" id="audio-status">Pronto para gravar</span>
                 </div>
-                <button class="btn" type="submit">Salvar no historico</button>
+                <button class="btn" type="submit">Salvar no histórico</button>
               </form>
             </div>
           </article>
@@ -2144,7 +2640,7 @@
                   <th>Paciente</th>
                   <th>Idade</th>
                   <th>Status</th>
-                  <th>Ultimo check-in</th>
+                  <th>Último check-in</th>
                 </tr>
               </thead>
               <tbody>
@@ -2167,11 +2663,11 @@
         const symptoms = patient ? state.symptoms.filter((item) => item.patientId === patient.id) : [];
 
         return `
-          ${renderHeader("Sintomas", "Registro de dor e observacoes clinicas.", patient ? patient.fullName : "Sem paciente")}
+          ${renderHeader("Sintomas", "Registro de dor e observações clínicas.", patient ? patient.fullName : "Sem paciente")}
           ${patient ? `
             <section class="grid content-grid">
               <article class="card section">
-                <h2>Historico de sintomas</h2>
+                <h2>Histórico de sintomas</h2>
                 ${symptoms.length ? `
                   <div class="timeline">
                     ${symptoms.map((item) => `
@@ -2207,7 +2703,7 @@
           ${patient ? `
             <section class="grid content-grid">
               <article class="card section">
-                <h2>Historico de medidas</h2>
+                <h2>Histórico de medidas</h2>
                 ${measurements.length ? `
                   <div class="table-wrap">
                     <table>
@@ -2283,13 +2779,13 @@
 
       function renderAdminManagement(state) {
         return `
-          ${renderHeader("Gestao administrativa", "Clinicas, medicos e instituicoes vinculadas ao LipeCare.", "Administrador")}
+          ${renderHeader("Gestão administrativa", "Clínicas, médicos e instituições vinculadas ao LipeCare.", "Administrador")}
           <section class="grid content-grid">
             <article class="card section">
-              <h2>Clinicas</h2>
+              <h2>Clínicas</h2>
               <div class="table-wrap">
                 <table>
-                  <thead><tr><th>Clinica</th><th>Cidade</th><th>Status</th></tr></thead>
+                  <thead><tr><th>Clínica</th><th>Cidade</th><th>Status</th></tr></thead>
                   <tbody>
                     ${state.clinics.map((clinic) => `
                       <tr><td>${clinic.name}</td><td>${clinic.city}</td><td>${clinic.status}</td></tr>
@@ -2299,10 +2795,10 @@
               </div>
             </article>
             <article class="card section">
-              <h2>Medicos</h2>
+              <h2>Médicos</h2>
               <div class="table-wrap">
                 <table>
-                  <thead><tr><th>Medico</th><th>Especialidade</th><th>Clinica</th></tr></thead>
+                  <thead><tr><th>Médico</th><th>Especialidade</th><th>Clínica</th></tr></thead>
                   <tbody>
                     ${state.doctors.map((doctor) => `
                       <tr><td>${doctor.name}</td><td>${doctor.specialty}</td><td>${doctor.clinic}</td></tr>
@@ -2312,10 +2808,10 @@
               </div>
             </article>
             <article class="card section assistant-card">
-              <h2>Instituicoes</h2>
+              <h2>Instituições</h2>
               <div class="table-wrap">
                 <table>
-                  <thead><tr><th>Instituicao</th><th>Tipo</th><th>Cidade</th></tr></thead>
+                  <thead><tr><th>Instituição</th><th>Tipo</th><th>Cidade</th></tr></thead>
                   <tbody>
                     ${state.institutions.map((institution) => `
                       <tr><td>${institution.name}</td><td>${institution.type}</td><td>${institution.city}</td></tr>
@@ -2339,54 +2835,54 @@
         ).length;
 
         return `
-          ${renderHeader("Arquitetura do sistema", "Mapa mental operacional dos modulos, dados e conexoes do CRM medico.", "Macro visao")}
+          ${renderHeader("Arquitetura do sistema", "Mapa mental operacional dos módulos, dados e conexões do CRM médico.", "Macro visão")}
           <section class="architecture-shell">
             <article class="architecture-map">
               <div class="architecture-core">
                 <span class="badge">Tenant ${tenantId}</span>
-                <strong>LipeCare CRM Medico</strong>
-                <span class="muted">Camada central multi-tenant: pacientes, medicos, clinicas, templates, auditoria e operacao clinica.</span>
+                <strong>LipeCare CRM Médico</strong>
+                <span class="muted">Camada central multi-tenant: pacientes, médicos, clínicas, templates, auditoria e operação clínica.</span>
               </div>
 
               <div class="architecture-flow" aria-label="Fluxo principal do sistema">
-                ${renderFlowStep("1", "Login e perfil", "Define tenant, papel e escopo de permissao.")}
-                ${renderFlowStep("2", "Dashboard", "Resume pacientes, alertas, check-ins e sinais clinicos.")}
-                ${renderFlowStep("3", "Cadastro de pacientes", "Dados essenciais universais + vinculo medico/tenant.")}
-                ${renderFlowStep("4", "Templates do medico", "Campos livres que viram padrao para pacientes atuais e futuros.")}
-                ${renderFlowStep("5", "Auditoria e deploy", "Rastreia eventos, versao, deploy e commit publicados.")}
+                ${renderFlowStep("1", "Login e perfil", "Define tenant, papel e escopo de permissão.")}
+                ${renderFlowStep("2", "Dashboard", "Resume pacientes, alertas, check-ins e sinais clínicos.")}
+                ${renderFlowStep("3", "Cadastro de pacientes", "Dados essenciais universais + vínculo médico/tenant.")}
+                ${renderFlowStep("4", "Templates do médico", "Campos livres que viram padrão para pacientes atuais e futuros.")}
+                ${renderFlowStep("5", "Auditoria e deploy", "Rastreia eventos, versão, deploy e commit publicados.")}
               </div>
 
               <div class="architecture-lanes">
                 <div class="architecture-lane">
                   <h2>Identidade e acesso</h2>
-                  ${renderArchitectureNode("Sessoes", "Admin, medico e paciente com visoes diferentes.")}
+                  ${renderArchitectureNode("Sessões", "Admin, médico e paciente com visões diferentes.")}
                   ${renderArchitectureNode("Multi-tenant", "Todos os pacientes e templates filtrados por tenantId.")}
-                  ${renderArchitectureNode("Permissoes", "Medico ve seus pacientes/templates; admin ve o tenant.")}
+                  ${renderArchitectureNode("Permissões", "Médico vê seus pacientes/templates; admin vê o tenant.")}
                 </div>
                 <div class="architecture-lane">
-                  <h2>Cadastro clinico</h2>
-                  ${renderArchitectureNode("Dados essenciais", "CPF, RG, nascimento, contato, endereco, convenio e observacoes.")}
-                  ${renderArchitectureNode("Dados personalizados", `${activeTemplates.length} template(s) ativo(s) para este medico.`)}
+                  <h2>Cadastro clínico</h2>
+                  ${renderArchitectureNode("Dados essenciais", "CPF, RG, nascimento, contato, endereço, convênio e observações.")}
+                  ${renderArchitectureNode("Dados personalizados", `${activeTemplates.length} template(s) ativo(s) para este médico.`)}
                   ${renderArchitectureNode("Valores por paciente", `${totalCustomValues} valor(es) customizados salvos no escopo atual.`)}
                 </div>
                 <div class="architecture-lane">
-                  <h2>Operacao assistencial</h2>
-                  ${renderArchitectureNode("Sintomas", "Dor, observacoes e historico de sintomas.")}
-                  ${renderArchitectureNode("Medidas", "Peso, cintura, quadril e evolucao corporal.")}
+                  <h2>Operação assistencial</h2>
+                  ${renderArchitectureNode("Sintomas", "Dor, observações e histórico de sintomas.")}
+                  ${renderArchitectureNode("Medidas", "Peso, cintura, quadril e evolução corporal.")}
                   ${renderArchitectureNode("Fotos", "Registro evolutivo preparado para storage privado.")}
                 </div>
                 <div class="architecture-lane">
-                  <h2>Governanca e deploy</h2>
-                  ${renderArchitectureNode("Alertas", "Exames, retornos e pendencias por paciente.")}
-                  ${renderArchitectureNode("Auditoria", "Eventos de consulta, criacao e alteracao de dados sensiveis.")}
+                  <h2>Governança e deploy</h2>
+                  ${renderArchitectureNode("Alertas", "Exames, retornos e pendências por paciente.")}
+                  ${renderArchitectureNode("Auditoria", "Eventos de consulta, criação e alteração de dados sensíveis.")}
                   ${renderArchitectureNode("CapRover/GitHub", `v${BUILD_INFO.version}, deploy #${BUILD_INFO.deployNumber}, commit ${shortCommit(BUILD_INFO.commit)}.`)}
                 </div>
               </div>
 
               <div class="architecture-principles">
-                ${renderArchitectureNode("Regra de ouro", "Todo novo modulo deve entrar neste mapa macro.")}
+                ${renderArchitectureNode("Regra de ouro", "Todo novo módulo deve entrar neste mapa macro.")}
                 ${renderArchitectureNode("Escalabilidade", "Templates personalizados ficam separados dos dados essenciais.")}
-                ${renderArchitectureNode("LGPD", "Dados sensiveis exigem tenantId, permissao e auditoria.")}
+                ${renderArchitectureNode("LGPD", "Dados sensíveis exigem tenantId, permissão e auditoria.")}
               </div>
             </article>
           </section>
@@ -2419,7 +2915,7 @@
         const returnAlerts = state.returnAlerts.filter((alert) => patientIds.includes(alert.patientId));
 
         return `
-          ${renderHeader("Alertas", "Exames, pendencias e retornos clinicos.", roleLabel(session.role))}
+          ${renderHeader("Alertas", "Exames, pendências e retornos clínicos.", roleLabel(session.role))}
           <section class="grid stats">
             ${statCard("Exames em aberto", examAlerts.filter((alert) => alert.status !== "Resolvido").length)}
             ${statCard("Retornos pendentes", returnAlerts.filter((alert) => alert.status !== "Resolvido").length)}
@@ -2479,7 +2975,7 @@
 
       function renderAudit(state) {
         return `
-          ${renderHeader("Auditoria", "Eventos minimos para rastreabilidade de dados sensiveis.", "LGPD")}
+          ${renderHeader("Auditoria", "Eventos mínimos para rastreabilidade de dados sensíveis.", "LGPD")}
           <section class="card section">
             <h2>Eventos recentes</h2>
             <div class="table-wrap">
@@ -2602,7 +3098,7 @@
               professional: session.role === "PROFESSIONAL" ? session.name : "Dra. Raquel Peres",
               status: "Avaliação pendente",
               lastCheckin: today(),
-              clinicalSummary: "Paciente novo aguardando primeira avaliacao clinica.",
+              clinicalSummary: "Paciente novo aguardando primeira avaliação clínica.",
               clinicalHistory: ["Cadastro criado para inicio do acompanhamento."],
               audioNotes: []
             };
@@ -2793,12 +3289,12 @@
           recordButton.addEventListener("click", () => {
             const status = document.getElementById("audio-status");
             const field = document.getElementById("audio-note-text");
-            status.textContent = "Gravando simulacao de audio...";
-            recordButton.textContent = "Parar gravacao";
+            status.textContent = "Gravando simulação de áudio...";
+            recordButton.textContent = "Parar gravação";
             window.setTimeout(() => {
-              field.value = "Nota de audio: paciente relata como se sentiu hoje, nivel de dor, inchaco e orientacoes combinadas na consulta.";
-              status.textContent = "Audio transcrito automaticamente para revisao.";
-              recordButton.textContent = "Gravar audio";
+              field.value = "Nota de áudio: paciente relata como se sentiu hoje, nível de dor, inchaço e orientações combinadas na consulta.";
+              status.textContent = "Áudio transcrito automaticamente para revisão.";
+              recordButton.textContent = "Gravar áudio";
             }, 1400);
           });
         }
