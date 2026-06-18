@@ -1,16 +1,14 @@
 {
-  "name": "@lipecare/web",
+  "name": "@lipecare/portal",
   "version": "0.1.0",
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev -p 3003",
+    "dev": "next dev -p 3000",
     "build": "next build",
-    "start": "next start -p 3003",
-    "start:local": "next start -p 3003",
-    "start:container": "next start -p 3003",
+    "start": "next start -p 3000",
     "lint": "next lint",
-    "test": "node -e \"console.log('web tests pending')\""
+    "test": "node -e \"console.log('portal tests pending')\""
   },
   "dependencies": {
     "next": "^14.2.14",

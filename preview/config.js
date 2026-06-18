@@ -1,0 +1,2 @@
+window.LIPECARE_DEPLOY_VERSION = window.LIPECARE_DEPLOY_VERSION || "local";
+window.LIPECARE_COMMIT_SHA = window.LIPECARE_COMMIT_SHA || "sem-commit";

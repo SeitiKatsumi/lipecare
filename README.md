@@ -64,6 +64,7 @@ docker compose up -d postgres redis
 
 ```text
 apps/
+  portal/   Portal local das aplicacoes na porta 3000
   web/      Next.js + TypeScript
   api/      NestJS + TypeScript + Prisma
 packages/
@@ -89,6 +90,7 @@ apps/api/Dockerfile
 - `docs/06-decisoes-adr/`: decisoes arquiteturais.
 - `docs/07-runbooks/`: operacao, rollback, backup e incidentes.
 - `docs/08-ai-context/codex.md`: contexto obrigatorio para uso do Codex.
+- `docs/09-portal-e-portas.md`: regra do portal local e mapa de portas.
 
 ## Politica De Seguranca
 

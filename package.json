@@ -9,6 +9,9 @@
   ],
   "scripts": {
     "dev": "npm run dev --workspaces",
+    "dev:portal": "npm run dev -w @lipecare/portal",
+    "dev:web": "npm run dev -w @lipecare/web",
+    "dev:api": "npm run dev -w @lipecare/api",
     "build": "npm run build --workspaces",
     "lint": "npm run lint --workspaces",
     "test": "npm run test --workspaces",
@@ -25,4 +28,3 @@
     "npm": ">=10.0.0"
   }
 }
-

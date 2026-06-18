@@ -20,6 +20,5 @@ COPY --from=builder /app/apps/web/package*.json ./apps/web/
 COPY --from=builder /app/apps/web/.next ./apps/web/.next
 COPY --from=builder /app/apps/web/public ./apps/web/public
 COPY --from=builder /app/apps/web/next.config.mjs ./apps/web/next.config.mjs
-EXPOSE 3000
-CMD ["npm", "run", "start", "-w", "@lipecare/web"]
-
+EXPOSE 3003
+CMD ["npm", "run", "start:container", "-w", "@lipecare/web"]

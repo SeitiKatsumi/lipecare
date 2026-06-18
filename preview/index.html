@@ -315,6 +315,23 @@
         display: block;
       }
 
+      .deploy-meta {
+        border-left: 1px solid rgb(255 255 255 / 12%);
+        color: var(--muted);
+        display: grid;
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+        font-size: 0.68rem;
+        gap: 3px;
+        line-height: 1.35;
+        margin-top: 10px;
+        padding-left: 10px;
+      }
+
+      .deploy-meta b {
+        color: var(--accent);
+        font-weight: 800;
+      }
+
       .nav {
         display: grid;
         gap: 8px;
@@ -515,6 +532,182 @@
         padding: 12px;
       }
 
+      .assistant-card {
+        grid-column: 1 / -1;
+      }
+
+      .assistant-chat {
+        display: grid;
+        gap: 12px;
+      }
+
+      .assistant-messages {
+        display: grid;
+        gap: 10px;
+        max-height: 260px;
+        overflow-y: auto;
+      }
+
+      .assistant-message {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        line-height: 1.5;
+        max-width: 78%;
+        padding: 10px 12px;
+      }
+
+      .assistant-message.assistant {
+        background: rgb(77 245 212 / 10%);
+        color: var(--text);
+      }
+
+      .assistant-message.user {
+        background: rgb(244 201 107 / 13%);
+        justify-self: end;
+      }
+
+      .assistant-form {
+        display: grid;
+        gap: 10px;
+        grid-template-columns: minmax(0, 1fr) auto;
+      }
+
+      .assistant-form input {
+        background: rgb(255 255 255 / 4%);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        color: var(--text);
+        font: inherit;
+        min-height: 44px;
+        padding: 10px 12px;
+      }
+
+      .audio-actions {
+        align-items: center;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .audio-status {
+        color: var(--accent);
+        font-weight: 800;
+      }
+
+      .future-chart-card {
+        grid-column: 1 / -1;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .future-chart-card::before {
+        animation: chartGlow 5s ease-in-out infinite;
+        background:
+          radial-gradient(circle at 18% 20%, rgb(77 245 212 / 24%), transparent 18rem),
+          radial-gradient(circle at 82% 12%, rgb(244 201 107 / 18%), transparent 16rem);
+        content: "";
+        inset: -30%;
+        position: absolute;
+        z-index: 0;
+      }
+
+      .future-chart {
+        display: grid;
+        gap: 18px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .chart-stage {
+        align-items: end;
+        background:
+          linear-gradient(180deg, rgb(255 255 255 / 8%) 1px, transparent 1px),
+          linear-gradient(90deg, rgb(255 255 255 / 6%) 1px, transparent 1px),
+          rgb(6 9 13 / 38%);
+        background-size: 100% 25%, 12.5% 100%;
+        border: 1px solid rgb(77 245 212 / 22%);
+        border-radius: 8px;
+        display: grid;
+        gap: 12px;
+        grid-template-columns: repeat(8, minmax(0, 1fr));
+        min-height: 260px;
+        padding: 18px;
+      }
+
+      .chart-column {
+        align-items: end;
+        display: grid;
+        gap: 8px;
+        min-width: 0;
+      }
+
+      .chart-bar {
+        animation: riseBar 900ms cubic-bezier(.2,.8,.2,1) both;
+        background: linear-gradient(180deg, var(--primary), rgb(77 245 212 / 16%));
+        border: 1px solid rgb(77 245 212 / 54%);
+        border-radius: 8px 8px 3px 3px;
+        box-shadow: 0 0 22px rgb(77 245 212 / 34%);
+        min-height: 18px;
+      }
+
+      .chart-bar.warn {
+        background: linear-gradient(180deg, var(--accent), rgb(244 201 107 / 15%));
+        border-color: rgb(244 201 107 / 60%);
+        box-shadow: 0 0 22px rgb(244 201 107 / 32%);
+      }
+
+      .chart-label {
+        color: var(--muted);
+        font-size: 0.78rem;
+        overflow: hidden;
+        text-align: center;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .chart-kpis {
+        display: grid;
+        gap: 12px;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .chart-kpi {
+        background: rgb(255 255 255 / 4%);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 14px;
+      }
+
+      .chart-kpi span {
+        color: var(--muted);
+        display: block;
+        font-size: 0.82rem;
+        margin-bottom: 6px;
+      }
+
+      .chart-kpi strong {
+        color: var(--primary);
+        font-size: 1.45rem;
+      }
+
+      @keyframes riseBar {
+        from {
+          opacity: 0;
+          transform: scaleY(.08);
+          transform-origin: bottom;
+        }
+        to {
+          opacity: 1;
+          transform: scaleY(1);
+          transform-origin: bottom;
+        }
+      }
+
+      @keyframes chartGlow {
+        0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+        50% { transform: translate3d(4%, -2%, 0) rotate(5deg); }
+      }
+
       .empty {
         border: 1px dashed var(--line);
         border-radius: 8px;
@@ -528,7 +721,8 @@
         .shell,
         .content-grid,
         .stats,
-        .two-cols {
+        .two-cols,
+        .chart-kpis {
           grid-template-columns: 1fr;
         }
 
@@ -573,6 +767,10 @@
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
+        }
+
+        .mobile-brand .deploy-meta {
+          display: none;
         }
 
         .menu-toggle {
@@ -663,7 +861,14 @@
   <body>
     <div id="app" class="app"></div>
 
+    <script src="config.js"></script>
     <script>
+      const BUILD_INFO = {
+        version: "0.1.0",
+        deploy: window.LIPECARE_DEPLOY_VERSION || "local",
+        commit: window.LIPECARE_COMMIT_SHA || "sem-commit"
+      };
+
       const SAMPLE_USERS = [
         {
           id: "u-admin",
@@ -700,7 +905,14 @@
             phone: "(11) 90000-1001",
             professional: "Dra. Raquel Peres",
             status: "Em acompanhamento",
-            lastCheckin: "2026-04-26"
+            lastCheckin: "2026-04-26",
+            clinicalSummary: "Lipedema em acompanhamento, dor vespertina moderada, boa adesao a caminhadas leves.",
+            clinicalHistory: [
+              "Queixa inicial de dor e sensibilidade em membros inferiores.",
+              "Relata piora apos longos periodos sentada.",
+              "Melhora parcial com movimento leve e rotina alimentar regular."
+            ],
+            audioNotes: []
           },
           {
             id: "p-002",
@@ -709,7 +921,10 @@
             phone: "(21) 90000-1002",
             professional: "Dra. Raquel Peres",
             status: "Avaliação pendente",
-            lastCheckin: "2026-04-18"
+            lastCheckin: "2026-04-18",
+            clinicalSummary: "Aguardando avaliacao inicial completa, com relato de inchaco e dor elevada.",
+            clinicalHistory: ["Primeiro contato registrado com queixa de inchaco e sensibilidade."],
+            audioNotes: []
           },
           {
             id: "p-003",
@@ -718,7 +933,10 @@
             phone: "(31) 90000-1003",
             professional: "Dra. Raquel Peres",
             status: "Em acompanhamento",
-            lastCheckin: "2026-04-27"
+            lastCheckin: "2026-04-27",
+            clinicalSummary: "Paciente em acompanhamento, medidas recentes estaveis e sem alerta critico.",
+            clinicalHistory: ["Acompanhamento preventivo com monitoramento de medidas e sintomas."],
+            audioNotes: []
           }
         ],
         symptoms: [
@@ -784,6 +1002,58 @@
             label: "Registro lateral"
           }
         ],
+        clinics: [
+          { id: "c-001", name: "Clinica LipeCare Jardins", city: "Sao Paulo", status: "Ativa" },
+          { id: "c-002", name: "Nucleo Integrado Rio", city: "Rio de Janeiro", status: "Homologacao" }
+        ],
+        doctors: [
+          { id: "d-001", name: "Dra. Raquel Peres", specialty: "Cirurgia vascular", clinic: "Clinica LipeCare Jardins" },
+          { id: "d-002", name: "Dr. Felipe Andrade", specialty: "Endocrinologia", clinic: "Nucleo Integrado Rio" }
+        ],
+        institutions: [
+          { id: "i-001", name: "Instituto Brasileiro de Lipedema", type: "Pesquisa e educacao", city: "Sao Paulo" },
+          { id: "i-002", name: "Rede Saude Integrada", type: "Parceiro clinico", city: "Belo Horizonte" }
+        ],
+        examAlerts: [
+          {
+            id: "ex-001",
+            patientId: "p-001",
+            title: "Exames laboratoriais pendentes",
+            dueDate: "2026-05-10",
+            priority: "Alta",
+            status: "Aberto",
+            detail: "Solicitar retorno com exames de rotina e marcadores inflamatorios."
+          },
+          {
+            id: "ex-002",
+            patientId: "p-002",
+            title: "Revisar exame enviado",
+            dueDate: "2026-05-08",
+            priority: "Media",
+            status: "Aberto",
+            detail: "Paciente relatou envio de exame para primeira avaliacao."
+          }
+        ],
+        returnAlerts: [
+          {
+            id: "rt-001",
+            patientId: "p-001",
+            title: "Retorno de acompanhamento",
+            dueDate: "2026-05-14",
+            priority: "Media",
+            status: "Agendado",
+            detail: "Reavaliar dor vespertina e resposta a rotina de movimento."
+          },
+          {
+            id: "rt-002",
+            patientId: "p-003",
+            title: "Check-in de medidas",
+            dueDate: "2026-05-20",
+            priority: "Baixa",
+            status: "Pendente",
+            detail: "Confirmar evolucao de medidas e sintomas recentes."
+          }
+        ],
         auditLogs: [
           {
             id: "a-001",
@@ -799,6 +1069,13 @@
             resource: "Dor nível 6",
             date: "2026-04-26 20:18"
           }
+        ],
+        assistantMessages: [
+          {
+            role: "assistant",
+            text: "Oi, eu sou a assistente LipeCare. Como voce esta se sentindo hoje?",
+            date: "agora"
+          }
         ]
       };
 
@@ -811,7 +1088,14 @@
           return structuredClone(INITIAL_STATE);
         }
 
-        return JSON.parse(stored);
+        const parsed = JSON.parse(stored);
+        return {
+          ...structuredClone(INITIAL_STATE),
+          ...parsed,
+          assistantMessages: parsed.assistantMessages?.length
+            ? parsed.assistantMessages
+            : structuredClone(INITIAL_STATE.assistantMessages)
+        };
       }
 
       function writeState(nextState) {
@@ -841,6 +1125,29 @@
 
       function today() {
         return new Date().toISOString().slice(0, 10);
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function assistantReply(message) {
+        const text = message.toLowerCase();
+        if (text.includes("dor") || text.includes("inch") || text.includes("cans")) {
+          return "Entendi. Vou registrar isso como um ponto de atencao. Se a dor estiver forte ou diferente do habitual, vale avisar sua profissional e evitar se automedicar.";
+        }
+        if (text.includes("bem") || text.includes("melhor") || text.includes("otim")) {
+          return "Que bom saber. Mantenha sua rotina de cuidado e me conte se houve algo que ajudou hoje, como movimento leve, hidratacao ou descanso.";
+        }
+        if (text.includes("triste") || text.includes("ans") || text.includes("mal")) {
+          return "Sinto muito que hoje esteja pesado. Vamos por partes: respire, acolha o que voce esta sentindo e registre um sintoma simples para sua equipe acompanhar.";
+        }
+        return "Obrigado por me contar. Quer registrar tambem nivel de dor, inchaco, energia ou alguma observacao do dia?";
       }
 
       function render() {
@@ -951,6 +1258,7 @@
                 <div>
                   <strong>LipeCare</strong>
                   <span class="muted">MVP funcional</span>
+                  ${renderDeployMeta()}
                 </div>
               </div>
               <nav class="nav">
@@ -1013,7 +1321,8 @@
 
       function allowedViews(role) {
         if (role === "PATIENT") return ["dashboard", "symptoms", "measurements", "photos"];
-        return ["dashboard", "patients", "symptoms", "measurements", "photos", "audit"];
+        if (role === "ADMIN") return ["dashboard", "alerts", "admin", "patients", "symptoms", "measurements", "photos", "audit"];
+        return ["dashboard", "alerts", "patients", "symptoms", "measurements", "photos", "audit"];
       }
 
       function viewTitle(view) {
@@ -1023,6 +1332,8 @@
           symptoms: "Sintomas",
           measurements: "Medidas",
           photos: "Fotos",
+          admin: "Gestao",
+          alerts: "Alertas",
           audit: "Auditoria"
         }[view];
       }
@@ -1034,6 +1345,8 @@
           symptoms: renderSymptoms,
           measurements: renderMeasurements,
           photos: renderPhotos,
+          admin: renderAdminManagement,
+          alerts: renderAlerts,
           audit: renderAudit
         }[state.activeView](state, session);
       }
@@ -1067,7 +1380,21 @@
       function renderLogoSlot() {
         return `
           <div class="logo-slot" aria-label="Logo LipeCare">
-            <img src="/assets/lipecare-logo.png" alt="LipeCare" />
+            <img src="assets/lipecare-logo.png" alt="LipeCare" />
+          </div>
+        `;
+      }
+
+      function shortCommit(value) {
+        return value.length > 12 ? value.slice(0, 12) : value;
+      }
+
+      function renderDeployMeta() {
+        return `
+          <div class="deploy-meta" aria-label="Versao do deploy">
+            <span>versao <b>v${BUILD_INFO.version}</b></span>
+            <span>deploy <b>${BUILD_INFO.deploy}</b></span>
+            <span>commit <b>${shortCommit(BUILD_INFO.commit)}</b></span>
           </div>
         `;
       }
@@ -1088,6 +1415,7 @@
             ${statCard("Fotos privadas", photos.length)}
           </section>
           <section class="grid content-grid">
+            ${session.role === "PROFESSIONAL" ? renderProfessionalChart(state, patients, symptoms, measurements) : ""}
             <article class="card section">
               <h2>Fila de acompanhamento</h2>
               ${patients.length ? renderPatientTable(patients, state.selectedPatientId) : empty("Nenhum paciente encontrado.")}
@@ -1106,7 +1434,68 @@
                 </div>
               </div>
             </article>
+            ${renderAssistant(state)}
           </section>
+        `;
+      }
+
+      function renderProfessionalChart(state, patients, symptoms, measurements) {
+        const series = [
+          { label: "Dor", value: Math.min(92, 38 + symptoms.length * 9), tone: "warn" },
+          { label: "Medidas", value: Math.min(88, 42 + measurements.length * 8), tone: "" },
+          { label: "Check-ins", value: 76, tone: "" },
+          { label: "Retornos", value: Math.min(84, 46 + state.returnAlerts.length * 10), tone: "warn" },
+          { label: "Exames", value: Math.min(86, 44 + state.examAlerts.length * 10), tone: "warn" },
+          { label: "Fotos", value: Math.min(80, 36 + state.photos.length * 11), tone: "" },
+          { label: "Adesao", value: 69, tone: "" },
+          { label: "Risco", value: 52, tone: "warn" }
+        ];
+        const openAlerts = [...state.examAlerts, ...state.returnAlerts].filter((alert) => alert.status !== "Resolvido").length;
+
+        return `
+          <article class="card section future-chart-card">
+            <div class="future-chart">
+              <div>
+                <p class="eyebrow">Radar clinico em tempo real</p>
+                <h2>Evolucao inteligente dos pacientes</h2>
+                <p class="muted">Visao animada para priorizar dor, exames, retornos e engajamento.</p>
+              </div>
+              <div class="chart-stage" aria-label="Grafico futurista de acompanhamento">
+                ${series.map((item, index) => `
+                  <div class="chart-column">
+                    <div class="chart-bar ${item.tone}" style="height: ${item.value}%; animation-delay: ${index * 90}ms"></div>
+                    <div class="chart-label">${item.label}</div>
+                  </div>
+                `).join("")}
+              </div>
+              <div class="chart-kpis">
+                <div class="chart-kpi"><span>Pacientes ativos</span><strong>${patients.length}</strong></div>
+                <div class="chart-kpi"><span>Alertas abertos</span><strong>${openAlerts}</strong></div>
+                <div class="chart-kpi"><span>Indice de adesao</span><strong>69%</strong></div>
+              </div>
+            </div>
+          </article>
+        `;
+      }
+
+      function renderAssistant(state) {
+        return `
+          <article class="card section assistant-card">
+            <h2>Assistente de IA</h2>
+            <div class="assistant-chat">
+              <div class="assistant-messages" id="assistant-messages">
+                ${state.assistantMessages.map((message) => `
+                  <div class="assistant-message ${message.role}">
+                    ${escapeHtml(message.text)}
+                  </div>
+                `).join("")}
+              </div>
+              <form class="assistant-form" id="assistant-form">
+                <input name="message" autocomplete="off" placeholder="Como voce esta se sentindo hoje?" />
+                <button class="btn" type="submit">Enviar</button>
+              </form>
+            </div>
+          </article>
         `;
       }
 
@@ -1121,6 +1510,7 @@
 
       function renderPatients(state, session) {
         const patients = scopedPatients(state, session);
+        const patient = selectedPatient(state, session);
 
         return `
           ${renderHeader("Pacientes", "Cadastro inicial e selecao de paciente para acompanhamento.", "MVP")}
@@ -1140,7 +1530,41 @@
                 <button class="btn" type="submit">Cadastrar paciente</button>
               </form>
             </article>
+            ${session.role === "PROFESSIONAL" && patient ? renderClinicalRecord(patient) : ""}
           </section>
+        `;
+      }
+
+      function renderClinicalRecord(patient) {
+        return `
+          <article class="card section assistant-card">
+            <h2>Historico do paciente</h2>
+            <div class="stack">
+              <div class="alert"><strong>Resumo clinico:</strong> ${patient.clinicalSummary}</div>
+              <div class="timeline">
+                ${(patient.clinicalHistory ?? []).map((item) => `
+                  <div class="timeline-item">${item}</div>
+                `).join("")}
+                ${(patient.audioNotes ?? []).map((note) => `
+                  <div class="timeline-item">
+                    <strong>Nota por audio</strong>
+                    <p class="muted">${note.date}</p>
+                    <p>${note.text}</p>
+                  </div>
+                `).join("")}
+              </div>
+              <form id="audio-note-form" class="form">
+                <label>Resumo ou transcricao da nota
+                  <textarea name="note" id="audio-note-text" rows="3" placeholder="Grave ou digite a evolucao do atendimento..."></textarea>
+                </label>
+                <div class="audio-actions">
+                  <button class="btn secondary" id="audio-record-btn" type="button">Gravar audio</button>
+                  <span class="audio-status" id="audio-status">Pronto para gravar</span>
+                </div>
+                <button class="btn" type="submit">Salvar no historico</button>
+              </form>
+            </div>
+          </article>
         `;
       }
 
@@ -1290,6 +1714,118 @@
         `;
       }
 
+      function renderAdminManagement(state) {
+        return `
+          ${renderHeader("Gestao administrativa", "Clinicas, medicos e instituicoes vinculadas ao LipeCare.", "Administrador")}
+          <section class="grid content-grid">
+            <article class="card section">
+              <h2>Clinicas</h2>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Clinica</th><th>Cidade</th><th>Status</th></tr></thead>
+                  <tbody>
+                    ${state.clinics.map((clinic) => `
+                      <tr><td>${clinic.name}</td><td>${clinic.city}</td><td>${clinic.status}</td></tr>
+                    `).join("")}
+                  </tbody>
+                </table>
+              </div>
+            </article>
+            <article class="card section">
+              <h2>Medicos</h2>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Medico</th><th>Especialidade</th><th>Clinica</th></tr></thead>
+                  <tbody>
+                    ${state.doctors.map((doctor) => `
+                      <tr><td>${doctor.name}</td><td>${doctor.specialty}</td><td>${doctor.clinic}</td></tr>
+                    `).join("")}
+                  </tbody>
+                </table>
+              </div>
+            </article>
+            <article class="card section assistant-card">
+              <h2>Instituicoes</h2>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Instituicao</th><th>Tipo</th><th>Cidade</th></tr></thead>
+                  <tbody>
+                    ${state.institutions.map((institution) => `
+                      <tr><td>${institution.name}</td><td>${institution.type}</td><td>${institution.city}</td></tr>
+                    `).join("")}
+                  </tbody>
+                </table>
+              </div>
+            </article>
+          </section>
+        `;
+      }
+
+      function renderAlerts(state, session) {
+        const patients = scopedPatients(state, session);
+        const patientIds = patients.map((patient) => patient.id);
+        const examAlerts = state.examAlerts.filter((alert) => patientIds.includes(alert.patientId));
+        const returnAlerts = state.returnAlerts.filter((alert) => patientIds.includes(alert.patientId));
+
+        return `
+          ${renderHeader("Alertas", "Exames, pendencias e retornos clinicos.", roleLabel(session.role))}
+          <section class="grid stats">
+            ${statCard("Exames em aberto", examAlerts.filter((alert) => alert.status !== "Resolvido").length)}
+            ${statCard("Retornos pendentes", returnAlerts.filter((alert) => alert.status !== "Resolvido").length)}
+            ${statCard("Alta prioridade", [...examAlerts, ...returnAlerts].filter((alert) => alert.priority === "Alta").length)}
+            ${statCard("Pacientes monitorados", patients.length)}
+          </section>
+          <section class="grid content-grid">
+            <article class="card section">
+              <h2>Alertas de exames</h2>
+              ${renderAlertList(examAlerts, state)}
+              <form id="exam-alert-form" class="form">
+                <h2>Novo alerta de exame</h2>
+                <label>Paciente ${renderPatientSelect(state, session)}</label>
+                <label>Titulo <input name="title" value="Solicitar exame de retorno" required /></label>
+                <label>Data limite <input name="dueDate" type="date" value="${today()}" required /></label>
+                <label>Detalhe <textarea name="detail" required></textarea></label>
+                <button class="btn" type="submit">Criar alerta</button>
+              </form>
+            </article>
+            <article class="card section">
+              <h2>Retornos</h2>
+              ${renderAlertList(returnAlerts, state)}
+              <form id="return-alert-form" class="form">
+                <h2>Agendar retorno</h2>
+                <label>Paciente ${renderPatientSelect(state, session)}</label>
+                <label>Motivo <input name="title" value="Retorno de acompanhamento" required /></label>
+                <label>Data <input name="dueDate" type="date" value="${today()}" required /></label>
+                <label>Resumo <textarea name="detail" required></textarea></label>
+                <button class="btn" type="submit">Agendar retorno</button>
+              </form>
+            </article>
+          </section>
+        `;
+      }
+
+      function renderAlertList(alerts, state) {
+        if (!alerts.length) return empty("Nenhum alerta encontrado.");
+
+        return `
+          <div class="timeline">
+            ${alerts.map((alert) => {
+              const patient = state.patients.find((item) => item.id === alert.patientId);
+              return `
+                <div class="timeline-item">
+                  <strong>${alert.title}</strong>
+                  <p class="muted">${patient?.fullName ?? "Paciente"} - ${alert.dueDate}</p>
+                  <p>${alert.detail}</p>
+                  <span class="pill ${alert.priority === "Alta" ? "warn" : "ok"}">${alert.priority}</span>
+                  <span class="pill ${alert.status === "Resolvido" ? "ok" : "warn"}">${alert.status}</span>
+                  ${alert.status !== "Resolvido" ? `<button class="btn secondary" type="button" data-resolve-alert="${alert.id}">Resolver</button>` : ""}
+                </div>
+              `;
+            }).join("")}
+          </div>
+        `;
+      }
+
       function renderAudit(state) {
         return `
           ${renderHeader("Auditoria", "Eventos minimos para rastreabilidade de dados sensiveis.", "LGPD")}
@@ -1361,7 +1897,10 @@
               phone: String(data.get("phone")),
               professional: "Dra. Raquel Peres",
               status: "Avaliação pendente",
-              lastCheckin: today()
+              lastCheckin: today(),
+              clinicalSummary: "Paciente novo aguardando primeira avaliacao clinica.",
+              clinicalHistory: ["Cadastro criado para inicio do acompanhamento."],
+              audioNotes: []
             };
             state.patients.unshift(patient);
             state.selectedPatientId = patient.id;
@@ -1370,6 +1909,90 @@
               action: "patient_created",
               actor: session.name,
               resource: patient.fullName,
+              date: new Date().toLocaleString("pt-BR")
+            });
+            writeState(state);
+            render();
+          });
+        }
+
+        const audioNoteForm = document.getElementById("audio-note-form");
+        if (audioNoteForm) {
+          audioNoteForm.addEventListener("submit", (event) => {
+            event.preventDefault();
+            const data = new FormData(event.currentTarget);
+            const note = String(data.get("note")).trim();
+            if (!note) return;
+
+            const state = readState();
+            const patient = state.patients.find((item) => item.id === state.selectedPatientId);
+            if (!patient) return;
+
+            patient.audioNotes = patient.audioNotes ?? [];
+            patient.audioNotes.unshift({ text: note, date: new Date().toLocaleString("pt-BR") });
+            patient.clinicalSummary = note.length > 130 ? `${note.slice(0, 130)}...` : note;
+            state.auditLogs.unshift({
+              id: crypto.randomUUID(),
+              action: "clinical_audio_note_created",
+              actor: session.name,
+              resource: patient.fullName,
+              date: new Date().toLocaleString("pt-BR")
+            });
+            writeState(state);
+            render();
+          });
+        }
+
+        const recordButton = document.getElementById("audio-record-btn");
+        if (recordButton) {
+          recordButton.addEventListener("click", () => {
+            const status = document.getElementById("audio-status");
+            const field = document.getElementById("audio-note-text");
+            status.textContent = "Gravando simulacao de audio...";
+            recordButton.textContent = "Parar gravacao";
+            window.setTimeout(() => {
+              field.value = "Nota de audio: paciente relata como se sentiu hoje, nivel de dor, inchaco e orientacoes combinadas na consulta.";
+              status.textContent = "Audio transcrito automaticamente para revisao.";
+              recordButton.textContent = "Gravar audio";
+            }, 1400);
+          });
+        }
+
+        document.querySelectorAll("[data-resolve-alert]").forEach((button) => {
+          button.addEventListener("click", () => {
+            const state = readState();
+            const alert = [...state.examAlerts, ...state.returnAlerts].find((item) => item.id === button.dataset.resolveAlert);
+            if (!alert) return;
+
+            alert.status = "Resolvido";
+            state.auditLogs.unshift({
+              id: crypto.randomUUID(),
+              action: "clinical_alert_resolved",
+              actor: session.name,
+              resource: alert.title,
+              date: new Date().toLocaleString("pt-BR")
+            });
+            writeState(state);
+            render();
+          });
+        });
+
+        bindAlertForm("exam-alert-form", "examAlerts", "exam_alert_created", session);
+        bindAlertForm("return-alert-form", "returnAlerts", "return_alert_created", session);
+
+        const assistantForm = document.getElementById("assistant-form");
+        if (assistantForm) {
+          assistantForm.addEventListener("submit", (event) => {
+            event.preventDefault();
+            const data = new FormData(event.currentTarget);
+            const text = String(data.get("message")).trim();
+            if (!text) return;
+
+            const state = readState();
+            state.assistantMessages.push({ role: "user", text, date: new Date().toLocaleString("pt-BR") });
+            state.assistantMessages.push({
+              role: "assistant",
+              text: assistantReply(text),
               date: new Date().toLocaleString("pt-BR")
             });
             writeState(state);
@@ -1431,6 +2054,38 @@
             action,
             actor: session.name,
             resource,
+            date: new Date().toLocaleString("pt-BR")
+          });
+          writeState(state);
+          render();
+        });
+      }
+
+      function bindAlertForm(formId, collectionName, action, session) {
+        const form = document.getElementById(formId);
+        if (!form) return;
+
+        form.addEventListener("submit", (event) => {
+          event.preventDefault();
+          const data = new FormData(event.currentTarget);
+          const state = readState();
+          const patientId = String(data.get("patientId"));
+          const patient = state.patients.find((item) => item.id === patientId);
+          state[collectionName].unshift({
+            id: crypto.randomUUID(),
+            patientId,
+            title: String(data.get("title")),
+            dueDate: String(data.get("dueDate")),
+            priority: "Media",
+            status: collectionName === "returnAlerts" ? "Agendado" : "Aberto",
+            detail: String(data.get("detail"))
+          });
+          state.selectedPatientId = patientId;
+          state.auditLogs.unshift({
+            id: crypto.randomUUID(),
+            action,
+            actor: session.name,
+            resource: patient?.fullName ?? "Paciente",
             date: new Date().toLocaleString("pt-BR")
           });
           writeState(state);

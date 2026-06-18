@@ -76,6 +76,33 @@ SSH Key: deixar vazio se usar repositorio publico por HTTPS
 
 Se o repositorio ficar privado, use uma chave SSH de deploy ou um GitHub Personal Access Token com permissao minima de leitura do repositorio. Nao use sua senha do GitHub.
 
+## Versionamento Visual Do Deploy
+
+O preview exibe abaixo do logo:
+
+- versao da aplicacao;
+- identificador do deploy;
+- SHA do commit.
+
+Por padrao local, `preview/config.js` usa:
+
+```text
+deploy local
+commit sem-commit
+```
+
+Em build Docker, `preview/Dockerfile` aceita:
+
+```bash
+docker build \
+  -f preview/Dockerfile \
+  --build-arg LIPECARE_DEPLOY_VERSION=staging-001 \
+  --build-arg LIPECARE_COMMIT_SHA=$(git rev-parse HEAD) \
+  -t lipecare-preview .
+```
+
+Em ambiente com varios colaboradores, cada deploy deve apontar para um commit rastreavel no GitHub. Nao publicar alteracoes manuais sem commit.
+
 ## Variaveis
 
 Secrets reais devem ficar no CapRover e no GitHub Secrets, nunca no repositorio.

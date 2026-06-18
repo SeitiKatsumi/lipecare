@@ -15,6 +15,9 @@ O Codex pode implementar, revisar, documentar, diagnosticar e orientar operacao,
 - Sempre considerar `tenantId` e permissoes ao acessar dados sensiveis.
 - Sempre atualizar documentacao quando alterar arquitetura, banco, deploy ou seguranca.
 - Preferir mudancas pequenas, revisaveis e testaveis.
+- Preservar `apps/portal` como portal local na porta `3000`.
+- Nunca colocar uma aplicacao de produto nova na porta local `3000`; adicionar link e porta fixa no portal.
+- Ao criar nova aplicacao, atualizar `apps/portal/src/app/app-registry.ts` e `docs/09-portal-e-portas.md`.
 
 ## Stack Alvo
 
@@ -28,6 +31,14 @@ O Codex pode implementar, revisar, documentar, diagnosticar e orientar operacao,
 - OpenAI API.
 - Docker + CapRover.
 - GitHub Actions.
+
+## Convencao De Apps E Portas
+
+- `apps/portal`: portal local das aplicacoes, `http://localhost:3000`.
+- `apps/web`: frontend principal, `http://localhost:3003` no desenvolvimento local.
+- `apps/api`: backend NestJS, `http://localhost:4000`.
+- Cada aplicacao deployavel deve ter Dockerfile proprio para CapRover.
+- O monorepo deve continuar sendo a fonte oficial das portas e links.
 
 ## Areas Sensíveis
 
@@ -50,4 +61,3 @@ O Codex pode implementar, revisar, documentar, diagnosticar e orientar operacao,
 - Documentacao foi atualizada quando necessario.
 - Nenhum secret foi adicionado.
 - Riscos foram informados.
-
