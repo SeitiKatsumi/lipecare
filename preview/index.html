@@ -933,6 +933,99 @@
         min-width: 98px;
       }
 
+      .page-actions {
+        align-items: center;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: space-between;
+        margin-bottom: 16px;
+      }
+
+      .modal-backdrop {
+        align-items: center;
+        background: rgb(0 0 0 / 62%);
+        display: flex;
+        inset: 0;
+        justify-content: center;
+        padding: 22px;
+        position: fixed;
+        z-index: 100;
+      }
+
+      .modal-panel {
+        background: #14171b;
+        border: 1px solid rgb(255 255 255 / 14%);
+        border-radius: 8px;
+        max-height: min(86vh, 860px);
+        max-width: 860px;
+        overflow: auto;
+        padding: 20px;
+        width: min(100%, 860px);
+      }
+
+      .modal-head {
+        align-items: flex-start;
+        border-bottom: 1px solid rgb(255 255 255 / 10%);
+        display: flex;
+        gap: 16px;
+        justify-content: space-between;
+        margin-bottom: 16px;
+        padding-bottom: 14px;
+      }
+
+      .stepper {
+        display: grid;
+        gap: 8px;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        margin-bottom: 16px;
+      }
+
+      .stepper span {
+        border: 1px solid rgb(255 255 255 / 12%);
+        border-radius: 999px;
+        color: var(--muted);
+        font-size: 0.78rem;
+        padding: 7px 10px;
+        text-align: center;
+      }
+
+      .stepper span.active {
+        border-color: var(--primary);
+        color: var(--primary);
+      }
+
+      .form-step {
+        display: none;
+      }
+
+      .form-step.active {
+        display: grid;
+        gap: 14px;
+      }
+
+      .modal-actions {
+        border-top: 1px solid rgb(255 255 255 / 10%);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: flex-end;
+        margin-top: 16px;
+        padding-top: 14px;
+      }
+
+      .profile-summary-grid {
+        display: grid;
+        gap: 12px;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .profile-summary-grid div {
+        border: 1px solid rgb(255 255 255 / 10%);
+        border-radius: 8px;
+        padding: 12px;
+      }
+
       .two-cols {
         display: grid;
         gap: 12px;
@@ -1569,7 +1662,9 @@
 
         .timeline-board,
         .settings-grid,
-        .image-bank-grid {
+        .image-bank-grid,
+        .profile-summary-grid,
+        .stepper {
           grid-template-columns: 1fr;
         }
 
@@ -1774,8 +1869,8 @@
     <script src="config.js"></script>
     <script>
       const BUILD_INFO = {
-        version: window.LIPECARE_APP_VERSION || "0.1.18",
-        deployNumber: window.LIPECARE_DEPLOY_NUMBER || "22",
+        version: window.LIPECARE_APP_VERSION || "0.1.19",
+        deployNumber: window.LIPECARE_DEPLOY_NUMBER || "23",
         deploy: window.LIPECARE_DEPLOY_VERSION || "local",
         commit: window.LIPECARE_COMMIT_SHA || "sem-commit"
       };
@@ -1825,6 +1920,7 @@
           "Configurações": "Settings",
           "Idioma": "Language",
           "Banco de imagens": "Image bank",
+          "Campos personalizados": "Custom fields",
           "Instituições": "Institutions",
           "Médicos": "Doctors",
           "Arquitetura": "Architecture",
@@ -1961,6 +2057,7 @@
           "Configurações": "Configuración",
           "Idioma": "Idioma",
           "Banco de imagens": "Banco de imágenes",
+          "Campos personalizados": "Campos personalizados",
           "Instituições": "Instituciones",
           "Médicos": "Médicos",
           "Arquitetura": "Arquitectura",
@@ -2087,6 +2184,7 @@
           "Configurações": "設定",
           "Idioma": "言語",
           "Banco de imagens": "画像バンク",
+          "Campos personalizados": "カスタムフィールド",
           "Instituições": "施設",
           "Médicos": "医師",
           "Arquitetura": "アーキテクチャ",
@@ -2207,6 +2305,7 @@
           "Configurações": "Einstellungen",
           "Idioma": "Sprache",
           "Banco de imagens": "Bilddatenbank",
+          "Campos personalizados": "Benutzerdefinierte Felder",
           "Instituições": "Institutionen",
           "Médicos": "Ärzte",
           "Arquitetura": "Architektur",
@@ -2343,6 +2442,8 @@
       const INITIAL_STATE = {
         selectedPatientId: "p-001",
         activeView: "home",
+        activeModal: null,
+        modalStep: 0,
         heroImageId: "classic",
         heroImagePosition: "center",
         accentColor: "#4df5d4",
@@ -2675,7 +2776,9 @@
           customHeroImages: parsed.customHeroImages ?? [],
           heroImageId: parsed.heroImageId ?? INITIAL_STATE.heroImageId,
           heroImagePosition: parsed.heroImagePosition ?? INITIAL_STATE.heroImagePosition,
-          accentColor: parsed.accentColor ?? INITIAL_STATE.accentColor
+          accentColor: parsed.accentColor ?? INITIAL_STATE.accentColor,
+          activeModal: parsed.activeModal ?? null,
+          modalStep: Number(parsed.modalStep ?? 0)
         };
       }
 
@@ -2704,6 +2807,56 @@
 
       function setSidebarHidden(hidden) {
         localStorage.setItem("lipecare-sidebar-hidden", String(hidden));
+      }
+
+      function openModal(name) {
+        const state = readState();
+        state.activeModal = name;
+        state.modalStep = 0;
+        writeState(state);
+        render();
+      }
+
+      function closeModal() {
+        const state = readState();
+        state.activeModal = null;
+        state.modalStep = 0;
+        writeState(state);
+        render();
+      }
+
+      function renderModal(state, title, subtitle, body) {
+        return `
+          <div class="modal-backdrop" role="presentation">
+            <section class="modal-panel" role="dialog" aria-modal="true" aria-label="${title}">
+              <div class="modal-head">
+                <div>
+                  <h2>${title}</h2>
+                  <p class="muted">${subtitle}</p>
+                </div>
+                <button class="btn secondary" type="button" data-close-modal>Fechar</button>
+              </div>
+              ${body}
+            </section>
+          </div>
+        `;
+      }
+
+      function renderStepper(labels, activeStep) {
+        return `
+          <div class="stepper">
+            ${labels.map((label, index) => `<span class="${index === activeStep ? "active" : ""}">${index + 1}. ${label}</span>`).join("")}
+          </div>
+        `;
+      }
+
+      function renderStepActions(step, totalSteps, submitLabel) {
+        return `
+          <div class="modal-actions">
+            ${step > 0 ? `<button class="btn secondary" type="button" data-modal-step="${step - 1}">Voltar</button>` : ""}
+            ${step < totalSteps - 1 ? `<button class="btn" type="button" data-modal-step="${step + 1}">Próximo</button>` : `<button class="btn" type="submit">${submitLabel}</button>`}
+          </div>
+        `;
       }
 
       function readSession() {
@@ -3024,6 +3177,7 @@
         const settings = [
           { view: "language", label: "Idioma" },
           { view: "imageBank", label: "Banco de imagens" },
+          { view: "customFields", label: "Campos personalizados" },
           { view: "institutions", label: "Instituições" },
           { view: "doctors", label: "Médicos" },
           { view: "patients", label: "Pacientes" },
@@ -3061,8 +3215,8 @@
 
       function allowedViews(role) {
         if (role === "PATIENT") return ["home", "dashboard", "timeline", "symptoms", "measurements", "tasks", "language", "architecture"];
-        if (role === "ADMIN") return ["home", "dashboard", "timeline", "symptoms", "measurements", "tasks", "language", "imageBank", "institutions", "doctors", "patients", "audit", "architecture", "admin"];
-        return ["home", "dashboard", "timeline", "symptoms", "measurements", "tasks", "language", "institutions", "doctors", "patients", "audit", "architecture", "admin"];
+        if (role === "ADMIN") return ["home", "dashboard", "timeline", "symptoms", "measurements", "tasks", "language", "imageBank", "customFields", "institutions", "doctors", "patients", "audit", "architecture", "admin"];
+        return ["home", "dashboard", "timeline", "symptoms", "measurements", "tasks", "language", "customFields", "institutions", "doctors", "patients", "audit", "architecture", "admin"];
       }
 
       function viewTitle(view) {
@@ -3073,6 +3227,7 @@
           tasks: "Tarefas",
           language: "Idioma",
           imageBank: "Banco de imagens",
+          customFields: "Campos personalizados",
           institutions: "Instituições",
           doctors: "Médicos",
           patients: "Pacientes",
@@ -3094,6 +3249,7 @@
           tasks: renderTasks,
           language: renderLanguageSettings,
           imageBank: renderImageBank,
+          customFields: renderCustomFieldSettings,
           institutions: renderInstitutions,
           doctors: renderDoctors,
           patients: renderPatients,
@@ -3585,41 +3741,55 @@
         `;
       }
 
-      function renderInstitutions(state) {
+      function renderInstitutions(state, session) {
         return `
           ${renderHeader("Instituições", "Instituições, parceiros e estruturas vinculadas ao tenant.", "Configurações")}
+          <div class="page-actions">
+            <div>
+              <h2>Instituições cadastradas</h2>
+              <p class="muted">Cadastro objetivo para clínicas, hospitais, institutos e parceiros.</p>
+            </div>
+            <button class="btn" type="button" data-open-modal="institution">Adicionar Instituição</button>
+          </div>
           <section class="card section">
-            <h2>Instituições cadastradas</h2>
             <div class="table-wrap">
               <table>
-                <thead><tr><th>Instituição</th><th>Tipo</th><th>Cidade</th></tr></thead>
+                <thead><tr><th>Instituição</th><th>Tipo</th><th>Cidade</th><th>Status</th></tr></thead>
                 <tbody>
                   ${state.institutions.map((institution) => `
-                    <tr><td>${institution.name}</td><td>${institution.type}</td><td>${institution.city}</td></tr>
+                    <tr><td><strong>${institution.name}</strong><br /><span class="muted">${institution.email ?? "Sem e-mail"}</span></td><td>${institution.type}</td><td>${institution.city}</td><td>${institution.status ?? "Ativa"}</td></tr>
                   `).join("")}
                 </tbody>
               </table>
             </div>
           </section>
+          ${state.activeModal === "institution" ? renderInstitutionModal(state, session) : ""}
         `;
       }
 
-      function renderDoctors(state) {
+      function renderDoctors(state, session) {
         return `
           ${renderHeader("Médicos", "Equipe médica, especialidades e vínculo com clínicas.", "Configurações")}
+          <div class="page-actions">
+            <div>
+              <h2>Médicos cadastrados</h2>
+              <p class="muted">Perfis profissionais com vínculo institucional e dados de contato.</p>
+            </div>
+            <button class="btn" type="button" data-open-modal="doctor">Adicionar Médico</button>
+          </div>
           <section class="card section">
-            <h2>Médicos cadastrados</h2>
             <div class="table-wrap">
               <table>
-                <thead><tr><th>Médico</th><th>Especialidade</th><th>Clínica</th></tr></thead>
+                <thead><tr><th>Médico</th><th>Especialidade</th><th>Clínica</th><th>Contato</th></tr></thead>
                 <tbody>
                   ${state.doctors.map((doctor) => `
-                    <tr><td>${doctor.name}</td><td>${doctor.specialty}</td><td>${doctor.clinic}</td></tr>
+                    <tr><td><strong>${doctor.name}</strong><br /><span class="muted">${doctor.crm ?? "CRM pendente"}</span></td><td>${doctor.specialty}</td><td>${doctor.clinic}</td><td>${doctor.email ?? doctor.phone ?? "Sem contato"}</td></tr>
                   `).join("")}
                 </tbody>
               </table>
             </div>
           </section>
+          ${state.activeModal === "doctor" ? renderDoctorModal(state, session) : ""}
         `;
       }
 
@@ -3629,18 +3799,22 @@
         const activeTab = state.patientFormTab ?? "essential";
 
         return `
-          ${renderHeader("Pacientes", "Cadastro base com campos personalizados por médico.", "CRM")}
-          <section class="grid content-grid">
+          ${renderHeader("Pacientes", "Lista de pacientes e ficha clínica em uma área simples e profissional.", "CRM")}
+          <div class="page-actions">
+            <div>
+              <h2>Pacientes</h2>
+              <p class="muted">Cadastre novos pacientes por etapas e acompanhe a ficha sem duplicar formulários.</p>
+            </div>
+            <button class="btn" type="button" data-open-modal="patient">Cadastrar Paciente</button>
+          </div>
+          <section class="grid">
             <article class="card section">
               <h2>Lista de pacientes</h2>
               ${renderPatientTable(patients, state.selectedPatientId)}
             </article>
-            <article class="card section">
-              <h2>Novo paciente</h2>
-              ${renderEssentialPatientForm("patient-form", {}, "Cadastrar paciente")}
-            </article>
             ${patient ? renderPatientRecord(state, session, patient, activeTab) : ""}
           </section>
+          ${state.activeModal === "patient" ? renderPatientModal(state) : ""}
         `;
       }
 
@@ -3657,7 +3831,7 @@
               ? renderCustomPatientFields(state, session, patient)
               : activeTab === "history"
                 ? renderClinicalRecord(patient)
-                : renderEssentialPatientForm("patient-essential-form", patient, "Salvar dados essenciais")}
+                : renderPatientSummary(patient)}
           </article>
         `;
       }
@@ -3666,51 +3840,184 @@
         return `<button class="tab-button ${activeTab === tab ? "active" : ""}" type="button" data-patient-tab="${tab}">${label}</button>`;
       }
 
+      function renderPatientSummary(patient) {
+        return `
+          <div class="profile-summary-grid">
+            <div><span class="muted">Nome</span><strong>${patient.fullName}</strong></div>
+            <div><span class="muted">CPF</span><strong>${patient.cpf || "Não informado"}</strong></div>
+            <div><span class="muted">Nascimento</span><strong>${patient.birthDate || "Não informado"}</strong></div>
+            <div><span class="muted">Telefone</span><strong>${patient.phone || "Não informado"}</strong></div>
+            <div><span class="muted">E-mail</span><strong>${patient.email || "Não informado"}</strong></div>
+            <div><span class="muted">Cidade</span><strong>${patient.city || "Não informado"}</strong></div>
+            <div><span class="muted">Convênio</span><strong>${patient.insurance || "Particular"}</strong></div>
+            <div><span class="muted">Status</span><strong>${patient.status}</strong></div>
+            <div><span class="muted">Último check-in</span><strong>${patient.lastCheckin}</strong></div>
+          </div>
+          ${patient.generalNotes ? `<div class="alert" style="margin-top: 14px;">${patient.generalNotes}</div>` : ""}
+        `;
+      }
+
+      function renderPatientModal(state) {
+        const step = Number(state.modalStep ?? 0);
+        const labels = ["Identificação", "Contato", "Endereço", "Convênio"];
+        const body = `
+          ${renderStepper(labels, step)}
+          ${renderEssentialPatientForm("patient-form", {}, "Cadastrar paciente", step, labels.length)}
+        `;
+        return renderModal(state, "Cadastrar Paciente", "Preencha poucos campos por etapa. Dados adicionais ficam em Configurações > Campos personalizados.", body);
+      }
+
       function renderEssentialPatientForm(formId, patient, actionLabel) {
+        const step = arguments.length > 3 ? arguments[3] : 0;
+        const totalSteps = arguments.length > 4 ? arguments[4] : 1;
+        const isModal = totalSteps > 1;
         return `
           <form id="${formId}" class="form">
             <input name="patientId" type="hidden" value="${patient.id ?? ""}" />
-            <label>Nome completo <input name="fullName" value="${patient.fullName ?? ""}" required /></label>
-            <div class="two-cols">
-              <label>CPF <input name="cpf" value="${patient.cpf ?? ""}" /></label>
-              <label>RG <input name="rg" value="${patient.rg ?? ""}" /></label>
+            <div class="form-step ${!isModal || step === 0 ? "active" : ""}">
+              <label>Nome completo <input name="fullName" value="${patient.fullName ?? ""}" required /></label>
+              <div class="two-cols">
+                <label>CPF <input name="cpf" value="${patient.cpf ?? ""}" /></label>
+                <label>RG <input name="rg" value="${patient.rg ?? ""}" /></label>
+              </div>
+              <div class="two-cols">
+                <label>Data de nascimento <input name="birthDate" type="date" value="${patient.birthDate ?? ""}" /></label>
+                <label>Sexo
+                  <select name="sex">
+                    ${["", "Feminino", "Masculino", "Outro", "Nao informado"].map((option) => `
+                      <option value="${option}" ${option === (patient.sex ?? "") ? "selected" : ""}>${option === "Nao informado" ? "Não informado" : option || "Selecione"}</option>
+                    `).join("")}
+                  </select>
+                </label>
+              </div>
             </div>
-            <div class="two-cols">
-              <label>Data de nascimento <input name="birthDate" type="date" value="${patient.birthDate ?? ""}" /></label>
-              <label>Sexo
-                <select name="sex">
-                  ${["", "Feminino", "Masculino", "Outro", "Nao informado"].map((option) => `
-                    <option value="${option}" ${option === (patient.sex ?? "") ? "selected" : ""}>${option === "Nao informado" ? "Não informado" : option || "Selecione"}</option>
-                  `).join("")}
+            <div class="form-step ${!isModal || step === 1 ? "active" : ""}">
+              <div class="two-cols">
+                <label>Telefone <input name="phone" value="${patient.phone ?? ""}" /></label>
+                <label>WhatsApp <input name="whatsapp" value="${patient.whatsapp ?? ""}" /></label>
+              </div>
+              <label>E-mail <input name="email" type="email" value="${patient.email ?? ""}" /></label>
+              <div class="two-cols">
+                <label>Profissão <input name="profession" value="${patient.profession ?? ""}" /></label>
+                <label>Estado civil <input name="maritalStatus" value="${patient.maritalStatus ?? ""}" /></label>
+              </div>
+            </div>
+            <div class="form-step ${!isModal || step === 2 ? "active" : ""}">
+              <label>Endereço completo <input name="address" value="${patient.address ?? ""}" /></label>
+              <div class="two-cols">
+                <label>Cidade <input name="city" value="${patient.city ?? ""}" /></label>
+                <label>Estado <input name="stateUf" maxlength="2" value="${patient.stateUf ?? ""}" /></label>
+              </div>
+              <label>CEP <input name="zipCode" value="${patient.zipCode ?? ""}" /></label>
+            </div>
+            <div class="form-step ${!isModal || step === 3 ? "active" : ""}">
+              <div class="two-cols">
+                <label>Convênio <input name="insurance" value="${patient.insurance ?? ""}" /></label>
+                <label>Número da carteirinha <input name="insuranceNumber" value="${patient.insuranceNumber ?? ""}" /></label>
+              </div>
+              <label>Responsável, se menor <input name="guardianName" value="${patient.guardianName ?? ""}" /></label>
+              <label>Observações gerais <textarea name="generalNotes">${patient.generalNotes ?? ""}</textarea></label>
+            </div>
+            ${isModal ? renderStepActions(step, totalSteps, actionLabel) : `<button class="btn" type="submit">${actionLabel}</button>`}
+          </form>
+        `;
+      }
+
+      function renderInstitutionModal(state, session) {
+        const step = Number(state.modalStep ?? 0);
+        const customFields = customTemplatesForDoctor(state, tenantIdForSession(session), doctorIdForSession(session), false, "institution");
+        const labels = ["Perfil", "Contato", "Endereço", "Campos extras"];
+        const body = `
+          ${renderStepper(labels, step)}
+          <form id="institution-form" class="form">
+            <div class="form-step ${step === 0 ? "active" : ""}">
+              <label>Nome da instituição <input name="name" required /></label>
+              <div class="two-cols">
+                <label>Tipo
+                  <select name="type" required>
+                    <option value="">Selecione</option>
+                    <option>Clínica</option>
+                    <option>Hospital</option>
+                    <option>Instituto</option>
+                    <option>Laboratório</option>
+                    <option>Parceiro clínico</option>
+                  </select>
+                </label>
+                <label>Status
+                  <select name="status">
+                    <option>Ativa</option>
+                    <option>Em implantação</option>
+                    <option>Inativa</option>
+                  </select>
+                </label>
+              </div>
+            </div>
+            <div class="form-step ${step === 1 ? "active" : ""}">
+              <div class="two-cols">
+                <label>Telefone <input name="phone" /></label>
+                <label>E-mail <input name="email" type="email" /></label>
+              </div>
+              <label>Responsável <input name="contactName" /></label>
+            </div>
+            <div class="form-step ${step === 2 ? "active" : ""}">
+              <label>Endereço <input name="address" /></label>
+              <div class="two-cols">
+                <label>Cidade <input name="city" required /></label>
+                <label>Estado <input name="stateUf" maxlength="2" /></label>
+              </div>
+            </div>
+            <div class="form-step ${step === 3 ? "active" : ""}">
+              ${customFields.length ? customFields.map((field) => renderCustomFieldInput(field, "")).join("") : empty("Nenhum campo personalizado configurado para instituições.")}
+            </div>
+            ${renderStepActions(step, labels.length, "Adicionar Instituição")}
+          </form>
+        `;
+        return renderModal(state, "Adicionar Instituição", "Dados institucionais organizados por natureza da informação.", body);
+      }
+
+      function renderDoctorModal(state, session) {
+        const step = Number(state.modalStep ?? 0);
+        const customFields = customTemplatesForDoctor(state, tenantIdForSession(session), doctorIdForSession(session), false, "doctor");
+        const labels = ["Identificação", "Contato", "Vínculo", "Campos extras"];
+        const clinics = state.clinics ?? [];
+        const body = `
+          ${renderStepper(labels, step)}
+          <form id="doctor-form" class="form">
+            <div class="form-step ${step === 0 ? "active" : ""}">
+              <label>Nome completo <input name="name" required /></label>
+              <div class="two-cols">
+                <label>CRM <input name="crm" required /></label>
+                <label>Especialidade <input name="specialty" value="Lipedema" required /></label>
+              </div>
+            </div>
+            <div class="form-step ${step === 1 ? "active" : ""}">
+              <div class="two-cols">
+                <label>Telefone <input name="phone" /></label>
+                <label>E-mail <input name="email" type="email" /></label>
+              </div>
+              <label>Agenda / observações <textarea name="notes"></textarea></label>
+            </div>
+            <div class="form-step ${step === 2 ? "active" : ""}">
+              <label>Clínica
+                <select name="clinic">
+                  ${clinics.map((clinic) => `<option>${clinic.name}</option>`).join("")}
+                </select>
+              </label>
+              <label>Status
+                <select name="status">
+                  <option>Ativo</option>
+                  <option>Convidado</option>
+                  <option>Inativo</option>
                 </select>
               </label>
             </div>
-            <div class="two-cols">
-              <label>Telefone <input name="phone" value="${patient.phone ?? ""}" /></label>
-              <label>WhatsApp <input name="whatsapp" value="${patient.whatsapp ?? ""}" /></label>
+            <div class="form-step ${step === 3 ? "active" : ""}">
+              ${customFields.length ? customFields.map((field) => renderCustomFieldInput(field, "")).join("") : empty("Nenhum campo personalizado configurado para médicos.")}
             </div>
-            <label>E-mail <input name="email" type="email" value="${patient.email ?? ""}" /></label>
-            <label>Endereco completo <input name="address" value="${patient.address ?? ""}" /></label>
-            <div class="two-cols">
-              <label>Cidade <input name="city" value="${patient.city ?? ""}" /></label>
-              <label>Estado <input name="stateUf" maxlength="2" value="${patient.stateUf ?? ""}" /></label>
-            </div>
-            <div class="two-cols">
-              <label>CEP <input name="zipCode" value="${patient.zipCode ?? ""}" /></label>
-              <label>Profissao <input name="profession" value="${patient.profession ?? ""}" /></label>
-            </div>
-            <div class="two-cols">
-              <label>Convenio <input name="insurance" value="${patient.insurance ?? ""}" /></label>
-              <label>Numero da carteirinha <input name="insuranceNumber" value="${patient.insuranceNumber ?? ""}" /></label>
-            </div>
-            <div class="two-cols">
-              <label>Estado civil <input name="maritalStatus" value="${patient.maritalStatus ?? ""}" /></label>
-              <label>Responsavel, se menor <input name="guardianName" value="${patient.guardianName ?? ""}" /></label>
-            </div>
-            <label>Observacoes gerais <textarea name="generalNotes">${patient.generalNotes ?? ""}</textarea></label>
-            <button class="btn" type="submit">${actionLabel}</button>
+            ${renderStepActions(step, labels.length, "Adicionar Médico")}
           </form>
         `;
+        return renderModal(state, "Adicionar Médico", "Cadastro profissional em etapas curtas e objetivas.", body);
       }
 
       function doctorIdForSession(session) {
@@ -3721,11 +4028,12 @@
         return session.tenantId ?? "tenant-lipecare";
       }
 
-      function customTemplatesForDoctor(state, tenantId, doctorId, includeInactive = false) {
+      function customTemplatesForDoctor(state, tenantId, doctorId, includeInactive = false, entityType = "patient") {
         return (state.customFieldTemplates ?? [])
           .filter((field) =>
             (field.tenantId ?? "tenant-lipecare") === tenantId &&
             field.doctorId === doctorId &&
+            (field.entityType ?? "patient") === entityType &&
             (includeInactive || field.active)
           )
           .sort((a, b) => Number(a.displayOrder) - Number(b.displayOrder));
@@ -3744,17 +4052,15 @@
         const tenantId = tenantIdForSession(session);
         const doctorId = doctorIdForSession(session);
         const fields = customTemplatesForDoctor(state, tenantId, doctorId);
-        const allFields = customTemplatesForDoctor(state, tenantId, doctorId, true);
 
         return `
           <div class="stack">
             <div class="alert">
-              Campos personalizados são templates livres deste médico neste tenant. Eles aparecem em todos os pacientes atuais e futuros deste médico, sem afetar outros médicos.
+              Campos personalizados são configurados em Configurações > Campos personalizados e aparecem aqui para preenchimento.
             </div>
-            ${session.role !== "PATIENT" ? renderCustomFieldManager(allFields, session) : ""}
             <form id="patient-custom-form" class="form">
               <input name="patientId" type="hidden" value="${patient.id}" />
-              ${fields.length ? fields.map((field) => renderCustomFieldInput(field, customValueForField(state, tenantId, patient.id, doctorId, field.id))).join("") : empty("Nenhum template ativo para este médico. Crie qualquer campo em Gerenciar Campos Personalizados.")}
+              ${fields.length ? fields.map((field) => renderCustomFieldInput(field, customValueForField(state, tenantId, patient.id, doctorId, field.id))).join("") : empty("Nenhum campo personalizado ativo para pacientes.")}
               ${fields.length ? `<button class="btn" type="submit">Salvar dados personalizados</button>` : ""}
             </form>
           </div>
@@ -3816,17 +4122,39 @@
       }
 
       function renderCustomFieldManager(fields, session) {
+        return renderCustomFieldSettings(readState(), session);
+      }
+
+      function renderCustomFieldSettings(state, session) {
+        const tenantId = tenantIdForSession(session);
+        const doctorId = doctorIdForSession(session);
+        const fields = (state.customFieldTemplates ?? [])
+          .filter((field) => (field.tenantId ?? "tenant-lipecare") === tenantId && field.doctorId === doctorId)
+          .sort((a, b) => String(a.entityType ?? "patient").localeCompare(String(b.entityType ?? "patient")) || Number(a.displayOrder) - Number(b.displayOrder));
+        const counts = {
+          patient: fields.filter((field) => (field.entityType ?? "patient") === "patient").length,
+          doctor: fields.filter((field) => field.entityType === "doctor").length,
+          institution: fields.filter((field) => field.entityType === "institution").length
+        };
+
         return `
-          <div class="field-manager">
+          ${renderHeader("Campos personalizados", "Templates adicionais para Pacientes, Médicos e Instituições.", "Configurações")}
+          <section class="grid stats">
+            ${statCard("Pacientes", counts.patient)}
+            ${statCard("Médicos", counts.doctor)}
+            ${statCard("Instituições", counts.institution)}
+            ${statCard("Templates ativos", fields.filter((field) => field.active).length)}
+          </section>
+          <section class="field-manager">
             <div>
-              <h2>Gerenciar Templates De Campos</h2>
-              <p class="muted">Crie qualquer campo adicional para ${session.role === "ADMIN" ? "o médico selecionado" : "sua ficha de pacientes"}. O template fica salvo para pacientes atuais e futuros deste médico dentro do tenant atual.</p>
+              <h2>Gerenciar campos personalizados</h2>
+              <p class="muted">Crie campos adicionais por tipo de cadastro. Eles ficam como templates futuros do médico no tenant atual.</p>
             </div>
             ${fields.length ? fields.map((field) => `
               <div class="field-row">
                 <div>
                   <strong>${field.displayOrder}. ${field.label}</strong>
-                  <div class="field-help">${field.fieldType} ${field.required ? "- obrigatório" : ""} ${field.active ? "" : "- inativo"}</div>
+                  <div class="field-help">${entityTypeLabel(field.entityType ?? "patient")} - ${field.fieldType} ${field.required ? "- obrigatório" : ""} ${field.active ? "" : "- inativo"}</div>
                 </div>
                 <span class="pill ${field.active ? "ok" : "warn"}">${field.active ? "Ativo" : "Oculto"}</span>
                 <div class="field-row-actions">
@@ -3835,6 +4163,13 @@
               </div>
             `).join("") : empty("Nenhum campo criado para este médico.")}
             <form id="custom-field-form" class="form">
+              <label>Aplicar em
+                <select name="entityType" required>
+                  <option value="patient">Pacientes</option>
+                  <option value="doctor">Médicos</option>
+                  <option value="institution">Instituições</option>
+                </select>
+              </label>
               <div class="two-cols">
                 <label>Nome do novo campo <input name="label" placeholder="Ex.: Objetivo do tratamento, Queixa principal, Código interno" required /></label>
                 <label>Tipo de campo
@@ -3862,8 +4197,16 @@
               <label><input name="required" type="checkbox" value="true" /> Campo obrigatório</label>
               <button class="btn" type="submit">Criar campo personalizado</button>
             </form>
-          </div>
+          </section>
         `;
+      }
+
+      function entityTypeLabel(entityType) {
+        return {
+          patient: "Pacientes",
+          doctor: "Médicos",
+          institution: "Instituições"
+        }[entityType] ?? "Pacientes";
       }
 
       function renderClinicalRecord(patient) {
@@ -4327,7 +4670,53 @@
         };
       }
 
+      function saveCustomEntityValues(state, session, entityType, entityId, data) {
+        const tenantId = tenantIdForSession(session);
+        const doctorId = doctorIdForSession(session);
+        const fields = customTemplatesForDoctor(state, tenantId, doctorId, false, entityType);
+        state.customFieldValues = state.customFieldValues ?? [];
+
+        fields.forEach((field) => {
+          const uploadedFile = data.get(`custom_${field.id}`);
+          const raw = field.fieldType === "upload_file"
+            ? (uploadedFile?.name || "")
+            : field.fieldType === "multi_select"
+              ? data.getAll(`custom_${field.id}`).join(", ")
+              : field.fieldType === "checkbox"
+                ? (data.get(`custom_${field.id}`) ? "Sim" : "Nao")
+                : String(data.get(`custom_${field.id}`) ?? "");
+
+          state.customFieldValues.push({
+            id: crypto.randomUUID(),
+            tenantId,
+            entityType,
+            entityId,
+            doctorId,
+            customFieldId: field.id,
+            value: raw,
+            createdAt: new Date().toISOString()
+          });
+        });
+      }
+
       function bindViewEvents(session) {
+        document.querySelectorAll("[data-open-modal]").forEach((button) => {
+          button.addEventListener("click", () => openModal(button.dataset.openModal));
+        });
+
+        document.querySelectorAll("[data-close-modal]").forEach((button) => {
+          button.addEventListener("click", closeModal);
+        });
+
+        document.querySelectorAll("[data-modal-step]").forEach((button) => {
+          button.addEventListener("click", () => {
+            const state = readState();
+            state.modalStep = Number(button.dataset.modalStep);
+            writeState(state);
+            render();
+          });
+        });
+
         document.querySelectorAll("[data-hero-image]").forEach((button) => {
           button.addEventListener("click", () => {
             const state = readState();
@@ -4440,6 +4829,73 @@
           });
         });
 
+        const institutionForm = document.getElementById("institution-form");
+        if (institutionForm) {
+          institutionForm.addEventListener("submit", (event) => {
+            event.preventDefault();
+            const data = new FormData(event.currentTarget);
+            const state = readState();
+            const institution = {
+              id: crypto.randomUUID(),
+              name: String(data.get("name")),
+              type: String(data.get("type")),
+              status: String(data.get("status") || "Ativa"),
+              phone: String(data.get("phone") || ""),
+              email: String(data.get("email") || ""),
+              contactName: String(data.get("contactName") || ""),
+              address: String(data.get("address") || ""),
+              city: String(data.get("city") || ""),
+              stateUf: String(data.get("stateUf") || "").toUpperCase()
+            };
+            state.institutions.unshift(institution);
+            saveCustomEntityValues(state, session, "institution", institution.id, data);
+            state.activeModal = null;
+            state.modalStep = 0;
+            state.auditLogs.unshift({
+              id: crypto.randomUUID(),
+              action: "institution_created",
+              actor: session.name,
+              resource: institution.name,
+              date: new Date().toLocaleString("pt-BR")
+            });
+            writeState(state);
+            render();
+          });
+        }
+
+        const doctorForm = document.getElementById("doctor-form");
+        if (doctorForm) {
+          doctorForm.addEventListener("submit", (event) => {
+            event.preventDefault();
+            const data = new FormData(event.currentTarget);
+            const state = readState();
+            const doctor = {
+              id: crypto.randomUUID(),
+              name: String(data.get("name")),
+              crm: String(data.get("crm")),
+              specialty: String(data.get("specialty")),
+              phone: String(data.get("phone") || ""),
+              email: String(data.get("email") || ""),
+              notes: String(data.get("notes") || ""),
+              clinic: String(data.get("clinic") || ""),
+              status: String(data.get("status") || "Ativo")
+            };
+            state.doctors.unshift(doctor);
+            saveCustomEntityValues(state, session, "doctor", doctor.id, data);
+            state.activeModal = null;
+            state.modalStep = 0;
+            state.auditLogs.unshift({
+              id: crypto.randomUUID(),
+              action: "doctor_created",
+              actor: session.name,
+              resource: doctor.name,
+              date: new Date().toLocaleString("pt-BR")
+            });
+            writeState(state);
+            render();
+          });
+        }
+
         const patientForm = document.getElementById("patient-form");
         if (patientForm) {
           patientForm.addEventListener("submit", (event) => {
@@ -4461,7 +4917,9 @@
             };
             state.patients.unshift(patient);
             state.selectedPatientId = patient.id;
-            state.patientFormTab = "custom";
+            state.patientFormTab = "essential";
+            state.activeModal = null;
+            state.modalStep = 0;
             state.auditLogs.unshift({
               id: crypto.randomUUID(),
               action: "patient_created",
@@ -4510,10 +4968,12 @@
             const state = readState();
             const tenantId = tenantIdForSession(session);
             const doctorId = doctorIdForSession(session);
+            const entityType = String(data.get("entityType") || "patient");
             const field = {
               id: crypto.randomUUID(),
               tenantId,
               doctorId,
+              entityType,
               label,
               fieldKey: slugify(label),
               fieldType: String(data.get("fieldType")),
@@ -4521,7 +4981,7 @@
               helpText: String(data.get("helpText")),
               required: data.get("required") === "true",
               options: String(data.get("options")).split(",").map((item) => item.trim()).filter(Boolean),
-              displayOrder: Number(data.get("displayOrder")) || customTemplatesForDoctor(state, tenantId, doctorId, true).length + 1,
+              displayOrder: Number(data.get("displayOrder")) || customTemplatesForDoctor(state, tenantId, doctorId, true, entityType).length + 1,
               active: true,
               createdAt: new Date().toISOString()
             };
@@ -4529,7 +4989,7 @@
             state.customFieldTemplates.push(field);
             state.auditLogs.unshift({
               id: crypto.randomUUID(),
-              action: "custom_patient_field_created",
+              action: "custom_field_template_created",
               actor: session.name,
               resource: field.label,
               date: new Date().toLocaleString("pt-BR")
