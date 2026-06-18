@@ -532,6 +532,76 @@
         padding: 12px;
       }
 
+      .tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 16px;
+      }
+
+      .tab-button {
+        background: rgb(255 255 255 / 3%);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        color: var(--muted);
+        cursor: pointer;
+        font-weight: 800;
+        min-height: 38px;
+        padding: 9px 12px;
+      }
+
+      .tab-button.active {
+        background: rgb(77 245 212 / 14%);
+        border-color: rgb(77 245 212 / 42%);
+        color: var(--primary);
+      }
+
+      .patient-detail {
+        grid-column: 1 / -1;
+      }
+
+      .form-section {
+        border-top: 1px solid var(--line);
+        display: grid;
+        gap: 14px;
+        margin-top: 16px;
+        padding-top: 16px;
+      }
+
+      .field-manager {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        display: grid;
+        gap: 14px;
+        margin-bottom: 16px;
+        padding: 14px;
+      }
+
+      .field-row {
+        align-items: center;
+        border-bottom: 1px solid var(--line);
+        display: grid;
+        gap: 10px;
+        grid-template-columns: minmax(0, 1fr) auto auto;
+        padding: 10px 0;
+      }
+
+      .field-row:last-child {
+        border-bottom: 0;
+      }
+
+      .field-row-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .field-help {
+        color: var(--muted);
+        font-size: 0.78rem;
+        line-height: 1.4;
+      }
+
       .assistant-card {
         grid-column: 1 / -1;
       }
@@ -864,8 +934,8 @@
     <script src="config.js"></script>
     <script>
       const BUILD_INFO = {
-        version: window.LIPECARE_APP_VERSION || "0.1.3",
-        deployNumber: window.LIPECARE_DEPLOY_NUMBER || "7",
+        version: window.LIPECARE_APP_VERSION || "0.1.4",
+        deployNumber: window.LIPECARE_DEPLOY_NUMBER || "8",
         deploy: window.LIPECARE_DEPLOY_VERSION || "local",
         commit: window.LIPECARE_COMMIT_SHA || "sem-commit"
       };
@@ -902,8 +972,25 @@
           {
             id: "p-001",
             fullName: "Marina Almeida",
+            cpf: "123.456.789-00",
+            rg: "12.345.678-9",
+            birthDate: "1989-03-12",
+            sex: "Feminino",
             age: 37,
             phone: "(11) 90000-1001",
+            whatsapp: "(11) 90000-1001",
+            email: "marina.almeida@teste.local",
+            address: "Rua das Acacias, 120",
+            city: "Sao Paulo",
+            stateUf: "SP",
+            zipCode: "01400-000",
+            insurance: "Particular",
+            insuranceNumber: "",
+            profession: "Designer",
+            maritalStatus: "Casada",
+            guardianName: "",
+            generalNotes: "Prefere contato por WhatsApp no fim da tarde.",
+            doctorId: "u-pro",
             professional: "Dra. Raquel Peres",
             status: "Em acompanhamento",
             lastCheckin: "2026-04-26",
@@ -918,8 +1005,25 @@
           {
             id: "p-002",
             fullName: "Beatriz Nogueira",
+            cpf: "222.333.444-55",
+            rg: "22.333.444-5",
+            birthDate: "1984-08-21",
+            sex: "Feminino",
             age: 42,
             phone: "(21) 90000-1002",
+            whatsapp: "(21) 90000-1002",
+            email: "beatriz.nogueira@teste.local",
+            address: "Av. Atlantica, 455",
+            city: "Rio de Janeiro",
+            stateUf: "RJ",
+            zipCode: "22000-000",
+            insurance: "Saude Total",
+            insuranceNumber: "ST-99881",
+            profession: "Advogada",
+            maritalStatus: "Solteira",
+            guardianName: "",
+            generalNotes: "Aguardando avaliacao inicial.",
+            doctorId: "u-pro",
             professional: "Dra. Raquel Peres",
             status: "Avaliação pendente",
             lastCheckin: "2026-04-18",
@@ -930,8 +1034,25 @@
           {
             id: "p-003",
             fullName: "Carolina Mendes",
+            cpf: "333.444.555-66",
+            rg: "33.444.555-6",
+            birthDate: "1992-01-09",
+            sex: "Feminino",
             age: 34,
             phone: "(31) 90000-1003",
+            whatsapp: "(31) 90000-1003",
+            email: "carolina.mendes@teste.local",
+            address: "Rua Minas Gerais, 80",
+            city: "Belo Horizonte",
+            stateUf: "MG",
+            zipCode: "30100-000",
+            insurance: "Particular",
+            insuranceNumber: "",
+            profession: "Professora",
+            maritalStatus: "Uniao estavel",
+            guardianName: "",
+            generalNotes: "Rotina regular de acompanhamento.",
+            doctorId: "u-pro",
             professional: "Dra. Raquel Peres",
             status: "Em acompanhamento",
             lastCheckin: "2026-04-27",
@@ -1002,6 +1123,51 @@
             date: "2026-03-26",
             label: "Registro lateral"
           }
+        ],
+        customFieldTemplates: [
+          {
+            id: "cf-001",
+            doctorId: "u-pro",
+            label: "Tipo sanguineo",
+            fieldKey: "tipo_sanguineo",
+            fieldType: "select",
+            placeholder: "Selecione",
+            helpText: "Campo visivel apenas para Dra. Raquel.",
+            required: false,
+            options: ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"],
+            displayOrder: 1,
+            active: true
+          },
+          {
+            id: "cf-002",
+            doctorId: "u-pro",
+            label: "Alergias",
+            fieldKey: "alergias",
+            fieldType: "long_text",
+            placeholder: "Descreva alergias relevantes",
+            helpText: "Inclua medicamento, alimento ou material.",
+            required: false,
+            options: [],
+            displayOrder: 2,
+            active: true
+          },
+          {
+            id: "cf-003",
+            doctorId: "d-002",
+            label: "Tipo de pele",
+            fieldKey: "tipo_de_pele",
+            fieldType: "select",
+            placeholder: "Selecione",
+            helpText: "Exemplo de campo de outro medico.",
+            required: false,
+            options: ["Oleosa", "Seca", "Mista", "Sensivel"],
+            displayOrder: 1,
+            active: true
+          }
+        ],
+        customFieldValues: [
+          { id: "cfv-001", patientId: "p-001", doctorId: "u-pro", customFieldId: "cf-001", value: "O+" },
+          { id: "cfv-002", patientId: "p-001", doctorId: "u-pro", customFieldId: "cf-002", value: "Sem alergias medicamentosas conhecidas." }
         ],
         clinics: [
           { id: "c-001", name: "Clinica LipeCare Jardins", city: "Sao Paulo", status: "Ativa" },
@@ -1093,6 +1259,30 @@
         return {
           ...structuredClone(INITIAL_STATE),
           ...parsed,
+          patients: (parsed.patients ?? INITIAL_STATE.patients).map((patient) => ({
+            doctorId: "u-pro",
+            cpf: "",
+            rg: "",
+            birthDate: "",
+            sex: "",
+            whatsapp: patient.phone ?? "",
+            email: "",
+            address: "",
+            city: "",
+            stateUf: "",
+            zipCode: "",
+            insurance: "",
+            insuranceNumber: "",
+            profession: "",
+            maritalStatus: "",
+            guardianName: "",
+            generalNotes: "",
+            ...patient
+          })),
+          customFieldTemplates: parsed.customFieldTemplates?.length
+            ? parsed.customFieldTemplates
+            : structuredClone(INITIAL_STATE.customFieldTemplates),
+          customFieldValues: parsed.customFieldValues ?? structuredClone(INITIAL_STATE.customFieldValues),
           assistantMessages: parsed.assistantMessages?.length
             ? parsed.assistantMessages
             : structuredClone(INITIAL_STATE.assistantMessages)
@@ -1357,6 +1547,10 @@
           return state.patients.filter((patient) => patient.id === session.patientId);
         }
 
+        if (session.role === "PROFESSIONAL") {
+          return state.patients.filter((patient) => !patient.doctorId || patient.doctorId === session.id);
+        }
+
         return state.patients;
       }
 
@@ -1512,9 +1706,10 @@
       function renderPatients(state, session) {
         const patients = scopedPatients(state, session);
         const patient = selectedPatient(state, session);
+        const activeTab = state.patientFormTab ?? "essential";
 
         return `
-          ${renderHeader("Pacientes", "Cadastro inicial e selecao de paciente para acompanhamento.", "MVP")}
+          ${renderHeader("Pacientes", "Cadastro base com campos personalizados por medico.", "CRM")}
           <section class="grid content-grid">
             <article class="card section">
               <h2>Lista de pacientes</h2>
@@ -1522,17 +1717,217 @@
             </article>
             <article class="card section">
               <h2>Novo paciente</h2>
-              <form id="patient-form" class="form">
-                <label>Nome completo <input name="fullName" required /></label>
-                <div class="two-cols">
-                  <label>Idade <input name="age" type="number" min="0" required /></label>
-                  <label>Telefone <input name="phone" /></label>
-                </div>
-                <button class="btn" type="submit">Cadastrar paciente</button>
-              </form>
+              ${renderEssentialPatientForm("patient-form", {}, "Cadastrar paciente")}
             </article>
-            ${session.role === "PROFESSIONAL" && patient ? renderClinicalRecord(patient) : ""}
+            ${patient ? renderPatientRecord(state, session, patient, activeTab) : ""}
           </section>
+        `;
+      }
+
+      function renderPatientRecord(state, session, patient, activeTab) {
+        return `
+          <article class="card section patient-detail">
+            <h2>Ficha do paciente</h2>
+            <div class="tabs" role="tablist" aria-label="Abas da ficha do paciente">
+              ${renderPatientTab("essential", "Dados Essenciais", activeTab)}
+              ${renderPatientTab("custom", "Dados Personalizados", activeTab)}
+              ${renderPatientTab("history", "Historico", activeTab)}
+            </div>
+            ${activeTab === "custom"
+              ? renderCustomPatientFields(state, session, patient)
+              : activeTab === "history"
+                ? renderClinicalRecord(patient)
+                : renderEssentialPatientForm("patient-essential-form", patient, "Salvar dados essenciais")}
+          </article>
+        `;
+      }
+
+      function renderPatientTab(tab, label, activeTab) {
+        return `<button class="tab-button ${activeTab === tab ? "active" : ""}" type="button" data-patient-tab="${tab}">${label}</button>`;
+      }
+
+      function renderEssentialPatientForm(formId, patient, actionLabel) {
+        return `
+          <form id="${formId}" class="form">
+            <input name="patientId" type="hidden" value="${patient.id ?? ""}" />
+            <label>Nome completo <input name="fullName" value="${patient.fullName ?? ""}" required /></label>
+            <div class="two-cols">
+              <label>CPF <input name="cpf" value="${patient.cpf ?? ""}" /></label>
+              <label>RG <input name="rg" value="${patient.rg ?? ""}" /></label>
+            </div>
+            <div class="two-cols">
+              <label>Data de nascimento <input name="birthDate" type="date" value="${patient.birthDate ?? ""}" /></label>
+              <label>Sexo
+                <select name="sex">
+                  ${["", "Feminino", "Masculino", "Outro", "Nao informado"].map((option) => `
+                    <option value="${option}" ${option === (patient.sex ?? "") ? "selected" : ""}>${option || "Selecione"}</option>
+                  `).join("")}
+                </select>
+              </label>
+            </div>
+            <div class="two-cols">
+              <label>Telefone <input name="phone" value="${patient.phone ?? ""}" /></label>
+              <label>WhatsApp <input name="whatsapp" value="${patient.whatsapp ?? ""}" /></label>
+            </div>
+            <label>E-mail <input name="email" type="email" value="${patient.email ?? ""}" /></label>
+            <label>Endereco completo <input name="address" value="${patient.address ?? ""}" /></label>
+            <div class="two-cols">
+              <label>Cidade <input name="city" value="${patient.city ?? ""}" /></label>
+              <label>Estado <input name="stateUf" maxlength="2" value="${patient.stateUf ?? ""}" /></label>
+            </div>
+            <div class="two-cols">
+              <label>CEP <input name="zipCode" value="${patient.zipCode ?? ""}" /></label>
+              <label>Profissao <input name="profession" value="${patient.profession ?? ""}" /></label>
+            </div>
+            <div class="two-cols">
+              <label>Convenio <input name="insurance" value="${patient.insurance ?? ""}" /></label>
+              <label>Numero da carteirinha <input name="insuranceNumber" value="${patient.insuranceNumber ?? ""}" /></label>
+            </div>
+            <div class="two-cols">
+              <label>Estado civil <input name="maritalStatus" value="${patient.maritalStatus ?? ""}" /></label>
+              <label>Responsavel, se menor <input name="guardianName" value="${patient.guardianName ?? ""}" /></label>
+            </div>
+            <label>Observacoes gerais <textarea name="generalNotes">${patient.generalNotes ?? ""}</textarea></label>
+            <button class="btn" type="submit">${actionLabel}</button>
+          </form>
+        `;
+      }
+
+      function doctorIdForSession(session) {
+        return session.role === "PROFESSIONAL" ? session.id : "u-pro";
+      }
+
+      function customTemplatesForDoctor(state, doctorId, includeInactive = false) {
+        return (state.customFieldTemplates ?? [])
+          .filter((field) => field.doctorId === doctorId && (includeInactive || field.active))
+          .sort((a, b) => Number(a.displayOrder) - Number(b.displayOrder));
+      }
+
+      function customValueForField(state, patientId, doctorId, fieldId) {
+        return (state.customFieldValues ?? []).find((value) =>
+          value.patientId === patientId &&
+          value.doctorId === doctorId &&
+          value.customFieldId === fieldId
+        )?.value ?? "";
+      }
+
+      function renderCustomPatientFields(state, session, patient) {
+        const doctorId = doctorIdForSession(session);
+        const fields = customTemplatesForDoctor(state, doctorId);
+        const allFields = customTemplatesForDoctor(state, doctorId, true);
+
+        return `
+          <div class="stack">
+            <div class="alert">
+              Campos personalizados sao exclusivos do medico logado. Campos desativados ficam ocultos, sem apagar dados antigos.
+            </div>
+            ${session.role === "PROFESSIONAL" ? renderCustomFieldManager(allFields) : ""}
+            <form id="patient-custom-form" class="form">
+              <input name="patientId" type="hidden" value="${patient.id}" />
+              ${fields.length ? fields.map((field) => renderCustomFieldInput(field, customValueForField(state, patient.id, doctorId, field.id))).join("") : empty("Nenhum campo personalizado ativo para este medico.")}
+              ${fields.length ? `<button class="btn" type="submit">Salvar dados personalizados</button>` : ""}
+            </form>
+          </div>
+        `;
+      }
+
+      function renderCustomFieldInput(field, value) {
+        const required = field.required ? "required" : "";
+        const help = field.helpText ? `<span class="field-help">${field.helpText}</span>` : "";
+        const options = Array.isArray(field.options) ? field.options : [];
+
+        if (field.fieldType === "long_text") {
+          return `<label>${field.label}${help}<textarea name="custom_${field.id}" placeholder="${field.placeholder ?? ""}" ${required}>${value}</textarea></label>`;
+        }
+
+        if (field.fieldType === "number") {
+          return `<label>${field.label}${help}<input name="custom_${field.id}" type="number" value="${value}" placeholder="${field.placeholder ?? ""}" ${required} /></label>`;
+        }
+
+        if (field.fieldType === "date") {
+          return `<label>${field.label}${help}<input name="custom_${field.id}" type="date" value="${value}" ${required} /></label>`;
+        }
+
+        if (field.fieldType === "yes_no") {
+          return `
+            <label>${field.label}${help}
+              <select name="custom_${field.id}" ${required}>
+                ${["", "Sim", "Nao"].map((option) => `<option value="${option}" ${option === value ? "selected" : ""}>${option || "Selecione"}</option>`).join("")}
+              </select>
+            </label>
+          `;
+        }
+
+        if (field.fieldType === "select" || field.fieldType === "multi_select") {
+          return `
+            <label>${field.label}${help}
+              <select name="custom_${field.id}" ${field.fieldType === "multi_select" ? "multiple" : ""} ${required}>
+                ${field.fieldType === "select" ? `<option value="">${field.placeholder || "Selecione"}</option>` : ""}
+                ${options.map((option) => `<option value="${option}" ${String(value).split(", ").includes(option) ? "selected" : ""}>${option}</option>`).join("")}
+              </select>
+            </label>
+          `;
+        }
+
+        if (field.fieldType === "checkbox") {
+          return `<label><input name="custom_${field.id}" type="checkbox" value="Sim" ${value === "Sim" ? "checked" : ""} /> ${field.label}${help}</label>`;
+        }
+
+        const type = {
+          email: "email",
+          phone: "tel"
+        }[field.fieldType] ?? "text";
+
+        return `<label>${field.label}${help}<input name="custom_${field.id}" type="${type}" value="${value}" placeholder="${field.placeholder ?? ""}" ${required} /></label>`;
+      }
+
+      function renderCustomFieldManager(fields) {
+        return `
+          <div class="field-manager">
+            <div>
+              <h2>Gerenciar Campos Personalizados</h2>
+              <p class="muted">Crie, ordene, obrigue ou desative campos exclusivos para seus pacientes.</p>
+            </div>
+            ${fields.length ? fields.map((field) => `
+              <div class="field-row">
+                <div>
+                  <strong>${field.displayOrder}. ${field.label}</strong>
+                  <div class="field-help">${field.fieldType} ${field.required ? "- obrigatorio" : ""} ${field.active ? "" : "- inativo"}</div>
+                </div>
+                <span class="pill ${field.active ? "ok" : "warn"}">${field.active ? "Ativo" : "Oculto"}</span>
+                <div class="field-row-actions">
+                  <button class="btn secondary" type="button" data-toggle-custom-field="${field.id}">${field.active ? "Desativar" : "Ativar"}</button>
+                </div>
+              </div>
+            `).join("") : empty("Nenhum campo criado para este medico.")}
+            <form id="custom-field-form" class="form">
+              <div class="two-cols">
+                <label>Label do campo <input name="label" placeholder="Ex.: Alergias" required /></label>
+                <label>Tipo de campo
+                  <select name="fieldType" required>
+                    <option value="short_text">Texto curto</option>
+                    <option value="long_text">Texto longo</option>
+                    <option value="number">Numero</option>
+                    <option value="date">Data</option>
+                    <option value="yes_no">Sim / Nao</option>
+                    <option value="select">Lista suspensa</option>
+                    <option value="multi_select">Multipla escolha</option>
+                    <option value="checkbox">Checkbox</option>
+                    <option value="phone">Telefone</option>
+                    <option value="email">E-mail</option>
+                  </select>
+                </label>
+              </div>
+              <div class="two-cols">
+                <label>Ordem <input name="displayOrder" type="number" min="1" value="${fields.length + 1}" required /></label>
+                <label>Placeholder <input name="placeholder" placeholder="Texto de apoio no campo" /></label>
+              </div>
+              <label>Texto de ajuda <input name="helpText" placeholder="Orientacao curta para preenchimento" /></label>
+              <label>Opcoes, separadas por virgula <input name="options" placeholder="A+, A-, O+, O-" /></label>
+              <label><input name="required" type="checkbox" value="true" /> Campo obrigatorio</label>
+              <button class="btn" type="submit">Criar campo personalizado</button>
+            </form>
+          </div>
         `;
       }
 
@@ -1868,11 +2263,54 @@
         return `<div class="empty">${message}</div>`;
       }
 
+      function slugify(value) {
+        return String(value)
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "_")
+          .replace(/^_+|_+$/g, "");
+      }
+
+      function ageFromBirthDate(value) {
+        if (!value) return 0;
+        const birthDate = new Date(value);
+        const now = new Date();
+        let age = now.getFullYear() - birthDate.getFullYear();
+        const monthDiff = now.getMonth() - birthDate.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && now.getDate() < birthDate.getDate())) age -= 1;
+        return Number.isFinite(age) ? age : 0;
+      }
+
+      function patientPayloadFromForm(data) {
+        return {
+          fullName: String(data.get("fullName")),
+          cpf: String(data.get("cpf")),
+          rg: String(data.get("rg")),
+          birthDate: String(data.get("birthDate")),
+          sex: String(data.get("sex")),
+          phone: String(data.get("phone")),
+          whatsapp: String(data.get("whatsapp")),
+          email: String(data.get("email")),
+          address: String(data.get("address")),
+          city: String(data.get("city")),
+          stateUf: String(data.get("stateUf")).toUpperCase(),
+          zipCode: String(data.get("zipCode")),
+          insurance: String(data.get("insurance")),
+          insuranceNumber: String(data.get("insuranceNumber")),
+          profession: String(data.get("profession")),
+          maritalStatus: String(data.get("maritalStatus")),
+          guardianName: String(data.get("guardianName")),
+          generalNotes: String(data.get("generalNotes"))
+        };
+      }
+
       function bindViewEvents(session) {
         document.querySelectorAll("[data-select-patient]").forEach((row) => {
           row.addEventListener("click", () => {
             const state = readState();
             state.selectedPatientId = row.dataset.selectPatient;
+            state.patientFormTab = "essential";
             state.auditLogs.unshift({
               id: crypto.randomUUID(),
               action: "patient_record_viewed",
@@ -1880,6 +2318,15 @@
               resource: state.patients.find((patient) => patient.id === row.dataset.selectPatient)?.fullName ?? "Paciente",
               date: new Date().toLocaleString("pt-BR")
             });
+            writeState(state);
+            render();
+          });
+        });
+
+        document.querySelectorAll("[data-patient-tab]").forEach((button) => {
+          button.addEventListener("click", () => {
+            const state = readState();
+            state.patientFormTab = button.dataset.patientTab;
             writeState(state);
             render();
           });
@@ -1893,10 +2340,10 @@
             const state = readState();
             const patient = {
               id: crypto.randomUUID(),
-              fullName: String(data.get("fullName")),
-              age: Number(data.get("age")),
-              phone: String(data.get("phone")),
-              professional: "Dra. Raquel Peres",
+              ...patientPayloadFromForm(data),
+              age: ageFromBirthDate(String(data.get("birthDate"))),
+              doctorId: doctorIdForSession(session),
+              professional: session.role === "PROFESSIONAL" ? session.name : "Dra. Raquel Peres",
               status: "Avaliação pendente",
               lastCheckin: today(),
               clinicalSummary: "Paciente novo aguardando primeira avaliacao clinica.",
@@ -1905,11 +2352,143 @@
             };
             state.patients.unshift(patient);
             state.selectedPatientId = patient.id;
+            state.patientFormTab = "custom";
             state.auditLogs.unshift({
               id: crypto.randomUUID(),
               action: "patient_created",
               actor: session.name,
               resource: patient.fullName,
+              date: new Date().toLocaleString("pt-BR")
+            });
+            writeState(state);
+            render();
+          });
+        }
+
+        const patientEssentialForm = document.getElementById("patient-essential-form");
+        if (patientEssentialForm) {
+          patientEssentialForm.addEventListener("submit", (event) => {
+            event.preventDefault();
+            const data = new FormData(event.currentTarget);
+            const state = readState();
+            const patient = state.patients.find((item) => item.id === String(data.get("patientId")));
+            if (!patient) return;
+
+            Object.assign(patient, patientPayloadFromForm(data), {
+              age: ageFromBirthDate(String(data.get("birthDate"))) || patient.age,
+              updatedAt: new Date().toISOString()
+            });
+            state.auditLogs.unshift({
+              id: crypto.randomUUID(),
+              action: "patient_essential_updated",
+              actor: session.name,
+              resource: patient.fullName,
+              date: new Date().toLocaleString("pt-BR")
+            });
+            writeState(state);
+            render();
+          });
+        }
+
+        const customFieldForm = document.getElementById("custom-field-form");
+        if (customFieldForm) {
+          customFieldForm.addEventListener("submit", (event) => {
+            event.preventDefault();
+            const data = new FormData(event.currentTarget);
+            const label = String(data.get("label")).trim();
+            if (!label) return;
+
+            const state = readState();
+            const doctorId = doctorIdForSession(session);
+            const field = {
+              id: crypto.randomUUID(),
+              doctorId,
+              label,
+              fieldKey: slugify(label),
+              fieldType: String(data.get("fieldType")),
+              placeholder: String(data.get("placeholder")),
+              helpText: String(data.get("helpText")),
+              required: data.get("required") === "true",
+              options: String(data.get("options")).split(",").map((item) => item.trim()).filter(Boolean),
+              displayOrder: Number(data.get("displayOrder")) || customTemplatesForDoctor(state, doctorId, true).length + 1,
+              active: true,
+              createdAt: new Date().toISOString()
+            };
+            state.customFieldTemplates = state.customFieldTemplates ?? [];
+            state.customFieldTemplates.push(field);
+            state.auditLogs.unshift({
+              id: crypto.randomUUID(),
+              action: "custom_patient_field_created",
+              actor: session.name,
+              resource: field.label,
+              date: new Date().toLocaleString("pt-BR")
+            });
+            writeState(state);
+            render();
+          });
+        }
+
+        document.querySelectorAll("[data-toggle-custom-field]").forEach((button) => {
+          button.addEventListener("click", () => {
+            const state = readState();
+            const field = state.customFieldTemplates.find((item) => item.id === button.dataset.toggleCustomField);
+            if (!field) return;
+            field.active = !field.active;
+            field.updatedAt = new Date().toISOString();
+            state.auditLogs.unshift({
+              id: crypto.randomUUID(),
+              action: field.active ? "custom_patient_field_activated" : "custom_patient_field_deactivated",
+              actor: session.name,
+              resource: field.label,
+              date: new Date().toLocaleString("pt-BR")
+            });
+            writeState(state);
+            render();
+          });
+        });
+
+        const patientCustomForm = document.getElementById("patient-custom-form");
+        if (patientCustomForm) {
+          patientCustomForm.addEventListener("submit", (event) => {
+            event.preventDefault();
+            const data = new FormData(event.currentTarget);
+            const state = readState();
+            const patientId = String(data.get("patientId"));
+            const patient = state.patients.find((item) => item.id === patientId);
+            const doctorId = doctorIdForSession(session);
+            const fields = customTemplatesForDoctor(state, doctorId);
+            state.customFieldValues = state.customFieldValues ?? [];
+
+            fields.forEach((field) => {
+              const raw = field.fieldType === "multi_select"
+                ? data.getAll(`custom_${field.id}`).join(", ")
+                : field.fieldType === "checkbox"
+                  ? (data.get(`custom_${field.id}`) ? "Sim" : "Nao")
+                  : String(data.get(`custom_${field.id}`) ?? "");
+              const existing = state.customFieldValues.find((value) =>
+                value.patientId === patientId &&
+                value.doctorId === doctorId &&
+                value.customFieldId === field.id
+              );
+              if (existing) {
+                existing.value = raw;
+                existing.updatedAt = new Date().toISOString();
+              } else {
+                state.customFieldValues.push({
+                  id: crypto.randomUUID(),
+                  patientId,
+                  doctorId,
+                  customFieldId: field.id,
+                  value: raw,
+                  createdAt: new Date().toISOString()
+                });
+              }
+            });
+            state.auditLogs.unshift({
+              id: crypto.randomUUID(),
+              action: "patient_custom_fields_updated",
+              actor: session.name,
+              resource: patient?.fullName ?? "Paciente",
               date: new Date().toLocaleString("pt-BR")
             });
             writeState(state);
