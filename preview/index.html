@@ -391,6 +391,130 @@
         padding: 30px;
       }
 
+      .home-hero {
+        align-items: stretch;
+        background:
+          linear-gradient(90deg, rgb(5 12 16 / 84%) 0%, rgb(5 12 16 / 58%) 44%, rgb(5 12 16 / 12%) 100%),
+          url("assets/home-hero-doctor.png") center / cover no-repeat;
+        border: 1px solid rgb(94 234 212 / 20%);
+        border-radius: 8px;
+        display: grid;
+        min-height: 430px;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .home-hero::after {
+        background-image:
+          linear-gradient(rgb(94 234 212 / 8%) 1px, transparent 1px),
+          linear-gradient(90deg, rgb(94 234 212 / 8%) 1px, transparent 1px);
+        background-size: 46px 46px;
+        content: "";
+        inset: 0;
+        pointer-events: none;
+        position: absolute;
+      }
+
+      .home-hero-content {
+        align-content: center;
+        display: grid;
+        gap: 18px;
+        max-width: 680px;
+        padding: 58px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .home-hero-content h1 {
+        font-size: clamp(3.4rem, 7vw, 6.8rem);
+        line-height: 0.92;
+        margin: 0;
+      }
+
+      .home-hero-content p {
+        font-size: 1.08rem;
+        max-width: 590px;
+      }
+
+      .home-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .home-highlights {
+        display: grid;
+        gap: 14px;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        margin-top: 18px;
+      }
+
+      .home-highlight {
+        background: rgb(255 255 255 / 6%);
+        border: 1px solid rgb(255 255 255 / 12%);
+        border-radius: 8px;
+        padding: 16px;
+      }
+
+      .home-highlight strong {
+        color: var(--accent);
+        display: block;
+        font-size: 1.45rem;
+      }
+
+      .module-grid {
+        display: grid;
+        gap: 14px;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .module-thumb {
+        background: linear-gradient(145deg, rgb(31 41 55 / 92%), rgb(12 19 24 / 96%));
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        color: var(--text);
+        cursor: pointer;
+        display: grid;
+        gap: 12px;
+        min-height: 150px;
+        padding: 18px;
+        text-align: left;
+        transition: border-color 180ms ease, transform 180ms ease;
+      }
+
+      .module-thumb:hover {
+        border-color: rgb(74 222 128 / 45%);
+        transform: translateY(-2px);
+      }
+
+      .module-icon {
+        align-items: center;
+        background: rgb(45 212 191 / 12%);
+        border: 1px solid rgb(94 234 212 / 28%);
+        border-radius: 8px;
+        color: var(--accent);
+        display: inline-flex;
+        height: 42px;
+        justify-content: center;
+        width: 42px;
+      }
+
+      .module-icon svg {
+        height: 22px;
+        width: 22px;
+      }
+
+      .module-thumb strong {
+        display: block;
+        font-size: 1rem;
+      }
+
+      .module-thumb span {
+        color: var(--muted);
+        font-size: 0.9rem;
+        line-height: 1.45;
+      }
+
       .sidebar-backdrop {
         display: none;
       }
@@ -783,7 +907,7 @@
       .architecture-flow {
         display: grid;
         gap: 10px;
-        grid-template-columns: repeat(5, minmax(0, 1fr));
+        grid-template-columns: repeat(6, minmax(0, 1fr));
       }
 
       .flow-step {
@@ -937,12 +1061,22 @@
         .shell,
         .content-grid,
         .stats,
+        .home-highlights,
+        .module-grid,
         .two-cols,
         .architecture-lanes,
         .architecture-flow,
         .architecture-principles,
         .chart-kpis {
           grid-template-columns: 1fr;
+        }
+
+        .home-hero {
+          background-position: 38% center;
+        }
+
+        .home-hero-content {
+          padding: 34px;
         }
 
         .shell {
@@ -1074,6 +1208,19 @@
           padding: 18px;
         }
 
+        .home-hero {
+          min-height: 520px;
+        }
+
+        .home-hero-content {
+          align-content: end;
+          padding: 24px;
+        }
+
+        .home-hero-content h1 {
+          font-size: 3.2rem;
+        }
+
         .topbar {
           flex-direction: column;
         }
@@ -1090,8 +1237,8 @@
     <script src="config.js"></script>
     <script>
       const BUILD_INFO = {
-        version: window.LIPECARE_APP_VERSION || "0.1.14",
-        deployNumber: window.LIPECARE_DEPLOY_NUMBER || "18",
+        version: window.LIPECARE_APP_VERSION || "0.1.15",
+        deployNumber: window.LIPECARE_DEPLOY_NUMBER || "19",
         deploy: window.LIPECARE_DEPLOY_VERSION || "local",
         commit: window.LIPECARE_COMMIT_SHA || "sem-commit"
       };
@@ -1114,6 +1261,27 @@
           "Administrador": "Administrator",
           "Profissional": "Professional",
           "Paciente": "Patient",
+          "Home": "Home",
+          "LipeCare Home": "LipeCare Home",
+          "Cuidado clínico conectado.": "Connected clinical care.",
+          "Acesso rápido aos módulos centrais, indicadores assistenciais e ferramentas de acompanhamento do paciente.": "Fast access to core modules, care indicators, and patient follow-up tools.",
+          "Abrir dashboard": "Open dashboard",
+          "Ver pacientes": "View patients",
+          "Registrar sintomas": "Record symptoms",
+          "Alertas ativos": "Active alerts",
+          "Templates médicos": "Medical templates",
+          "Deploy publicado": "Published deploy",
+          "Módulos e atalhos": "Modules and shortcuts",
+          "Visão executiva de pacientes, sintomas, medidas e alertas.": "Executive view of patients, symptoms, measurements, and alerts.",
+          "Exames, retornos e pendências clínicas priorizadas.": "Prioritized exams, follow-ups, and clinical pending items.",
+          "Cadastro universal com campos personalizados por médico.": "Universal registry with custom fields by doctor.",
+          "Registro de dor, observações e evolução clínica.": "Pain, notes, and clinical progress records.",
+          "Peso, cintura, quadril e acompanhamento corporal.": "Weight, waist, hip, and body tracking.",
+          "Registros evolutivos preparados para storage privado.": "Progress records prepared for private storage.",
+          "Rastreabilidade de ações e eventos sensíveis.": "Traceability for sensitive actions and events.",
+          "Mapa macro dos módulos, conexões e regras do produto.": "Macro map of modules, connections, and product rules.",
+          "Entrada visual com hero, highlights e atalhos de módulos.": "Visual entry with hero, highlights, and module shortcuts.",
+          "Clínicas, médicos e instituições vinculadas ao tenant.": "Clinics, doctors, and institutions linked to the tenant.",
           "Dashboard": "Dashboard",
           "Alertas": "Alerts",
           "Gestao": "Management",
@@ -1219,6 +1387,27 @@
           "Administrador": "Administrador",
           "Profissional": "Profesional",
           "Paciente": "Paciente",
+          "Home": "Inicio",
+          "LipeCare Home": "Inicio LipeCare",
+          "Cuidado clínico conectado.": "Cuidado clínico conectado.",
+          "Acesso rápido aos módulos centrais, indicadores assistenciais e ferramentas de acompanhamento do paciente.": "Acceso rápido a módulos centrales, indicadores asistenciales y herramientas de seguimiento del paciente.",
+          "Abrir dashboard": "Abrir dashboard",
+          "Ver pacientes": "Ver pacientes",
+          "Registrar sintomas": "Registrar síntomas",
+          "Alertas ativos": "Alertas activos",
+          "Templates médicos": "Plantillas médicas",
+          "Deploy publicado": "Deploy publicado",
+          "Módulos e atalhos": "Módulos y accesos directos",
+          "Visão executiva de pacientes, sintomas, medidas e alertas.": "Vista ejecutiva de pacientes, síntomas, medidas y alertas.",
+          "Exames, retornos e pendências clínicas priorizadas.": "Exámenes, retornos y pendientes clínicos priorizados.",
+          "Cadastro universal com campos personalizados por médico.": "Registro universal con campos personalizados por médico.",
+          "Registro de dor, observações e evolução clínica.": "Registro de dolor, observaciones y evolución clínica.",
+          "Peso, cintura, quadril e acompanhamento corporal.": "Peso, cintura, cadera y seguimiento corporal.",
+          "Registros evolutivos preparados para storage privado.": "Registros evolutivos preparados para almacenamiento privado.",
+          "Rastreabilidade de ações e eventos sensíveis.": "Trazabilidad de acciones y eventos sensibles.",
+          "Mapa macro dos módulos, conexões e regras do produto.": "Mapa macro de módulos, conexiones y reglas del producto.",
+          "Entrada visual com hero, highlights e atalhos de módulos.": "Entrada visual con hero, destacados y accesos a módulos.",
+          "Clínicas, médicos e instituições vinculadas ao tenant.": "Clínicas, médicos e instituciones vinculadas al tenant.",
           "Alertas": "Alertas",
           "Gestao": "Gestión",
           "Gestão": "Gestión",
@@ -1314,6 +1503,27 @@
           "Administrador": "管理者",
           "Profissional": "医療担当者",
           "Paciente": "患者",
+          "Home": "ホーム",
+          "LipeCare Home": "LipeCare ホーム",
+          "Cuidado clínico conectado.": "つながる臨床ケア。",
+          "Acesso rápido aos módulos centrais, indicadores assistenciais e ferramentas de acompanhamento do paciente.": "主要モジュール、ケア指標、患者フォローアップツールへの素早いアクセス。",
+          "Abrir dashboard": "ダッシュボードを開く",
+          "Ver pacientes": "患者を見る",
+          "Registrar sintomas": "症状を記録",
+          "Alertas ativos": "有効なアラート",
+          "Templates médicos": "医療テンプレート",
+          "Deploy publicado": "公開済みデプロイ",
+          "Módulos e atalhos": "モジュールとショートカット",
+          "Visão executiva de pacientes, sintomas, medidas e alertas.": "患者、症状、測定、アラートの概要ビュー。",
+          "Exames, retornos e pendências clínicas priorizadas.": "優先された検査、再診、臨床タスク。",
+          "Cadastro universal com campos personalizados por médico.": "医師ごとのカスタム項目を持つ共通登録。",
+          "Registro de dor, observações e evolução clínica.": "痛み、メモ、臨床経過の記録。",
+          "Peso, cintura, quadril e acompanhamento corporal.": "体重、ウエスト、ヒップ、身体変化の追跡。",
+          "Registros evolutivos preparados para storage privado.": "非公開ストレージ向けの経過記録。",
+          "Rastreabilidade de ações e eventos sensíveis.": "重要な操作とイベントの追跡。",
+          "Mapa macro dos módulos, conexões e regras do produto.": "モジュール、接続、製品ルールの全体マップ。",
+          "Entrada visual com hero, highlights e atalhos de módulos.": "ヒーロー、ハイライト、モジュールショートカットを備えた入口。",
+          "Clínicas, médicos e instituições vinculadas ao tenant.": "テナントに紐づくクリニック、医師、機関。",
           "Pacientes": "患者",
           "Sintomas": "症状",
           "Medidas": "測定",
@@ -1403,6 +1613,27 @@
           "Administrador": "Administrator",
           "Profissional": "Fachkraft",
           "Paciente": "Patient",
+          "Home": "Home",
+          "LipeCare Home": "LipeCare Home",
+          "Cuidado clínico conectado.": "Vernetzte klinische Betreuung.",
+          "Acesso rápido aos módulos centrais, indicadores assistenciais e ferramentas de acompanhamento do paciente.": "Schneller Zugriff auf Kernmodule, Versorgungskennzahlen und Patientenbetreuung.",
+          "Abrir dashboard": "Dashboard öffnen",
+          "Ver pacientes": "Patienten ansehen",
+          "Registrar sintomas": "Symptome erfassen",
+          "Alertas ativos": "Aktive Warnungen",
+          "Templates médicos": "Medizinische Vorlagen",
+          "Deploy publicado": "Veröffentlichter Deploy",
+          "Módulos e atalhos": "Module und Kurzbefehle",
+          "Visão executiva de pacientes, sintomas, medidas e alertas.": "Übersicht über Patienten, Symptome, Messungen und Warnungen.",
+          "Exames, retornos e pendências clínicas priorizadas.": "Priorisierte Untersuchungen, Rückkehrtermine und klinische Aufgaben.",
+          "Cadastro universal com campos personalizados por médico.": "Universelles Register mit benutzerdefinierten Feldern pro Arzt.",
+          "Registro de dor, observações e evolução clínica.": "Dokumentation von Schmerz, Notizen und klinischem Verlauf.",
+          "Peso, cintura, quadril e acompanhamento corporal.": "Gewicht, Taille, Hüfte und Körperverlauf.",
+          "Registros evolutivos preparados para storage privado.": "Verlaufsdaten für privaten Speicher vorbereitet.",
+          "Rastreabilidade de ações e eventos sensíveis.": "Nachverfolgbarkeit sensibler Aktionen und Ereignisse.",
+          "Mapa macro dos módulos, conexões e regras do produto.": "Makrokarte der Module, Verbindungen und Produktregeln.",
+          "Entrada visual com hero, highlights e atalhos de módulos.": "Visueller Einstieg mit Hero, Highlights und Modul-Kurzbefehlen.",
+          "Clínicas, médicos e instituições vinculadas ao tenant.": "Kliniken, Ärzte und Institutionen des Tenants.",
           "Pacientes": "Patienten",
           "Sintomas": "Symptome",
           "Medidas": "Messungen",
@@ -1515,7 +1746,7 @@
 
       const INITIAL_STATE = {
         selectedPatientId: "p-001",
-        activeView: "dashboard",
+        activeView: "home",
         patients: [
           {
             id: "p-001",
@@ -2157,13 +2388,14 @@
       }
 
       function allowedViews(role) {
-        if (role === "PATIENT") return ["dashboard", "symptoms", "measurements", "photos", "architecture"];
-        if (role === "ADMIN") return ["dashboard", "alerts", "admin", "patients", "symptoms", "measurements", "photos", "audit", "architecture"];
-        return ["dashboard", "alerts", "patients", "symptoms", "measurements", "photos", "audit", "architecture"];
+        if (role === "PATIENT") return ["home", "dashboard", "symptoms", "measurements", "photos", "architecture"];
+        if (role === "ADMIN") return ["home", "dashboard", "alerts", "admin", "patients", "symptoms", "measurements", "photos", "audit", "architecture"];
+        return ["home", "dashboard", "alerts", "patients", "symptoms", "measurements", "photos", "audit", "architecture"];
       }
 
       function viewTitle(view) {
         return {
+          home: "Home",
           dashboard: "Dashboard",
           patients: "Pacientes",
           symptoms: "Sintomas",
@@ -2178,6 +2410,7 @@
 
       function renderView(state, session) {
         return {
+          home: renderHome,
           dashboard: renderDashboard,
           patients: renderPatients,
           symptoms: renderSymptoms,
@@ -2243,6 +2476,98 @@
             <span>deploy <b>#${BUILD_INFO.deployNumber}</b></span>
             <span>commit <b>${shortCommit(BUILD_INFO.commit)}</b></span>
           </div>
+        `;
+      }
+
+      function renderModuleIcon(icon) {
+        const icons = {
+          dashboard: '<path d="M4 13h6V4H4v9Zm10 7h6V4h-6v16ZM4 20h6v-4H4v4Z"/>',
+          alerts: '<path d="M12 3 2 20h20L12 3Zm0 6v5m0 3h.01"/>',
+          patients: '<path d="M16 11a4 4 0 1 0-8 0m12 9a8 8 0 1 0-16 0m15-12v6m3-3h-6"/>',
+          symptoms: '<path d="M3 13h4l3-8 4 14 3-6h4"/>',
+          measurements: '<path d="M4 19V5m0 14h16M8 16V9m4 7V6m4 10v-4"/>',
+          photos: '<path d="M4 7h4l2-2h4l2 2h4v12H4V7Zm8 9a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"/>',
+          audit: '<path d="M8 4h8l3 3v13H5V4h3Zm2 6h6m-6 4h6m-6 4h3"/>',
+          architecture: '<path d="M12 4v4m0 8v4M4 12h4m8 0h4M7 7l3 3m4 4 3 3m0-10-3 3m-4 4-3 3"/>',
+          admin: '<path d="M12 3 4 7v6c0 4 3 7 8 8 5-1 8-4 8-8V7l-8-4Zm-3 9 2 2 4-5"/>'
+        };
+
+        return `
+          <span class="module-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              ${icons[icon] ?? icons.dashboard}
+            </svg>
+          </span>
+        `;
+      }
+
+      function homeModulesForSession(session) {
+        const modules = [
+          { view: "dashboard", icon: "dashboard", title: "Dashboard", detail: "Visão executiva de pacientes, sintomas, medidas e alertas." },
+          { view: "alerts", icon: "alerts", title: "Alertas", detail: "Exames, retornos e pendências clínicas priorizadas." },
+          { view: "patients", icon: "patients", title: "Pacientes", detail: "Cadastro universal com campos personalizados por médico." },
+          { view: "symptoms", icon: "symptoms", title: "Sintomas", detail: "Registro de dor, observações e evolução clínica." },
+          { view: "measurements", icon: "measurements", title: "Medidas", detail: "Peso, cintura, quadril e acompanhamento corporal." },
+          { view: "photos", icon: "photos", title: "Fotos", detail: "Registros evolutivos preparados para storage privado." },
+          { view: "audit", icon: "audit", title: "Auditoria", detail: "Rastreabilidade de ações e eventos sensíveis." },
+          { view: "architecture", icon: "architecture", title: "Arquitetura do sistema", detail: "Mapa macro dos módulos, conexões e regras do produto." }
+        ];
+
+        if (session.role === "PATIENT") {
+          return modules.filter((module) => ["dashboard", "symptoms", "measurements", "photos", "architecture"].includes(module.view));
+        }
+
+        if (session.role === "ADMIN") {
+          return [
+            ...modules.slice(0, 3),
+            { view: "admin", icon: "admin", title: "Gestão", detail: "Clínicas, médicos e instituições vinculadas ao tenant." },
+            ...modules.slice(3)
+          ];
+        }
+
+        return modules;
+      }
+
+      function renderHome(state, session) {
+        const patients = scopedPatients(state, session);
+        const openAlerts = [...state.examAlerts, ...state.returnAlerts].filter((alert) => alert.status !== "Resolvido").length;
+        const templates = customTemplatesForDoctor(state, tenantIdForSession(session), doctorIdForSession(session)).length;
+        const modules = homeModulesForSession(session);
+        const secondaryView = modules.some((module) => module.view === "patients") ? "patients" : "symptoms";
+        const secondaryLabel = secondaryView === "patients" ? "Ver pacientes" : "Registrar sintomas";
+
+        return `
+          <section class="home-hero">
+            <div class="home-hero-content">
+              <p class="eyebrow">LipeCare Home</p>
+              <h1>Cuidado clínico conectado.</h1>
+              <p class="muted">Acesso rápido aos módulos centrais, indicadores assistenciais e ferramentas de acompanhamento do paciente.</p>
+              <div class="home-actions">
+                <button class="btn" type="button" data-view="dashboard">Abrir dashboard</button>
+                <button class="btn secondary" type="button" data-view="${secondaryView}">${secondaryLabel}</button>
+              </div>
+            </div>
+          </section>
+
+          <section class="home-highlights">
+            <div class="home-highlight"><strong>${patients.length}</strong><span>Pacientes acompanhados</span></div>
+            <div class="home-highlight"><strong>${openAlerts}</strong><span>Alertas ativos</span></div>
+            <div class="home-highlight"><strong>${templates}</strong><span>Templates médicos</span></div>
+            <div class="home-highlight"><strong>#${BUILD_INFO.deployNumber}</strong><span>Deploy publicado</span></div>
+          </section>
+
+          <section class="card section" style="margin-top: 16px;">
+            <h2>Módulos e atalhos</h2>
+            <div class="module-grid">
+              ${modules.map((module) => `
+                <button class="module-thumb" type="button" data-view="${module.view}">
+                  ${renderModuleIcon(module.icon)}
+                  <strong>${module.title}</strong>
+                  <span>${module.detail}</span>
+                </button>
+              `).join("")}
+            </div>
+          </section>
         `;
       }
 
@@ -2846,10 +3171,11 @@
 
               <div class="architecture-flow" aria-label="Fluxo principal do sistema">
                 ${renderFlowStep("1", "Login e perfil", "Define tenant, papel e escopo de permissão.")}
-                ${renderFlowStep("2", "Dashboard", "Resume pacientes, alertas, check-ins e sinais clínicos.")}
-                ${renderFlowStep("3", "Cadastro de pacientes", "Dados essenciais universais + vínculo médico/tenant.")}
-                ${renderFlowStep("4", "Templates do médico", "Campos livres que viram padrão para pacientes atuais e futuros.")}
-                ${renderFlowStep("5", "Auditoria e deploy", "Rastreia eventos, versão, deploy e commit publicados.")}
+                ${renderFlowStep("2", "Home", "Entrada visual com hero, highlights e atalhos de módulos.")}
+                ${renderFlowStep("3", "Dashboard", "Resume pacientes, alertas, check-ins e sinais clínicos.")}
+                ${renderFlowStep("4", "Cadastro de pacientes", "Dados essenciais universais + vínculo médico/tenant.")}
+                ${renderFlowStep("5", "Templates do médico", "Campos livres que viram padrão para pacientes atuais e futuros.")}
+                ${renderFlowStep("6", "Auditoria e deploy", "Rastreia eventos, versão, deploy e commit publicados.")}
               </div>
 
               <div class="architecture-lanes">
