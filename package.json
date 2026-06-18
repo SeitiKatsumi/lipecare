@@ -1,7 +1,7 @@
 {
   "name": "lipecare",
-  "version": "0.1.9",
-  "deployNumber": 13,
+  "version": "0.1.10",
+  "deployNumber": 14,
   "private": true,
   "description": "LipeCare monorepo for clinical patient monitoring.",
   "workspaces": [
