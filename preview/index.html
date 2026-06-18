@@ -664,6 +664,136 @@
         font-weight: 800;
       }
 
+      .architecture-shell {
+        display: grid;
+        gap: 16px;
+      }
+
+      .architecture-map {
+        background:
+          radial-gradient(circle at 12% 20%, rgb(77 245 212 / 18%), transparent 22rem),
+          radial-gradient(circle at 85% 28%, rgb(244 201 107 / 13%), transparent 20rem),
+          linear-gradient(135deg, rgb(255 255 255 / 7%), rgb(255 255 255 / 2%));
+        border: 1px solid rgb(77 245 212 / 22%);
+        border-radius: 8px;
+        display: grid;
+        gap: 18px;
+        overflow: hidden;
+        padding: 18px;
+        position: relative;
+      }
+
+      .architecture-map::before {
+        background:
+          linear-gradient(90deg, rgb(77 245 212 / 10%) 1px, transparent 1px),
+          linear-gradient(rgb(77 245 212 / 8%) 1px, transparent 1px);
+        background-size: 42px 42px;
+        content: "";
+        inset: 0;
+        opacity: 0.55;
+        pointer-events: none;
+        position: absolute;
+      }
+
+      .architecture-map > * {
+        position: relative;
+        z-index: 1;
+      }
+
+      .architecture-core {
+        align-items: center;
+        background:
+          linear-gradient(135deg, rgb(77 245 212 / 22%), rgb(244 201 107 / 10%)),
+          rgb(6 9 13 / 72%);
+        border: 1px solid rgb(77 245 212 / 42%);
+        border-radius: 8px;
+        box-shadow: 0 0 42px rgb(77 245 212 / 22%);
+        display: grid;
+        gap: 8px;
+        justify-items: center;
+        margin: 0 auto;
+        max-width: 520px;
+        padding: 18px;
+        text-align: center;
+      }
+
+      .architecture-core strong {
+        color: var(--primary);
+        font-size: 1.4rem;
+      }
+
+      .architecture-lanes {
+        display: grid;
+        gap: 14px;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .architecture-lane {
+        background: rgb(6 9 13 / 64%);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        display: grid;
+        gap: 10px;
+        padding: 14px;
+      }
+
+      .architecture-lane h2 {
+        color: var(--primary);
+        font-size: 0.98rem;
+        margin: 0;
+      }
+
+      .architecture-node {
+        background:
+          linear-gradient(135deg, rgb(255 255 255 / 8%), rgb(255 255 255 / 3%)),
+          rgb(12 18 25 / 88%);
+        border: 1px solid rgb(77 245 212 / 18%);
+        border-radius: 8px;
+        padding: 12px;
+      }
+
+      .architecture-node strong {
+        display: block;
+        margin-bottom: 6px;
+      }
+
+      .architecture-node span {
+        color: var(--muted);
+        display: block;
+        font-size: 0.82rem;
+        line-height: 1.45;
+      }
+
+      .architecture-flow {
+        display: grid;
+        gap: 10px;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+      }
+
+      .flow-step {
+        background: rgb(77 245 212 / 8%);
+        border: 1px solid rgb(77 245 212 / 24%);
+        border-radius: 8px;
+        padding: 12px;
+        position: relative;
+      }
+
+      .flow-step:not(:last-child)::after {
+        color: var(--primary);
+        content: ">";
+        font-weight: 900;
+        position: absolute;
+        right: -11px;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+
+      .architecture-principles {
+        display: grid;
+        gap: 10px;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
       .future-chart-card {
         grid-column: 1 / -1;
         overflow: hidden;
@@ -792,6 +922,9 @@
         .content-grid,
         .stats,
         .two-cols,
+        .architecture-lanes,
+        .architecture-flow,
+        .architecture-principles,
         .chart-kpis {
           grid-template-columns: 1fr;
         }
@@ -841,6 +974,13 @@
 
         .mobile-brand .deploy-meta {
           display: none;
+        }
+
+        .flow-step:not(:last-child)::after {
+          bottom: -18px;
+          right: 50%;
+          top: auto;
+          transform: translateX(50%) rotate(90deg);
         }
 
         .menu-toggle {
@@ -934,8 +1074,8 @@
     <script src="config.js"></script>
     <script>
       const BUILD_INFO = {
-        version: window.LIPECARE_APP_VERSION || "0.1.5",
-        deployNumber: window.LIPECARE_DEPLOY_NUMBER || "9",
+        version: window.LIPECARE_APP_VERSION || "0.1.6",
+        deployNumber: window.LIPECARE_DEPLOY_NUMBER || "10",
         deploy: window.LIPECARE_DEPLOY_VERSION || "local",
         commit: window.LIPECARE_COMMIT_SHA || "sem-commit"
       };
@@ -1521,9 +1661,9 @@
       }
 
       function allowedViews(role) {
-        if (role === "PATIENT") return ["dashboard", "symptoms", "measurements", "photos"];
-        if (role === "ADMIN") return ["dashboard", "alerts", "admin", "patients", "symptoms", "measurements", "photos", "audit"];
-        return ["dashboard", "alerts", "patients", "symptoms", "measurements", "photos", "audit"];
+        if (role === "PATIENT") return ["dashboard", "symptoms", "measurements", "photos", "architecture"];
+        if (role === "ADMIN") return ["dashboard", "alerts", "admin", "patients", "symptoms", "measurements", "photos", "audit", "architecture"];
+        return ["dashboard", "alerts", "patients", "symptoms", "measurements", "photos", "audit", "architecture"];
       }
 
       function viewTitle(view) {
@@ -1535,7 +1675,8 @@
           photos: "Fotos",
           admin: "Gestao",
           alerts: "Alertas",
-          audit: "Auditoria"
+          audit: "Auditoria",
+          architecture: "Arquitetura do sistema"
         }[view];
       }
 
@@ -1548,7 +1689,8 @@
           photos: renderPhotos,
           admin: renderAdminManagement,
           alerts: renderAlerts,
-          audit: renderAudit
+          audit: renderAudit,
+          architecture: renderSystemArchitecture
         }[state.activeView](state, session);
       }
 
@@ -2183,6 +2325,90 @@
               </div>
             </article>
           </section>
+        `;
+      }
+
+      function renderSystemArchitecture(state, session) {
+        const tenantId = tenantIdForSession(session);
+        const doctorId = doctorIdForSession(session);
+        const patients = scopedPatients(state, session);
+        const activeTemplates = customTemplatesForDoctor(state, tenantId, doctorId);
+        const totalCustomValues = (state.customFieldValues ?? []).filter((value) =>
+          (value.tenantId ?? "tenant-lipecare") === tenantId &&
+          value.doctorId === doctorId
+        ).length;
+
+        return `
+          ${renderHeader("Arquitetura do sistema", "Mapa mental operacional dos modulos, dados e conexoes do CRM medico.", "Macro visao")}
+          <section class="architecture-shell">
+            <article class="architecture-map">
+              <div class="architecture-core">
+                <span class="badge">Tenant ${tenantId}</span>
+                <strong>LipeCare CRM Medico</strong>
+                <span class="muted">Camada central multi-tenant: pacientes, medicos, clinicas, templates, auditoria e operacao clinica.</span>
+              </div>
+
+              <div class="architecture-flow" aria-label="Fluxo principal do sistema">
+                ${renderFlowStep("1", "Login e perfil", "Define tenant, papel e escopo de permissao.")}
+                ${renderFlowStep("2", "Dashboard", "Resume pacientes, alertas, check-ins e sinais clinicos.")}
+                ${renderFlowStep("3", "Cadastro de pacientes", "Dados essenciais universais + vinculo medico/tenant.")}
+                ${renderFlowStep("4", "Templates do medico", "Campos livres que viram padrao para pacientes atuais e futuros.")}
+                ${renderFlowStep("5", "Auditoria e deploy", "Rastreia eventos, versao, deploy e commit publicados.")}
+              </div>
+
+              <div class="architecture-lanes">
+                <div class="architecture-lane">
+                  <h2>Identidade e acesso</h2>
+                  ${renderArchitectureNode("Sessoes", "Admin, medico e paciente com visoes diferentes.")}
+                  ${renderArchitectureNode("Multi-tenant", "Todos os pacientes e templates filtrados por tenantId.")}
+                  ${renderArchitectureNode("Permissoes", "Medico ve seus pacientes/templates; admin ve o tenant.")}
+                </div>
+                <div class="architecture-lane">
+                  <h2>Cadastro clinico</h2>
+                  ${renderArchitectureNode("Dados essenciais", "CPF, RG, nascimento, contato, endereco, convenio e observacoes.")}
+                  ${renderArchitectureNode("Dados personalizados", `${activeTemplates.length} template(s) ativo(s) para este medico.`)}
+                  ${renderArchitectureNode("Valores por paciente", `${totalCustomValues} valor(es) customizados salvos no escopo atual.`)}
+                </div>
+                <div class="architecture-lane">
+                  <h2>Operacao assistencial</h2>
+                  ${renderArchitectureNode("Sintomas", "Dor, observacoes e historico de sintomas.")}
+                  ${renderArchitectureNode("Medidas", "Peso, cintura, quadril e evolucao corporal.")}
+                  ${renderArchitectureNode("Fotos", "Registro evolutivo preparado para storage privado.")}
+                </div>
+                <div class="architecture-lane">
+                  <h2>Governanca e deploy</h2>
+                  ${renderArchitectureNode("Alertas", "Exames, retornos e pendencias por paciente.")}
+                  ${renderArchitectureNode("Auditoria", "Eventos de consulta, criacao e alteracao de dados sensiveis.")}
+                  ${renderArchitectureNode("CapRover/GitHub", `v${BUILD_INFO.version}, deploy #${BUILD_INFO.deployNumber}, commit ${shortCommit(BUILD_INFO.commit)}.`)}
+                </div>
+              </div>
+
+              <div class="architecture-principles">
+                ${renderArchitectureNode("Regra de ouro", "Todo novo modulo deve entrar neste mapa macro.")}
+                ${renderArchitectureNode("Escalabilidade", "Templates personalizados ficam separados dos dados essenciais.")}
+                ${renderArchitectureNode("LGPD", "Dados sensiveis exigem tenantId, permissao e auditoria.")}
+              </div>
+            </article>
+          </section>
+        `;
+      }
+
+      function renderFlowStep(number, title, detail) {
+        return `
+          <div class="flow-step">
+            <span class="pill ok">${number}</span>
+            <strong>${title}</strong>
+            <p class="muted">${detail}</p>
+          </div>
+        `;
+      }
+
+      function renderArchitectureNode(title, detail) {
+        return `
+          <div class="architecture-node">
+            <strong>${title}</strong>
+            <span>${detail}</span>
+          </div>
         `;
       }
 

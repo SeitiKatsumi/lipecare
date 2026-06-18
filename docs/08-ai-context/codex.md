@@ -18,6 +18,7 @@ O Codex pode implementar, revisar, documentar, diagnosticar e orientar operacao,
 - Preservar `apps/portal` como portal local na porta `3000`.
 - Nunca colocar uma aplicacao de produto nova na porta local `3000`; adicionar link e porta fixa no portal.
 - Ao criar nova aplicacao, atualizar `apps/portal/src/app/app-registry.ts` e `docs/09-portal-e-portas.md`.
+- Ao criar ou alterar modulo, fluxo, integracao, permissao ou entidade relevante, atualizar tambem a tela `Arquitetura do sistema` no preview para manter a visao macro do produto.
 
 ## Stack Alvo
 
