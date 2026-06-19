@@ -630,9 +630,9 @@
       .module-icon {
         align-items: center;
         background: none;
-        border: 1px solid rgb(255 255 255 / 22%);
+        border: 1px solid color-mix(in srgb, var(--primary) 38%, var(--line));
         border-radius: 8px;
-        color: var(--accent);
+        color: var(--primary);
         display: inline-flex;
         height: 42px;
         justify-content: center;
@@ -2102,8 +2102,8 @@
     <script src="config.js"></script>
     <script>
       const BUILD_INFO = {
-        version: window.LIPECARE_APP_VERSION || "0.1.20",
-        deployNumber: window.LIPECARE_DEPLOY_NUMBER || "24",
+        version: window.LIPECARE_APP_VERSION || "0.1.21",
+        deployNumber: window.LIPECARE_DEPLOY_NUMBER || "25",
         deploy: window.LIPECARE_DEPLOY_VERSION || "local",
         commit: window.LIPECARE_COMMIT_SHA || "sem-commit"
       };
@@ -2680,6 +2680,8 @@
         heroImageId: "classic",
         heroImagePosition: "center",
         accentColor: "#4df5d4",
+        secondaryColor: "#f4c96b",
+        logoUrl: "assets/lipecare-logo.png",
         customHeroImages: [],
         patients: [
           {
@@ -3010,6 +3012,8 @@
           heroImageId: parsed.heroImageId ?? INITIAL_STATE.heroImageId,
           heroImagePosition: parsed.heroImagePosition ?? INITIAL_STATE.heroImagePosition,
           accentColor: parsed.accentColor ?? INITIAL_STATE.accentColor,
+          secondaryColor: parsed.secondaryColor ?? INITIAL_STATE.secondaryColor,
+          logoUrl: parsed.logoUrl ?? INITIAL_STATE.logoUrl,
           activeModal: parsed.activeModal ?? null,
           modalStep: Number(parsed.modalStep ?? 0)
         };
@@ -3031,7 +3035,8 @@
         const selected = selectedHeroImage(state);
         const position = HERO_POSITIONS[state.heroImagePosition] ? state.heroImagePosition : "center";
         const accentColor = state.accentColor || INITIAL_STATE.accentColor;
-        return `--hero-image: url('${selected.url}'); --hero-position: ${position}; --primary: ${accentColor}; --primary-dark: ${accentColor}; --cyan-soft: ${accentColor};`;
+        const secondaryColor = state.secondaryColor || INITIAL_STATE.secondaryColor;
+        return `--hero-image: url('${selected.url}'); --hero-position: ${position}; --primary: ${accentColor}; --primary-dark: ${accentColor}; --cyan-soft: ${accentColor}; --accent: ${secondaryColor};`;
       }
 
       function isSidebarHidden() {
@@ -3531,9 +3536,11 @@
       }
 
       function renderLogoSlot() {
+        const state = readState();
+        const logoUrl = state.logoUrl || INITIAL_STATE.logoUrl;
         return `
           <div class="logo-slot" aria-label="Logo LipeCare">
-            <img src="assets/lipecare-logo.png" alt="LipeCare" />
+            <img src="${logoUrl}" alt="LipeCare" />
           </div>
         `;
       }
@@ -4022,13 +4029,30 @@
               </div>
             </article>
             <article class="card section assistant-card">
-              <h2>Tema e cor de destaque</h2>
-              <form id="accent-form" class="form">
-                <label>Cor principal
-                  <input name="accentColor" type="color" value="${state.accentColor || INITIAL_STATE.accentColor}" />
+              <h2>Identidade visual</h2>
+              <form id="branding-form" class="form">
+                <div class="image-bank-actions">
+                  <div>
+                    <strong>Logo atual</strong>
+                    <p class="muted">Aplicado no menu lateral e topo mobile.</p>
+                  </div>
+                  <div class="logo-slot" aria-label="Logo atual">
+                    <img src="${state.logoUrl || INITIAL_STATE.logoUrl}" alt="Logo atual" />
+                  </div>
+                </div>
+                <label>Novo logo
+                  <input name="logoFile" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" />
                 </label>
-                <div class="alert">A base visual permanece em tons de cinza. Esta cor controla apenas destaques, botões, linhas ativas e estados selecionados.</div>
-                <button class="btn" type="submit">Salvar cor de destaque</button>
+                <div class="two-cols">
+                  <label>Cor principal
+                    <input name="accentColor" type="color" value="${state.accentColor || INITIAL_STATE.accentColor}" />
+                  </label>
+                  <label>Cor secundaria
+                    <input name="secondaryColor" type="color" value="${state.secondaryColor || INITIAL_STATE.secondaryColor}" />
+                  </label>
+                </div>
+                <div class="alert">A base visual permanece em tons de cinza. A cor principal controla icones, botoes, linhas ativas e estados selecionados.</div>
+                <button class="btn" type="submit">Salvar identidade visual</button>
               </form>
             </article>
           </section>
@@ -5172,22 +5196,35 @@
           });
         }
 
-        const accentForm = document.getElementById("accent-form");
-        if (accentForm) {
-          accentForm.addEventListener("submit", (event) => {
+        const brandingForm = document.getElementById("branding-form");
+        if (brandingForm) {
+          brandingForm.addEventListener("submit", (event) => {
             event.preventDefault();
             const data = new FormData(event.currentTarget);
             const state = readState();
-            state.accentColor = String(data.get("accentColor") || INITIAL_STATE.accentColor);
-            state.auditLogs.unshift({
-              id: crypto.randomUUID(),
-              action: "accent_color_changed",
-              actor: session.name,
-              resource: state.accentColor,
-              date: new Date().toLocaleString("pt-BR")
-            });
-            writeState(state);
-            render();
+            const logoFile = data.get("logoFile");
+            const saveBranding = (logoUrl) => {
+              state.accentColor = String(data.get("accentColor") || INITIAL_STATE.accentColor);
+              state.secondaryColor = String(data.get("secondaryColor") || INITIAL_STATE.secondaryColor);
+              if (logoUrl) state.logoUrl = logoUrl;
+              state.auditLogs.unshift({
+                id: crypto.randomUUID(),
+                action: "visual_identity_changed",
+                actor: session.name,
+                resource: `${state.accentColor} / ${state.secondaryColor}`,
+                date: new Date().toLocaleString("pt-BR")
+              });
+              writeState(state);
+              render();
+            };
+
+            if (logoFile && logoFile.size) {
+              const reader = new FileReader();
+              reader.onload = () => saveBranding(String(reader.result));
+              reader.readAsDataURL(logoFile);
+            } else {
+              saveBranding();
+            }
           });
         }
 
