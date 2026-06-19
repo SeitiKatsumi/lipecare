@@ -407,11 +407,14 @@
       }
 
       .nav button {
+        align-items: center;
         background: none;
         border: 1px solid transparent;
         border-radius: 6px;
         color: var(--muted);
         cursor: pointer;
+        display: flex;
+        gap: 10px;
         padding: 10px 12px;
         text-align: left;
         transition:
@@ -422,7 +425,7 @@
 
       .nav button.active {
         background: none;
-        border-color: rgb(77 245 212 / 42%);
+        border-color: color-mix(in srgb, var(--primary) 48%, transparent);
         color: var(--primary);
         box-shadow: inset 0 1px 0 rgb(255 255 255 / 14%);
         font-weight: 800;
@@ -467,13 +470,17 @@
       }
 
       .nav-details summary {
+        align-items: center;
         background: none;
         border: 1px solid transparent;
         border-radius: 6px;
         color: rgb(255 255 255 / 72%);
         cursor: pointer;
+        display: flex;
         font-size: 0.72rem;
         font-weight: 900;
+        gap: 9px;
+        justify-content: space-between;
         list-style: none;
         padding: 11px 12px;
         text-transform: uppercase;
@@ -485,7 +492,8 @@
 
       .nav-details summary::after {
         content: "+";
-        float: right;
+        color: var(--primary);
+        margin-left: auto;
       }
 
       .nav-details[open] summary::after {
@@ -494,6 +502,27 @@
 
       .nav-details:not([open]) .nav-submenu {
         display: none;
+      }
+
+      .nav-label {
+        flex: 1;
+      }
+
+      .nav-icon {
+        align-items: center;
+        border: 1px solid color-mix(in srgb, var(--primary) 38%, var(--line));
+        border-radius: 7px;
+        color: var(--primary);
+        display: inline-flex;
+        flex: 0 0 auto;
+        height: 26px;
+        justify-content: center;
+        width: 26px;
+      }
+
+      .nav-icon svg {
+        height: 15px;
+        width: 15px;
       }
 
       .user-box {
@@ -584,12 +613,16 @@
       }
 
       .home-highlight {
+        align-items: center;
         background:
           none,
           rgb(18 27 36 / 74%);
         border: 1px solid rgb(255 255 255 / 18%);
         border-radius: 8px;
         box-shadow: inset 0 1px 0 rgb(255 255 255 / 12%);
+        display: grid;
+        gap: 12px;
+        grid-template-columns: auto 1fr;
         padding: 16px;
       }
 
@@ -622,15 +655,15 @@
       }
 
       .module-thumb:hover {
-        border-color: rgb(255 255 255 / 34%);
-        box-shadow: 0 18px 50px rgb(77 245 212 / 12%);
+        border-color: color-mix(in srgb, var(--primary) 58%, var(--line));
+        box-shadow: 0 18px 50px color-mix(in srgb, var(--primary) 14%, transparent);
         transform: translateY(-2px);
       }
 
       .module-icon {
         align-items: center;
-        background: none;
-        border: 1px solid color-mix(in srgb, var(--primary) 38%, var(--line));
+        background: color-mix(in srgb, var(--primary) 8%, transparent);
+        border: 1px solid color-mix(in srgb, var(--primary) 52%, var(--line));
         border-radius: 8px;
         color: var(--primary);
         display: inline-flex;
@@ -642,6 +675,36 @@
       .module-icon svg {
         height: 22px;
         width: 22px;
+      }
+
+      .module-thumb header {
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .quest-badge {
+        border: 1px solid color-mix(in srgb, var(--primary) 42%, var(--line));
+        border-radius: 999px;
+        color: var(--primary);
+        font-size: 0.72rem;
+        font-weight: 900;
+        padding: 5px 8px;
+        text-transform: uppercase;
+      }
+
+      .module-progress {
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        height: 8px;
+        overflow: hidden;
+      }
+
+      .module-progress span {
+        background: var(--primary);
+        display: block;
+        height: 100%;
+        width: var(--progress, 62%);
       }
 
       .module-thumb strong {
@@ -902,12 +965,30 @@
         border: 1px solid var(--line);
         border-radius: 8px;
         color: var(--muted);
+        display: grid;
+        gap: 8px;
         padding: 10px;
       }
 
       .wizard-step.active {
         border-color: color-mix(in srgb, var(--primary) 70%, transparent);
         color: var(--text);
+      }
+
+      .wizard-step header {
+        align-items: center;
+        display: flex;
+        gap: 8px;
+      }
+
+      .wizard-step .module-icon {
+        height: 32px;
+        width: 32px;
+      }
+
+      .wizard-step .module-icon svg {
+        height: 17px;
+        width: 17px;
       }
 
       .clinical-timeline {
@@ -2102,8 +2183,8 @@
     <script src="config.js"></script>
     <script>
       const BUILD_INFO = {
-        version: window.LIPECARE_APP_VERSION || "0.1.21",
-        deployNumber: window.LIPECARE_DEPLOY_NUMBER || "25",
+        version: window.LIPECARE_APP_VERSION || "0.1.22",
+        deployNumber: window.LIPECARE_DEPLOY_NUMBER || "26",
         deploy: window.LIPECARE_DEPLOY_VERSION || "local",
         commit: window.LIPECARE_COMMIT_SHA || "sem-commit"
       };
@@ -3407,48 +3488,48 @@
       function renderNavigation(state, session, views) {
         const can = (view) => views.includes(view);
         const modules = [
-          { view: "timeline", label: "Linha do tempo" },
-          { view: "symptoms", label: "Sintomas" },
-          { view: "measurements", label: "Medidas" },
-          { view: "tasks", label: "Tarefas" }
+          { view: "timeline", label: "Linha do tempo", icon: "timeline" },
+          { view: "symptoms", label: "Sintomas", icon: "symptoms" },
+          { view: "measurements", label: "Medidas", icon: "measurements" },
+          { view: "tasks", label: "Tarefas", icon: "tasks" }
         ].filter((item) => can(item.view));
         const settings = [
-          { view: "language", label: "Idioma" },
-          { view: "imageBank", label: "Banco de imagens" },
-          { view: "customFields", label: "Campos personalizados" },
-          { view: "institutions", label: "Instituições" },
-          { view: "doctors", label: "Médicos" },
-          { view: "patients", label: "Pacientes" },
-          { view: "audit", label: "Auditoria" },
-          { view: "architecture", label: "Arquitetura" },
-          { view: "admin", label: "Gestão" }
+          { view: "language", label: "Idioma", icon: "language" },
+          { view: "imageBank", label: "Banco de imagens", icon: "images" },
+          { view: "customFields", label: "Campos personalizados", icon: "customFields" },
+          { view: "institutions", label: "Instituicoes", icon: "institutions" },
+          { view: "doctors", label: "Medicos", icon: "doctors" },
+          { view: "patients", label: "Pacientes", icon: "patients" },
+          { view: "audit", label: "Auditoria", icon: "audit" },
+          { view: "architecture", label: "Arquitetura", icon: "architecture" },
+          { view: "admin", label: "Gestao", icon: "admin" }
         ].filter((item) => can(item.view));
 
         return `
-          ${navButton("home", "Home", state.activeView, can)}
-          ${navButton("dashboard", "Meu Dashboard", state.activeView, can)}
+          ${navButton("home", "Home", state.activeView, can, "home")}
+          ${navButton("dashboard", "Meu Dashboard", state.activeView, can, "dashboard")}
           ${modules.length ? `
             <details class="nav-group nav-details">
-              <summary>Módulos</summary>
+              <summary>${renderNavIcon("timeline")}<span>Modulos</span></summary>
               <div class="nav-submenu">
-                ${modules.map((item) => navButton(item.view, item.label, state.activeView, can)).join("")}
+                ${modules.map((item) => navButton(item.view, item.label, state.activeView, can, item.icon)).join("")}
               </div>
             </details>
           ` : ""}
           ${settings.length ? `
             <details class="nav-group nav-details">
-              <summary>Configurações</summary>
+              <summary>${renderNavIcon("admin")}<span>Configuracoes</span></summary>
               <div class="nav-submenu">
-                ${settings.map((item) => navButton(item.view, item.label, state.activeView, can)).join("")}
+                ${settings.map((item) => navButton(item.view, item.label, state.activeView, can, item.icon)).join("")}
               </div>
             </details>
           ` : ""}
         `;
       }
 
-      function navButton(view, label, activeView, canAccess) {
+      function navButton(view, label, activeView, canAccess, icon = view) {
         if (!canAccess(view)) return "";
-        return `<button class="${activeView === view ? "active" : ""}" data-view="${view}">${label}</button>`;
+        return `<button class="${activeView === view ? "active" : ""}" data-view="${view}">${renderNavIcon(icon)}<span class="nav-label">${label}</span></button>`;
       }
 
       function allowedViews(role) {
@@ -3559,8 +3640,9 @@
         `;
       }
 
-      function renderModuleIcon(icon) {
+      function iconPath(icon) {
         const icons = {
+          home: '<path d="M4 11 12 4l8 7v9h-5v-6H9v6H4v-9Z"/>',
           dashboard: '<path d="M4 13h6V4H4v9Zm10 7h6V4h-6v16ZM4 20h6v-4H4v4Z"/>',
           alerts: '<path d="M12 3 2 20h20L12 3Zm0 6v5m0 3h.01"/>',
           timeline: '<path d="M4 6h16M7 3v6m10-6v6M5 10h14v10H5V10Zm3 4h.01m4 0h.01m4 0h.01M8 17h.01m4 0h.01"/>',
@@ -3575,16 +3657,22 @@
           photos: '<path d="M4 7h4l2-2h4l2 2h4v12H4V7Zm8 9a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"/>',
           audit: '<path d="M8 4h8l3 3v13H5V4h3Zm2 6h6m-6 4h6m-6 4h3"/>',
           architecture: '<path d="M12 4v4m0 8v4M4 12h4m8 0h4M7 7l3 3m4 4 3 3m0-10-3 3m-4 4-3 3"/>',
-          admin: '<path d="M12 3 4 7v6c0 4 3 7 8 8 5-1 8-4 8-8V7l-8-4Zm-3 9 2 2 4-5"/>'
+          admin: '<path d="M12 3 4 7v6c0 4 3 7 8 8 5-1 8-4 8-8V7l-8-4Zm-3 9 2 2 4-5"/>',
+          customFields: '<path d="M4 6h16M4 12h10M4 18h7m7-4v6m3-3h-6"/>'
         };
+        return icons[icon] ?? icons.dashboard;
+      }
 
-        return `
-          <span class="module-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              ${icons[icon] ?? icons.dashboard}
-            </svg>
-          </span>
-        `;
+      function renderIconSvg(icon) {
+        return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + iconPath(icon) + '</svg>';
+      }
+
+      function renderNavIcon(icon) {
+        return '<span class="nav-icon" aria-hidden="true">' + renderIconSvg(icon) + '</span>';
+      }
+
+      function renderModuleIcon(icon) {
+        return '<span class="module-icon" aria-hidden="true">' + renderIconSvg(icon) + '</span>';
       }
 
       function homeModulesForSession(session) {
@@ -3640,8 +3728,8 @@
           <section class="home-hero">
             <div class="home-hero-content">
               <p class="eyebrow">LipeCare Home</p>
-              <h1>Cuidado clínico conectado.</h1>
-              <p class="muted">Acesso rápido aos módulos centrais, indicadores assistenciais e ferramentas de acompanhamento do paciente.</p>
+              <h1>Cuidado clinico conectado.</h1>
+              <p class="muted">Acesso rapido aos modulos centrais, indicadores assistenciais e ferramentas de acompanhamento do paciente.</p>
               <div class="home-actions">
                 <button class="btn" type="button" data-view="dashboard">Abrir Meu Dashboard</button>
                 <button class="btn secondary" type="button" data-view="${secondaryView}">${secondaryLabel}</button>
@@ -3650,20 +3738,24 @@
           </section>
 
           <section class="home-highlights">
-            <div class="home-highlight"><strong>${patients.length}</strong><span>Pacientes acompanhados</span></div>
-            <div class="home-highlight"><strong>${openAlerts}</strong><span>Alertas ativos</span></div>
-            <div class="home-highlight"><strong>${templates}</strong><span>Templates médicos</span></div>
-            <div class="home-highlight"><strong>#${BUILD_INFO.deployNumber}</strong><span>Deploy publicado</span></div>
+            <div class="home-highlight">${renderModuleIcon("patients")}<div><strong>${patients.length}</strong><span>Pacientes acompanhados</span></div></div>
+            <div class="home-highlight">${renderModuleIcon("alerts")}<div><strong>${openAlerts}</strong><span>Alertas ativos</span></div></div>
+            <div class="home-highlight">${renderModuleIcon("customFields")}<div><strong>${templates}</strong><span>Templates medicos</span></div></div>
+            <div class="home-highlight">${renderModuleIcon("admin")}<div><strong>#${BUILD_INFO.deployNumber}</strong><span>Deploy publicado</span></div></div>
           </section>
 
           <section class="card section" style="margin-top: 16px;">
-            <h2>Módulos e atalhos</h2>
+            <h2>Modulos e atalhos</h2>
             <div class="module-grid">
               ${modules.map((module) => `
                 <button class="module-thumb" type="button" data-view="${module.view}">
-                  ${renderModuleIcon(module.icon)}
+                  <header>
+                    ${renderModuleIcon(module.icon)}
+                    <span class="quest-badge">Nivel ${module.level ?? 1}</span>
+                  </header>
                   <strong>${module.title}</strong>
                   <span>${module.detail}</span>
+                  <div class="module-progress" aria-hidden="true"><span style="--progress: ${module.progress ?? 62}%"></span></div>
                 </button>
               `).join("")}
             </div>
@@ -3844,11 +3936,15 @@
       }
 
       function wizardSteps(items, activeIndex = 0) {
+        const fallbackIcons = ["patients", "timeline", "tasks"];
         return `
           <div class="wizard-steps">
             ${items.map((item, index) => `
               <div class="wizard-step ${index === activeIndex ? "active" : ""}">
-                <strong>${index + 1}. ${item.title}</strong>
+                <header>
+                  ${renderModuleIcon(item.icon ?? fallbackIcons[index] ?? "tasks")}
+                  <strong>${index + 1}. ${item.title}</strong>
+                </header>
                 <p class="muted">${item.detail}</p>
               </div>
             `).join("")}
@@ -4680,9 +4776,9 @@
                   <span class="badge">3 etapas</span>
                 </div>
                 ${wizardSteps([
-                  { title: "Paciente", detail: "Confirme quem esta relatando" },
-                  { title: "Intensidade", detail: "Marque a dor de 0 a 10" },
-                  { title: "Contexto", detail: "Descreva sinais e gatilhos" }
+                  { title: "Paciente", detail: "Confirme quem esta relatando", icon: "patients" },
+                  { title: "Intensidade", detail: "Marque a dor de 0 a 10", icon: "symptoms" },
+                  { title: "Contexto", detail: "Descreva sinais e gatilhos", icon: "timeline" }
                 ], 1)}
                 <form id="symptom-form" class="form">
                   <label>Paciente ${renderPatientSelect(state, session)}</label>
@@ -4745,9 +4841,9 @@
                   <span class="badge">3 etapas</span>
                 </div>
                 ${wizardSteps([
-                  { title: "Paciente", detail: "Confirme o perfil" },
-                  { title: "Data", detail: "Use a data da medicao" },
-                  { title: "Medidas", detail: "Informe peso, cintura e quadril" }
+                  { title: "Paciente", detail: "Confirme o perfil", icon: "patients" },
+                  { title: "Data", detail: "Use a data da medicao", icon: "timeline" },
+                  { title: "Medidas", detail: "Informe peso, cintura e quadril", icon: "measurements" }
                 ], 2)}
                 <form id="measurement-form" class="form">
                   <label>Paciente ${renderPatientSelect(state, session)}</label>
