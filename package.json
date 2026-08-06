@@ -14,11 +14,13 @@
     "dev:web": "npm run dev -w @lipecare/web",
     "dev:api": "npm run dev -w @lipecare/api",
     "build": "npm run build --workspaces",
-    "lint": "npm run lint --workspaces",
+    "lint": "npm run lint:portuguese && npm run lint --workspaces",
+    "lint:portuguese": "node scripts/check-portuguese-accents.mjs",
     "test": "npm run test --workspaces",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,css}\"",
     "prisma:generate": "npm run prisma:generate -w @lipecare/api",
-    "prisma:migrate": "npm run prisma:migrate -w @lipecare/api"
+    "prisma:migrate": "npm run prisma:migrate -w @lipecare/api",
+    "prisma:seed": "npm run prisma:seed -w @lipecare/api"
   },
   "devDependencies": {
     "prettier": "^3.3.3",

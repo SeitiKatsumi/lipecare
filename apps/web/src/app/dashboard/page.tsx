@@ -3,7 +3,7 @@ const sections = [
   "Sintomas",
   "Medidas",
   "Fotos evolutivas",
-  "Conteudos",
+  "Conteúdos",
   "Auditoria"
 ];
 
@@ -22,7 +22,7 @@ export default function DashboardPage() {
         {sections.map((section) => (
           <article key={section}>
             <h2>{section}</h2>
-            <p>Modulo preparado para a primeira entrega do MVP.</p>
+            <p>Módulo preparado para a primeira entrega do MVP.</p>
           </article>
         ))}
       </section>

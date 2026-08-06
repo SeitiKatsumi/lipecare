@@ -2,3 +2,4 @@ window.LIPECARE_APP_VERSION = window.LIPECARE_APP_VERSION || "0.1.22";
 window.LIPECARE_DEPLOY_NUMBER = window.LIPECARE_DEPLOY_NUMBER || "26";
 window.LIPECARE_DEPLOY_VERSION = window.LIPECARE_DEPLOY_VERSION || "local";
 window.LIPECARE_COMMIT_SHA = window.LIPECARE_COMMIT_SHA || "sem-commit";
+window.LIPECARE_API_URL = window.LIPECARE_API_URL || "http://localhost:4000";

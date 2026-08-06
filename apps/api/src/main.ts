@@ -1,15 +1,21 @@
 import { ValidationPipe } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { NestFactory } from "@nestjs/core";
+import type { NestExpressApplication } from "@nestjs/platform-express";
 import { AppModule } from "./app.module.js";
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const config = app.get(ConfigService);
+  app.useBodyParser("json", { limit: "2mb" });
   const webUrl = config.get<string>("WEB_URL") ?? "http://localhost:3000";
+  const allowedOrigins = new Set([webUrl, "http://localhost:3009"]);
 
   app.enableCors({
-    origin: webUrl,
+    origin(origin, callback) {
+      if (!origin || allowedOrigins.has(origin)) return callback(null, true);
+      return callback(null, false);
+    },
     credentials: true
   });
   app.useGlobalPipes(

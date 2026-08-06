@@ -3,7 +3,7 @@ import "./styles.css";
 
 export const metadata: Metadata = {
   title: "LipeCare Portal",
-  description: "Portal local das aplicacoes LipeCare."
+  description: "Portal local das aplicações LipeCare."
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

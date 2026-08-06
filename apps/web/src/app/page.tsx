@@ -3,8 +3,8 @@ import { Activity, CalendarCheck, ShieldCheck } from "lucide-react";
 
 const metrics = [
   { label: "Pacientes acompanhados", value: "0" },
-  { label: "Avaliacoes pendentes", value: "0" },
-  { label: "Alertas clinicos", value: "0" }
+  { label: "Avaliações pendentes", value: "0" },
+  { label: "Alertas clínicos", value: "0" }
 ];
 
 export default function HomePage() {
@@ -13,11 +13,11 @@ export default function HomePage() {
       <section className="hero">
         <div>
           <p className="eyebrow">LipeCare</p>
-          <h1>Cuidado clinico continuo, seguro e humanizado.</h1>
+          <h1>Cuidado clínico contínuo, seguro e humanizado.</h1>
           <p className="hero-copy">
             Plataforma para acompanhamento de pacientes com lipedema, com
-            registro de sintomas, medidas, fotos evolutivas, conteudos e apoio
-            a decisao clinica.
+            registro de sintomas, medidas, fotos evolutivas, conteúdos e apoio
+            à decisão clínica.
           </p>
           <div className="actions">
             <Link className="primary-action" href="/dashboard">
@@ -42,7 +42,7 @@ export default function HomePage() {
         <article>
           <Activity aria-hidden="true" />
           <h2>Monitoramento</h2>
-          <p>Sintomas, medidas, habitos e evolucao em uma linha clinica clara.</p>
+          <p>Sintomas, medidas, hábitos e evolução em uma linha clínica clara.</p>
         </article>
         <article>
           <CalendarCheck aria-hidden="true" />
@@ -51,8 +51,8 @@ export default function HomePage() {
         </article>
         <article>
           <ShieldCheck aria-hidden="true" />
-          <h2>Seguranca</h2>
-          <p>Multi-tenant, auditoria e arquivos privados desde a fundacao.</p>
+          <h2>Segurança</h2>
+          <p>Multi-tenant, auditoria e arquivos privados desde a fundação.</p>
         </article>
       </section>
     </main>

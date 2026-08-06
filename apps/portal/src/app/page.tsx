@@ -7,10 +7,10 @@ export default function PortalPage() {
       <header className="portal-header">
         <div>
           <p className="eyebrow">localhost:3000</p>
-          <h1>Portal das aplicacoes</h1>
+          <h1>Portal das aplicações</h1>
           <p>
-            Hub local para abrir rapidamente cada aplicacao do monorepo, com portas
-            fixas e links versionados junto com o codigo.
+            Hub local para abrir rapidamente cada aplicação do monorepo, com portas
+            fixas e links versionados junto com o código.
           </p>
         </div>
         <div className="network-mark" aria-hidden="true">
@@ -18,7 +18,7 @@ export default function PortalPage() {
         </div>
       </header>
 
-      <section className="app-grid" aria-label="Aplicacoes locais">
+      <section className="app-grid" aria-label="Aplicações locais">
         {portalApps.map((app) => {
           const Icon = app.icon;
 

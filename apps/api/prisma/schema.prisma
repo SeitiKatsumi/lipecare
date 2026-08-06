@@ -17,12 +17,16 @@ model Tenant {
   id        String   @id @default(uuid())
   name      String
   slug      String   @unique
+  isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  users         User[]
-  professionals Professional[]
-  patients      Patient[]
+  users           User[]
+  professionals   Professional[]
+  patients        Patient[]
+  workspace       TenantWorkspace?
+  sessions        AuthSession[]
+  loginChallenges LoginChallenge[]
 }
 
 model User {
@@ -40,39 +44,89 @@ model User {
   professional Professional?
   patient      Patient?
   auditLogs    AuditLog[]
+  sessions     AuthSession[]
 
   @@unique([tenantId, email])
   @@index([tenantId, role])
 }
 
 model Professional {
-  id        String   @id @default(uuid())
-  tenantId  String
-  userId    String   @unique
-  specialty String?
-  license   String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                       String   @id @default(uuid())
+  tenantId                 String
+  userId                   String   @unique
+  specialty                String?
+  license                  String?
+  canManageTenantWorkspace Boolean  @default(false)
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
 
-  tenant   Tenant @relation(fields: [tenantId], references: [id])
-  user     User   @relation(fields: [userId], references: [id])
+  tenant   Tenant                @relation(fields: [tenantId], references: [id])
+  user     User                  @relation(fields: [userId], references: [id])
   patients PatientProfessional[]
 
   @@index([tenantId])
 }
 
-model Patient {
-  id          String   @id @default(uuid())
-  tenantId    String
-  userId      String?  @unique
-  fullName    String
-  birthDate   DateTime?
-  phone       String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+model TenantWorkspace {
+  tenantId        String   @id
+  identity        Json
+  palette         Json
+  assistant       Json
+  protocol        Json
+  metrics         Json
+  causeQuestions  Json
+  automation      Json
+  version         Int      @default(1)
+  updatedByUserId String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
-  tenant        Tenant @relation(fields: [tenantId], references: [id])
-  user          User?  @relation(fields: [userId], references: [id])
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+}
+
+model AuthSession {
+  id         String   @id @default(uuid())
+  tenantId   String
+  userId     String
+  tokenHash  String   @unique
+  csrfToken  String
+  expiresAt  DateTime
+  lastUsedAt DateTime @default(now())
+  createdAt  DateTime @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, userId])
+  @@index([expiresAt])
+}
+
+model LoginChallenge {
+  id         String    @id @default(uuid())
+  tenantId   String?
+  tokenHash  String    @unique
+  userIds    Json
+  expiresAt  DateTime
+  consumedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  tenant Tenant? @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([expiresAt])
+}
+
+model Patient {
+  id        String    @id @default(uuid())
+  tenantId  String
+  userId    String?   @unique
+  fullName  String
+  birthDate DateTime?
+  phone     String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  tenant        Tenant                @relation(fields: [tenantId], references: [id])
+  user          User?                 @relation(fields: [userId], references: [id])
   professionals PatientProfessional[]
   symptoms      SymptomRecord[]
   measurements  BodyMeasurement[]
@@ -96,13 +150,13 @@ model PatientProfessional {
 }
 
 model SymptomRecord {
-  id        String   @id @default(uuid())
-  tenantId  String
-  patientId String
-  painLevel Int?
-  notes     String?
+  id         String   @id @default(uuid())
+  tenantId   String
+  patientId  String
+  painLevel  Int?
+  notes      String?
   recordedAt DateTime @default(now())
-  createdAt DateTime @default(now())
+  createdAt  DateTime @default(now())
 
   patient Patient @relation(fields: [patientId], references: [id])
 
@@ -110,16 +164,16 @@ model SymptomRecord {
 }
 
 model BodyMeasurement {
-  id        String   @id @default(uuid())
-  tenantId  String
-  patientId String
-  weightKg  Decimal?
-  heightCm  Decimal?
-  waistCm   Decimal?
-  hipCm     Decimal?
-  notes     String?
+  id         String   @id @default(uuid())
+  tenantId   String
+  patientId  String
+  weightKg   Decimal?
+  heightCm   Decimal?
+  waistCm    Decimal?
+  hipCm      Decimal?
+  notes      String?
   recordedAt DateTime @default(now())
-  createdAt DateTime @default(now())
+  createdAt  DateTime @default(now())
 
   patient Patient @relation(fields: [patientId], references: [id])
 
@@ -141,17 +195,16 @@ model PatientFile {
 }
 
 model AuditLog {
-  id         String   @id @default(uuid())
-  tenantId   String
+  id          String   @id @default(uuid())
+  tenantId    String
   actorUserId String?
-  action     String
-  resource   String
-  resourceId String?
-  metadata   Json?
-  createdAt  DateTime @default(now())
+  action      String
+  resource    String
+  resourceId  String?
+  metadata    Json?
+  createdAt   DateTime @default(now())
 
   actor User? @relation(fields: [actorUserId], references: [id])
 
   @@index([tenantId, action, createdAt])
 }
-

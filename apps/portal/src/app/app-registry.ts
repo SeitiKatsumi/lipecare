@@ -13,7 +13,7 @@ export type PortalApp = {
 export const portalApps: PortalApp[] = [
   {
     name: "LipeCare Web",
-    description: "Aplicacao principal para pacientes, profissionais e operacao clinica.",
+    description: "Aplicação principal para pacientes, profissionais e operação clínica.",
     href: "http://localhost:3003",
     port: 3003,
     icon: LayoutDashboard,
@@ -21,7 +21,7 @@ export const portalApps: PortalApp[] = [
   },
   {
     name: "LipeCare API",
-    description: "Backend NestJS, contratos, auth, dados clinicos e integracoes.",
+    description: "Backend NestJS, contratos, auth, dados clínicos e integrações.",
     href: "http://localhost:4000/health",
     statusHref: "http://localhost:4000/health",
     port: 4000,
