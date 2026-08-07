@@ -30,8 +30,12 @@ const paletteSchema = z.object({
   accent: color,
   lightBackground: color,
   lightSurface: color,
+  lightText: color,
+  lightMuted: color,
   darkBackground: color,
-  darkSurface: color
+  darkSurface: color,
+  darkText: color,
+  darkMuted: color
 }).strict();
 
 export const workspaceSchema = z.object({

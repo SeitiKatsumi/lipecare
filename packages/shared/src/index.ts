@@ -31,8 +31,12 @@ export type WorkspacePalette = {
   accent: string;
   lightBackground: string;
   lightSurface: string;
+  lightText: string;
+  lightMuted: string;
   darkBackground: string;
   darkSurface: string;
+  darkText: string;
+  darkMuted: string;
 };
 
 export type TenantWorkspaceData = {
@@ -136,8 +140,12 @@ export function createDefaultTenantWorkspace(input?: {
       accent: "#155b88",
       lightBackground: "#fff9f8",
       lightSurface: "#ffffff",
+      lightText: "#392332",
+      lightMuted: "#796b74",
       darkBackground: "#1c141a",
-      darkSurface: "#2d2028"
+      darkSurface: "#2d2028",
+      darkText: "#fff8f6",
+      darkMuted: "#cdbdc4"
     },
     assistant: {
       name: "Lipe",

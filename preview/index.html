@@ -320,14 +320,19 @@
       }
 
       .sidebar {
+        align-self: start;
         border-radius: 0;
         border-width: 0 1px 0 0;
         box-shadow: none;
+        box-sizing: border-box;
         display: flex;
         flex-direction: column;
         background: var(--surface);
         gap: 26px;
-        min-height: 100vh;
+        height: 100vh;
+        height: 100dvh;
+        min-height: 0;
+        overflow: hidden;
         padding: 28px 20px;
         position: sticky;
         top: 0;
@@ -336,6 +341,7 @@
       .brand {
         align-items: center;
         display: flex;
+        flex: 0 0 auto;
         gap: 12px;
       }
 
@@ -379,6 +385,13 @@
       .nav-secondary {
         display: grid;
         gap: 6px;
+      }
+
+      .sidebar > .nav {
+        align-content: start;
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
       }
 
       .nav button,
@@ -425,6 +438,7 @@
       .sidebar-footer {
         border-top: 1px solid var(--line);
         display: grid;
+        flex: 0 0 auto;
         gap: 12px;
         margin-top: auto;
         padding-top: 18px;
@@ -1842,8 +1856,12 @@
           accent: "#155b88",
           lightBackground: "#fff9f8",
           lightSurface: "#ffffff",
+          lightText: "#392332",
+          lightMuted: "#796b74",
           darkBackground: "#1c141a",
-          darkSurface: "#2d2028"
+          darkSurface: "#2d2028",
+          darkText: "#fff8f6",
+          darkMuted: "#cdbdc4"
         },
         assistant: {
           name: "Lipe",
@@ -1882,6 +1900,20 @@
           lowEngagementAction: "Retomar com uma pergunta simples e sugerir contato com o profissional quando necessário."
         }
       };
+
+      const PALETTE_FIELDS = [
+        "primary",
+        "primaryStrong",
+        "accent",
+        "lightBackground",
+        "lightSurface",
+        "lightText",
+        "lightMuted",
+        "darkBackground",
+        "darkSurface",
+        "darkText",
+        "darkMuted"
+      ];
 
       const PLATFORM_WORKSPACE = structuredClone(DEFAULT_WORKSPACE);
       PLATFORM_WORKSPACE.identity = {
@@ -1935,14 +1967,19 @@
           "Ou usar uma URL externa": "Or use an external URL",
           "Restaurar logo padrão": "Restore default logo",
           "Paleta da marca": "Brand palette",
-          "As cores são aplicadas imediatamente em botões, destaques, gráficos e superfícies.": "Colors are immediately applied to buttons, highlights, charts, and surfaces.",
+          "As cores são aplicadas imediatamente em textos, botões, destaques, gráficos e superfícies.": "Colors are immediately applied to text, buttons, highlights, charts, and surfaces.",
+          "Restaurar cores padrão": "Restore default colors",
           "Cor principal": "Primary color",
           "Cor principal ativa": "Active primary color",
           "Cor de apoio": "Accent color",
           "Fundo claro": "Light background",
           "Superfície clara": "Light surface",
+          "Texto principal claro": "Light theme primary text",
+          "Texto secundário claro": "Light theme secondary text",
           "Fundo escuro": "Dark background",
           "Superfície escura": "Dark surface",
+          "Texto principal escuro": "Dark theme primary text",
+          "Texto secundário escuro": "Dark theme secondary text",
           "Apresentação": "Presentation",
           "Formato": "Format",
           "Texto": "Text",
@@ -2081,7 +2118,13 @@
           "Seus pilares de cuidado": "Your care pillars",
           "Meu chat": "My chat",
           "Chats dos pacientes": "Patient chats",
+          "Simule aqui a mesma experiência de uma paciente, sem alterar conversas reais.": "Simulate the patient experience here without changing real conversations.",
+          "Ambiente de teste": "Test environment",
+          "Simulação da paciente": "Patient simulation",
           "Reiniciar chat": "Restart chat",
+          "Reiniciar a simulação?": "Restart the simulation?",
+          "O histórico e os registros clínicos de teste serão apagados.": "The test history and clinical records will be deleted.",
+          "Confirmar reinício": "Confirm restart",
           "Reiniciar seu chat?": "Restart your chat?",
           "Confirmar reset": "Confirm reset",
           "Cancelar": "Cancel",
@@ -2213,14 +2256,19 @@
           "Ou usar uma URL externa": "O usar una URL externa",
           "Restaurar logo padrão": "Restaurar logo predeterminado",
           "Paleta da marca": "Paleta de la marca",
-          "As cores são aplicadas imediatamente em botões, destaques, gráficos e superfícies.": "Los colores se aplican inmediatamente a botones, destacados, gráficos y superficies.",
+          "As cores são aplicadas imediatamente em textos, botões, destaques, gráficos e superfícies.": "Los colores se aplican inmediatamente a textos, botones, destacados, gráficos y superficies.",
+          "Restaurar cores padrão": "Restaurar colores predeterminados",
           "Cor principal": "Color principal",
           "Cor principal ativa": "Color principal activo",
           "Cor de apoio": "Color de apoyo",
           "Fundo claro": "Fondo claro",
           "Superfície clara": "Superficie clara",
+          "Texto principal claro": "Texto principal del modo claro",
+          "Texto secundário claro": "Texto secundario del modo claro",
           "Fundo escuro": "Fondo oscuro",
           "Superfície escura": "Superficie oscura",
+          "Texto principal escuro": "Texto principal del modo oscuro",
+          "Texto secundário escuro": "Texto secundario del modo oscuro",
           "Apresentação": "Presentación",
           "Formato": "Formato",
           "Texto": "Texto",
@@ -2359,7 +2407,13 @@
           "Seus pilares de cuidado": "Tus pilares de cuidado",
           "Meu chat": "Mi chat",
           "Chats dos pacientes": "Chats de pacientes",
+          "Simule aqui a mesma experiência de uma paciente, sem alterar conversas reais.": "Simula aquí la experiencia de una paciente sin cambiar conversaciones reales.",
+          "Ambiente de teste": "Entorno de prueba",
+          "Simulação da paciente": "Simulación de la paciente",
           "Reiniciar chat": "Reiniciar chat",
+          "Reiniciar a simulação?": "¿Reiniciar la simulación?",
+          "O histórico e os registros clínicos de teste serão apagados.": "Se eliminarán el historial y los registros clínicos de prueba.",
+          "Confirmar reinício": "Confirmar reinicio",
           "Reiniciar seu chat?": "¿Reiniciar tu chat?",
           "Confirmar reset": "Confirmar reinicio",
           "Cancelar": "Cancelar",
@@ -2532,6 +2586,7 @@
         credentials: [],
         checkins: [],
         chatControls: {},
+        staffSimulationVersions: {},
         workspace: structuredClone(DEFAULT_WORKSPACE),
         workspaceProfiles: {
           "u-admin": structuredClone(DEFAULT_WORKSPACE),
@@ -2628,7 +2683,13 @@
         if (parts[0] === "cadastro") return { type: "register" };
         if (parts[0] === "login") return { type: "login", slug: parts[1] || null };
         if (parts[0] === "clinica" && parts[1]) { // accent-check: technical-token
-          return { type: "clinic", slug: parts[1], view: ROUTE_VIEWS[parts[2]] || "home" };
+          return { type: "clinic", slug: parts[1], view: ROUTE_VIEWS[parts[2]] || "home", legacy: true };
+        }
+        const directClinicRoute = /^[a-z0-9-]+$/.test(parts[0])
+          && parts.length <= 2
+          && (!parts[1] || Boolean(ROUTE_VIEWS[parts[1]]));
+        if (directClinicRoute) {
+          return { type: "clinic", slug: parts[0], view: ROUTE_VIEWS[parts[1]] || "home", legacy: false };
         }
         return { type: "unknown" };
       }
@@ -2641,7 +2702,10 @@
       }
 
       function clinicPath(view = "home", slug = activeSession?.tenant?.slug) {
-        return slug ? `/clinica/${encodeURIComponent(slug)}/${VIEW_ROUTES[view] || VIEW_ROUTES.home}` : "/login"; // accent-check: technical-token
+        if (!slug) return "/login";
+        const basePath = `/${encodeURIComponent(slug)}`;
+        const viewPath = VIEW_ROUTES[view] || VIEW_ROUTES.home;
+        return viewPath === VIEW_ROUTES.home ? basePath : `${basePath}/${viewPath}`;
       }
 
       function syncRouteToState() {
@@ -2695,6 +2759,7 @@
         initial.tasks = [];
         initial.chats = {};
         initial.staffChats = {};
+        initial.staffSimulationVersions = {};
         initial.audit = [];
         return initial;
       }
@@ -2712,6 +2777,7 @@
         const next = { ...tenantInitial, ...stored };
         next.chats = { ...structuredClone(tenantInitial.chats), ...(stored.chats || {}) };
         next.staffChats = { ...(stored.staffChats || {}) };
+        next.staffSimulationVersions = { ...(stored.staffSimulationVersions || {}) };
         next.chatControls = { ...(stored.chatControls || {}) };
         next.workspace = mergeWorkspace(stored.workspace);
         next.workspaceProfiles = { ...(stored.workspaceProfiles || {}) };
@@ -2887,11 +2953,55 @@
         return messages;
       }
 
-      function staffMessages(data, user) {
-        const workspace = workspaceConfig(data);
-        const messages = data.staffChats?.[user.id] || [];
-        if (messages.some((message) => message.welcome)) return messages;
-        return [{ role: "assistant", date: "agora", welcome: true, text: `Olá, ${user.name.split(" ")[0]}! Este é o seu chat pessoal em ${workspace.identity.brandName}. Envie uma pergunta, anexe uma imagem ou documento, ou grave um áudio.` }, ...messages];
+      const STAFF_SIMULATION_VERSION = 1;
+
+      function staffSimulationPatient(user) {
+        const name = String(user?.name || "")
+          .replace(/^Dr(?:a)?\.?\s+/i, "")
+          .trim();
+        return {
+          id: `staff-${user.id}`,
+          name: name || "Paciente de teste",
+          summary: "Ambiente de simulação do acompanhamento.",
+          status: "Avaliação pendente"
+        };
+      }
+
+      function clearStaffSimulationRecords(data, patientId) {
+        data.checkins = (data.checkins || []).filter((item) => item.patientId !== patientId);
+        data.symptoms = (data.symptoms || []).filter((item) => item.patientId !== patientId);
+        data.measurements = (data.measurements || []).filter((item) => item.patientId !== patientId);
+      }
+
+      function staffMessages(data, user, startAutomaticFlow = false) {
+        const patient = staffSimulationPatient(user);
+        data.staffChats ||= {};
+        data.staffSimulationVersions ||= {};
+        data.conversationProfiles ||= {};
+
+        if (data.staffSimulationVersions[user.id] !== STAFF_SIMULATION_VERSION) {
+          data.staffChats[user.id] = [];
+          delete data.conversationProfiles[patient.id];
+          clearStaffSimulationRecords(data, patient.id);
+          data.staffSimulationVersions[user.id] = STAFF_SIMULATION_VERSION;
+        }
+
+        const profile = chatProfile(data, patient);
+        const messages = data.staffChats[user.id] || [];
+        let changed = false;
+        if (!messages.some((message) => message.welcome)) {
+          messages.unshift({ role: "assistant", date: "agora", welcome: true, text: welcomeMessage(patient, data) });
+          changed = true;
+        }
+        if (startAutomaticFlow) {
+          const prompt = automaticConversationPrompt(profile, data);
+          if (prompt) {
+            messages.push({ role: "assistant", date: new Date().toLocaleString("pt-BR"), automatic: true, text: prompt });
+            changed = true;
+          }
+        }
+        if (changed) save(data);
+        return messages;
       }
 
       function renderAttachment(attachment) {
@@ -3063,6 +3173,8 @@
         root.style.setProperty("--accent", palette.accent);
         root.style.setProperty("--bg", dark ? palette.darkBackground : palette.lightBackground);
         root.style.setProperty("--surface", dark ? palette.darkSurface : palette.lightSurface);
+        root.style.setProperty("--text", dark ? palette.darkText : palette.lightText);
+        root.style.setProperty("--muted", dark ? palette.darkMuted : palette.lightMuted);
         root.style.setProperty("--bg-soft", `color-mix(in srgb, ${palette.primary} ${dark ? 7 : 5}%, ${dark ? palette.darkBackground : palette.lightBackground})`);
         root.style.setProperty("--surface-2", `color-mix(in srgb, ${palette.primary} ${dark ? 6 : 3}%, ${dark ? palette.darkSurface : palette.lightSurface})`);
         root.style.setProperty("--surface-3", `color-mix(in srgb, ${palette.primary} ${dark ? 13 : 8}%, ${dark ? palette.darkSurface : palette.lightSurface})`);
@@ -3264,7 +3376,6 @@
           : PLATFORM_WORKSPACE;
         const identity = workspace.identity;
         const branded = route.type === "login" && Boolean(route.slug && activePublicBrand);
-        const showDemoUsers = !branded || route.slug === "raquel-peres";
         applyWorkspaceTheme(data, workspace);
         app.innerHTML = `
           <main class="login">
@@ -3284,9 +3395,6 @@
                 <button class="btn" type="submit">Acessar plataforma</button>
               </form>
               ${bootstrapError ? `<button class="btn secondary" type="button" data-retry-bootstrap>Tentar novamente</button>` : ""}
-              ${showDemoUsers ? `<div class="sample-users">
-                ${USERS.map((user) => `<button type="button" data-login="${user.email}"><strong>${roleLabel(user.role)}</strong><span>${user.email} / 123456</span></button>`).join("")}
-              </div>` : ""}
               <div class="login-links">
                 ${branded ? `<a href="/login" data-navigate>Entrar por outra clínica</a>` : `<span class="muted">Ainda não tem uma clínica?</span>`}
                 <a href="/cadastro" data-navigate>Cadastrar clínica</a>
@@ -3332,14 +3440,6 @@
           }
         });
 
-        document.querySelectorAll("[data-login]").forEach((button) => {
-          button.addEventListener("click", () => {
-            const user = USERS.find((item) => item.email === button.dataset.login);
-            loginForm.elements.email.value = user.email;
-            loginForm.elements.password.value = user.password;
-            loginForm.requestSubmit();
-          });
-        });
         document.querySelector("[data-retry-bootstrap]")?.addEventListener("click", bootstrap);
         bindNavigationLinks();
       }
@@ -4000,11 +4100,12 @@
       function renderChat(data, user) {
         const workspace = workspaceConfig(data);
         const patient = selectedPatient(data, user);
+        const simulationPatient = staffSimulationPatient(user);
         const mode = data.chatMode === "self" ? "self" : "patients";
-        const messages = mode === "self" ? staffMessages(data, user) : patientMessages(data, patient);
+        const messages = mode === "self" ? staffMessages(data, user, true) : patientMessages(data, patient);
         const pendingKey = mode === "self" ? `staff:${user.id}` : `patient:${patient?.id || ""}`;
         const pending = pendingChats.has(pendingKey);
-        const profile = mode === "patients" ? chatProfile(data, patient) : null;
+        const profile = mode === "self" ? chatProfile(data, simulationPatient) : chatProfile(data, patient);
         const control = mode === "patients" ? chatControl(data, patient) : null;
         const assumedByCurrentUser = control?.assumedBy === user.id;
         const assumedByAnotherUser = Boolean(control?.assumedBy && !assumedByCurrentUser);
@@ -4014,7 +4115,7 @@
             ? `${workspace.assistant.name} está respondendo automaticamente.`
             : "A IA está pausada. Assuma a conversa para responder como equipe.";
         return `
-          ${header(mode === "self" ? "Meu chat" : "Chats dos pacientes", mode === "self" ? `Sua conversa particular com ${workspace.identity.brandName}.` : "Consulte o histórico individual dos pacientes acompanhados.", mode === "self" ? "Privado" : `${scopedPatients(data, user).length} pacientes`, "chat-page-header")}
+          ${header(mode === "self" ? "Meu chat" : "Chats dos pacientes", mode === "self" ? "Simule aqui a mesma experiência de uma paciente, sem alterar conversas reais." : "Consulte o histórico individual dos pacientes acompanhados.", mode === "self" ? "Ambiente de teste" : `${scopedPatients(data, user).length} pacientes`, "chat-page-header")}
           <div class="tabs">
             <button class="${mode === "patients" ? "active" : ""}" type="button" data-chat-mode="patients">Chats dos pacientes</button>
             <button class="${mode === "self" ? "active" : ""}" type="button" data-chat-mode="self">Meu chat</button>
@@ -4023,16 +4124,16 @@
             <article class="chat-window ${data.chatExpanded ? "expanded" : ""}">
               ${renderChatWindowBar(
                 data,
-                mode === "self" ? "Conversa privada" : `Conversa com ${patient?.name || "paciente"}`,
+                mode === "self" ? "Simulação da paciente" : `Conversa com ${patient?.name || "paciente"}`,
                 mode === "self" && user.role === "ADMIN"
                   ? `<button class="btn secondary chat-reset-self-button" type="button" data-reset-self-chat title="Reiniciar chat">${icon("reset")}<span>Reiniciar chat</span></button>`
                   : ""
               )}
               ${mode === "self" && user.role === "ADMIN" && data.chatResetConfirmUserId === user.id ? `
                 <div class="chat-reset-confirm" role="alert">
-                  <p><strong>Reiniciar seu chat?</strong><br><span class="muted">O histórico local desta conversa será apagado.</span></p>
+                  <p><strong>Reiniciar a simulação?</strong><br><span class="muted">O histórico e os registros clínicos de teste serão apagados.</span></p>
                   <div class="inline-actions">
-                    <button class="btn danger" type="button" data-confirm-reset-self-chat>Confirmar reset</button>
+                    <button class="btn danger" type="button" data-confirm-reset-self-chat>Confirmar reinício</button>
                     <button class="btn ghost" type="button" data-cancel-reset-self-chat>Cancelar</button>
                   </div>
                 </div>
@@ -4059,7 +4160,7 @@
                 ${messages.map((message) => renderMessage(message, mode === "self" ? "Você" : "Paciente", workspace.assistant.name, `Equipe ${workspace.identity.brandName}`)).join("")}
                 ${pending ? renderPendingMessage(workspace.assistant.name) : ""}
               </div>
-              ${mode === "self" ? renderChatComposer(false, false, pending, workspace.assistant.name) : assumedByCurrentUser ? renderChatComposer(false, true, false, workspace.assistant.name) : ""}
+              ${mode === "self" ? renderChatComposer(true, false, pending, workspace.assistant.name) : assumedByCurrentUser ? renderChatComposer(false, true, false, workspace.assistant.name) : ""}
             </article>
             ${mode === "patients" ? `<aside class="card">
                 <h2>Resumo do paciente</h2>
@@ -4195,7 +4296,7 @@
       }
 
       function colorField(name, label, value) {
-        return `<label class="color-field"><input name="${name}" type="color" value="${escapeHtml(value)}" /><span>${escapeHtml(label)}<br />${escapeHtml(value)}</span></label>`;
+        return `<label class="color-field"><input name="${name}" type="color" value="${escapeHtml(value)}" /><span>${escapeHtml(label)}<br /><span data-color-value="${name}">${escapeHtml(value)}</span></span></label>`;
       }
 
       function renderBrandSettings(workspace) {
@@ -4232,16 +4333,22 @@
               </article>
             </section>
             <article class="card">
-              <h2>Paleta da marca</h2>
-              <p class="muted">As cores são aplicadas imediatamente em botões, destaques, gráficos e superfícies.</p>
+              <div class="settings-intro">
+                <div><h2>Paleta da marca</h2><p class="muted">As cores são aplicadas imediatamente em textos, botões, destaques, gráficos e superfícies.</p></div>
+                <button class="btn secondary" type="button" data-reset-palette>Restaurar cores padrão</button>
+              </div>
               <div class="color-grid">
                 ${colorField("primary", "Cor principal", palette.primary)}
                 ${colorField("primaryStrong", "Cor principal ativa", palette.primaryStrong)}
                 ${colorField("accent", "Cor de apoio", palette.accent)}
                 ${colorField("lightBackground", "Fundo claro", palette.lightBackground)}
                 ${colorField("lightSurface", "Superfície clara", palette.lightSurface)}
+                ${colorField("lightText", "Texto principal claro", palette.lightText)}
+                ${colorField("lightMuted", "Texto secundário claro", palette.lightMuted)}
                 ${colorField("darkBackground", "Fundo escuro", palette.darkBackground)}
                 ${colorField("darkSurface", "Superfície escura", palette.darkSurface)}
+                ${colorField("darkText", "Texto principal escuro", palette.darkText)}
+                ${colorField("darkMuted", "Texto secundário escuro", palette.darkMuted)}
               </div>
             </article>
             <section class="grid settings-grid">
@@ -5615,12 +5722,37 @@
           });
           const logoUrl = String(form.get("logoUrl") || "").trim();
           if (safeExternalUrl(logoUrl)) workspace.identity.logo = logoUrl;
-          ["primary", "primaryStrong", "accent", "lightBackground", "lightSurface", "darkBackground", "darkSurface"].forEach((field) => {
+          PALETTE_FIELDS.forEach((field) => {
             workspace.palette[field] = String(form.get(field) || workspace.palette[field]);
           });
           saveWorkspaceConfig(data, workspace);
           save(data);
           await commitWorkspaceChange(workspace, user, "brand_identity_updated", workspace.identity.brandName);
+        });
+
+        document.querySelectorAll("#brand-settings-form input[type='color']").forEach((input) => {
+          input.addEventListener("input", () => {
+            const data = state();
+            const workspace = workspaceConfig(data);
+            const form = new FormData(input.form);
+            PALETTE_FIELDS.forEach((field) => {
+              workspace.palette[field] = String(form.get(field) || workspace.palette[field]);
+            });
+            const valueLabel = input.closest(".color-field")?.querySelector(`[data-color-value="${input.name}"]`);
+            if (valueLabel) valueLabel.textContent = input.value;
+            applyWorkspaceTheme(data, workspace);
+          });
+        });
+
+        document.querySelector("[data-reset-palette]")?.addEventListener("click", async (event) => {
+          const button = event.currentTarget;
+          button.disabled = true;
+          const data = state();
+          const workspace = workspaceConfig(data);
+          workspace.palette = structuredClone(DEFAULT_WORKSPACE.palette);
+          saveWorkspaceConfig(data, workspace);
+          save(data);
+          await commitWorkspaceChange(workspace, user, "brand_palette_reset", workspace.identity.brandName);
         });
 
         document.getElementById("brand-logo-input")?.addEventListener("change", (event) => {
@@ -5963,13 +6095,15 @@
           const data = state();
           if (user.role !== "ADMIN" || data.chatMode !== "self" || data.chatResetConfirmUserId !== user.id) return;
 
+          const simulationPatient = staffSimulationPatient(user);
           pendingChats.delete(`staff:${user.id}`);
           data.staffChats ||= {};
           data.staffChats[user.id] = [];
           data.conversationProfiles ||= {};
-          delete data.conversationProfiles[`staff-${user.id}`];
+          delete data.conversationProfiles[simulationPatient.id];
+          clearStaffSimulationRecords(data, simulationPatient.id);
           data.audit.unshift({
-            action: "staff_chat_reset",
+            action: "staff_patient_simulation_reset",
             actor: user.name,
             resource: user.email,
             date: new Date().toLocaleString("pt-BR")
@@ -6082,16 +6216,15 @@
               data.staffChats ||= {};
               data.staffChats[user.id] = staffMessages(data, user);
               data.staffChats[user.id].push({ role: "user", date: new Date().toLocaleString("pt-BR"), text, attachments });
-              const staffContext = { id: `staff-${user.id}`, name: user.name };
-              const staffProfile = chatProfile(data, staffContext);
-              Object.assign(staffProfile, { stage: "active", consent: true, frequency: "Sob demanda" });
-              const suggestedReply = chatReply(text, staffContext, data, attachments);
-              if (text && !attachments.length) {
-                replyRequest = { key: `staff:${user.id}`, type: "staff", id: user.id, patient: staffContext, messages: data.staffChats[user.id], suggestedReply };
+              const simulationPatient = staffSimulationPatient(user);
+              const suggestedReply = chatReply(text, simulationPatient, data, attachments);
+              const simulationProfile = chatProfile(data, simulationPatient);
+              if (text && !attachments.length && simulationProfile.consent === true) {
+                replyRequest = { key: `staff:${user.id}`, type: "staff", id: user.id, patient: simulationPatient, messages: data.staffChats[user.id], suggestedReply };
               } else {
                 data.staffChats[user.id].push({ role: "assistant", date: new Date().toLocaleString("pt-BR"), text: suggestedReply });
               }
-              data.audit.unshift({ action: "staff_personal_chat_message", actor: user.name, resource: user.email, date: new Date().toLocaleString("pt-BR") });
+              data.audit.unshift({ action: "staff_patient_simulation_message", actor: user.name, resource: user.email, date: new Date().toLocaleString("pt-BR") });
             }
           }
           try {
@@ -6320,6 +6453,13 @@
         if (route.type === "root" || route.type === "unknown") {
           history.replaceState({}, "", activeSession ? clinicPath("home") : "/login");
           route = routeInfo();
+        }
+        if (route.type === "clinic") {
+          const canonicalPath = clinicPath(route.view, route.slug);
+          if (route.legacy || location.pathname !== canonicalPath) {
+            history.replaceState({}, "", canonicalPath);
+            route = routeInfo();
+          }
         }
         if (activeSession && (route.type === "login" || route.type === "register")) {
           history.replaceState({}, "", clinicPath("home"));
