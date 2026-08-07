@@ -6,6 +6,7 @@ ARG CAPROVER_GIT_COMMIT_SHA
 
 COPY package.json /tmp/package.json
 COPY preview/ /usr/share/nginx/html/
+COPY deploy/preview-nginx.conf /etc/nginx/conf.d/default.conf
 
 RUN APP_VERSION="$(sed -n 's/.*"version": *"\([^"]*\)".*/\1/p' /tmp/package.json | head -n 1)" \
   && DEPLOY_NUMBER="$(sed -n 's/.*"deployNumber": *\([0-9][0-9]*\).*/\1/p' /tmp/package.json | head -n 1)" \

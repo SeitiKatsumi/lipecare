@@ -38,3 +38,20 @@ jobs:
 
       - name: Docker build
         run: docker build -t lipecare-ci .
+
+      - name: Build preview container
+        run: docker build -f preview/Dockerfile -t lipecare-preview-ci .
+
+      - name: Validate preview routes
+        run: |
+          docker run --detach --name lipecare-preview-ci --publish 8080:80 lipecare-preview-ci
+          trap 'docker rm --force lipecare-preview-ci' EXIT
+
+          for route in / /login /cadastro /clinica-teste/configuracoes; do
+            curl --fail --silent --show-error \
+              --retry 10 \
+              --retry-connrefused \
+              --retry-delay 1 \
+              "http://127.0.0.1:8080${route}" \
+              --output /dev/null
+          done
