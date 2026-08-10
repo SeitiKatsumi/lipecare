@@ -1870,6 +1870,10 @@
       let tenantWorkspaceVersion = 1;
       let bootstrapComplete = false;
       let bootstrapError = "";
+      let clinicalHydrated = false;
+      let clinicalSyncTimer = null;
+      let clinicalSyncPromise = Promise.resolve();
+      let lastClinicalSnapshot = "";
 
       const USERS = [
         { id: "u-admin", name: "Dra. Helena Costa", email: "admin@lipecare.test", password: "123456", role: "ADMIN" },
@@ -2631,6 +2635,8 @@
         checkins: [],
         chatControls: {},
         staffSimulationVersions: {},
+        clinicalSummaries: {},
+        clinicalAlerts: [],
         workspace: structuredClone(DEFAULT_WORKSPACE),
         workspaceProfiles: {
           "u-admin": structuredClone(DEFAULT_WORKSPACE),
@@ -2832,6 +2838,33 @@
         return migrateStoredState(next);
       }
 
+      function legacyClinicalImportState(fallback) {
+        if (activeSession?.tenant?.slug !== "raquel-peres") return fallback;
+        try {
+          const backup = JSON.parse(localStorage.getItem(`lipecare-clinical-import-backup:${activeSession.tenant.id}`) || "null");
+          const stored = JSON.parse(localStorage.getItem("lipecare-redesign-state") || "null");
+          const candidates = [fallback, backup].filter(Boolean);
+          if (stored) {
+            const initial = structuredClone(INITIAL_STATE);
+            const next = { ...initial, ...stored };
+            next.chats = { ...structuredClone(initial.chats), ...(stored.chats || {}) };
+            next.staffChats = { ...(stored.staffChats || {}) };
+            next.staffSimulationVersions = { ...(stored.staffSimulationVersions || {}) };
+            next.chatControls = { ...(stored.chatControls || {}) };
+            next.workspace = mergeWorkspace(stored.workspace);
+            next.workspaceProfiles = { ...(stored.workspaceProfiles || {}) };
+            next.conversationProfiles = { ...structuredClone(initial.conversationProfiles), ...(stored.conversationProfiles || {}) };
+            next.checkins = stored.checkins || structuredClone(initial.checkins);
+            if (stored.chat?.length && !stored.chats) next.chats[stored.selectedPatientId || "p-001"] = stored.chat;
+            candidates.push(migrateStoredState(next));
+          }
+          return candidates.sort((first, second) => (second.patients?.length || 0) - (first.patients?.length || 0))[0] || fallback;
+        } catch (error) {
+          console.warn("Não foi possível preparar os dados clínicos locais para importação.", error);
+          return fallback;
+        }
+      }
+
       function mergeWorkspace(workspace = {}) {
         const defaults = structuredClone(DEFAULT_WORKSPACE);
         return {
@@ -2851,8 +2884,160 @@
         };
       }
 
-      function save(next) {
+      function writeLocalState(next) {
         localStorage.setItem(stateStorageKey(), JSON.stringify(next));
+      }
+
+      function save(next) {
+        ensureClinicalIds(next);
+        writeLocalState(next);
+        if (clinicalHydrated && activeSession) scheduleClinicalSync();
+      }
+
+      function ensureClinicalIds(next) {
+        ["symptoms", "measurements", "tasks", "checkins"].forEach((key) => {
+          (next[key] || []).forEach((item) => { item.id ||= crypto.randomUUID(); });
+        });
+        Object.values(next.chats || {}).forEach((messages) => {
+          messages.forEach((message) => { message.id ||= crypto.randomUUID(); });
+        });
+        return next;
+      }
+
+      function clinicalSnapshot(next) {
+        ensureClinicalIds(next);
+        const patientIds = new Set((next.patients || []).map((patient) => patient.id));
+        const chats = Object.fromEntries(Object.entries(next.chats || {})
+          .filter(([patientId]) => patientIds.has(patientId))
+          .map(([patientId, messages]) => [patientId, messages.map((message) => ({
+            id: message.id,
+            role: ["user", "assistant", "staff"].includes(message.role) ? message.role : "assistant",
+            author: message.author || null,
+            date: message.date || null,
+            text: String(message.text || ""),
+            attachments: (message.attachments || []).map((attachment) => ({
+              name: String(attachment.name || "Arquivo"),
+              type: String(attachment.type || "application/octet-stream"),
+              size: Number(attachment.size || 0),
+              dataUrl: String(attachment.dataUrl || "")
+            })),
+            ai: Boolean(message.ai),
+            fallback: Boolean(message.fallback),
+            welcome: Boolean(message.welcome),
+            automatic: Boolean(message.automatic)
+          }))]));
+        const conversationProfiles = Object.fromEntries(Object.entries(next.conversationProfiles || {})
+          .filter(([patientId]) => patientIds.has(patientId)));
+        return {
+          patients: (next.patients || []).map((patient) => ({
+            id: patient.id,
+            name: patient.name,
+            age: Number.isFinite(Number(patient.age)) ? Number(patient.age) : null,
+            phone: patient.phone || "",
+            email: patient.email || "",
+            city: patient.city || "",
+            doctorId: patient.doctorId || null,
+            status: patient.status || "Avaliação pendente",
+            lastCheckin: patient.lastCheckin || null,
+            summary: patient.summary || "",
+            interactionFrequency: patient.interactionFrequency || null,
+            planningDay: patient.planningDay || null,
+            focusMetrics: Array.isArray(patient.focusMetrics) ? patient.focusMetrics : []
+          })),
+          symptoms: (next.symptoms || []).map((item) => ({ id: item.id, patientId: item.patientId, date: item.date || null, pain: item.pain ?? null, note: item.note || "" })),
+          measurements: (next.measurements || []).map((item) => ({
+            id: item.id,
+            patientId: item.patientId,
+            date: item.date || null,
+            weight: item.weight ?? null,
+            height: item.height ?? null,
+            thigh: item.thigh ?? null,
+            leg: item.leg ?? null,
+            waist: item.waist ?? null,
+            hip: item.hip ?? null,
+            note: item.note || ""
+          })),
+          tasks: (next.tasks || []).map((item) => ({ id: item.id, patientId: item.patientId, title: item.title, type: item.type || "Acompanhamento", status: item.status || "Pendente", priority: item.priority || null, due: item.due || null })),
+          checkins: (next.checkins || []).map((item) => ({ id: item.id, patientId: item.patientId, date: item.date || null, type: item.type, frequency: item.frequency || null, answers: item.answers || {} })),
+          chats,
+          conversationProfiles
+        };
+      }
+
+      function applyClinicalPayload(next, payload) {
+        const localPatients = new Map((next.patients || []).map((patient) => [patient.id, patient]));
+        next.patients = (payload.patients || []).map((patient) => {
+          const local = localPatients.get(patient.id) || {};
+          return {
+            ...local,
+            ...patient,
+            planningDay: patient.planningDay || local.planningDay || null,
+            focusMetrics: patient.focusMetrics?.length ? patient.focusMetrics : local.focusMetrics || []
+          };
+        });
+        next.symptoms = payload.symptoms || [];
+        next.measurements = payload.measurements || [];
+        next.tasks = payload.tasks || [];
+        next.checkins = payload.checkins || [];
+        next.chats = payload.chats || {};
+        next.conversationProfiles = payload.conversationProfiles || {};
+        next.clinicalSummaries = payload.clinicalSummaries || {};
+        next.clinicalAlerts = payload.clinicalAlerts || [];
+        if (!next.patients.some((patient) => patient.id === next.selectedPatientId)) {
+          next.selectedPatientId = activeSession?.user?.patientId || next.patients[0]?.id || null;
+        }
+        return ensureClinicalIds(next);
+      }
+
+      function mergeClinicalInsights(next, payload) {
+        next.clinicalSummaries = payload.clinicalSummaries || {};
+        next.clinicalAlerts = payload.clinicalAlerts || [];
+        const serverPatients = new Map((payload.patients || []).map((patient) => [patient.id, patient]));
+        (next.patients || []).forEach((patient) => {
+          const serverPatient = serverPatients.get(patient.id);
+          if (serverPatient?.summary) patient.summary = serverPatient.summary;
+        });
+      }
+
+      async function syncClinicalState() {
+        if (!clinicalHydrated || !activeSession) return;
+        const next = state();
+        const snapshot = JSON.stringify(clinicalSnapshot(next));
+        if (snapshot === lastClinicalSnapshot) return;
+        const payload = await apiRequest("/clinical/state", { method: "PUT", body: JSON.parse(snapshot) });
+        const latest = state();
+        mergeClinicalInsights(latest, payload);
+        writeLocalState(latest);
+        lastClinicalSnapshot = snapshot;
+        if (JSON.stringify(clinicalSnapshot(latest)) !== snapshot) scheduleClinicalSync();
+      }
+
+      function scheduleClinicalSync() {
+        clearTimeout(clinicalSyncTimer);
+        clinicalSyncTimer = setTimeout(() => {
+          clinicalSyncPromise = clinicalSyncPromise
+            .then(syncClinicalState)
+            .catch((error) => console.warn("Não foi possível sincronizar os dados clínicos.", error));
+        }, 450);
+      }
+
+      async function loadClinicalState() {
+        clinicalHydrated = false;
+        const local = ensureClinicalIds(state());
+        writeLocalState(local);
+        let payload = await apiRequest("/clinical/state");
+        if (!payload.initialized && activeSession?.user?.role !== "ADMIN") {
+          const backupKey = `lipecare-clinical-import-backup:${activeSession.tenant.id}`;
+          if (!localStorage.getItem(backupKey)) localStorage.setItem(backupKey, JSON.stringify(clinicalSnapshot(local)));
+        }
+        if (!payload.initialized && activeSession?.user?.role === "ADMIN") {
+          const importSource = legacyClinicalImportState(local);
+          payload = await apiRequest("/clinical/state", { method: "PUT", body: clinicalSnapshot(importSource) });
+        }
+        applyClinicalPayload(local, payload);
+        writeLocalState(local);
+        lastClinicalSnapshot = JSON.stringify(clinicalSnapshot(local));
+        clinicalHydrated = true;
       }
 
       function session() {
@@ -2860,6 +3045,8 @@
       }
 
       function setSession(payload) {
+        clinicalHydrated = false;
+        clearTimeout(clinicalSyncTimer);
         activeSession = { csrfToken: payload.csrfToken, tenant: payload.tenant, user: payload.user };
         const user = activeSession.user;
         if (user.role === "PATIENT") {
@@ -3118,6 +3305,8 @@
         } catch (error) {
           if (!error.network) console.warn(error);
         }
+        clinicalHydrated = false;
+        clearTimeout(clinicalSyncTimer);
         activeSession = null;
         activePublicBrand = null;
         navigate(slug ? `/login/${encodeURIComponent(slug)}` : "/login", true);
@@ -3628,6 +3817,7 @@
       async function completeAuthentication(payload, view) {
         setSession(payload);
         await loadTenantWorkspace();
+        await loadClinicalState();
         navigate(clinicPath(view, payload.tenant.slug), true);
       }
 
@@ -3911,19 +4101,48 @@
         `;
       }
 
+      function clinicalSummaryStatusLabel(status) {
+        return {
+          APPROVED: "Aprovado pela equipe",
+          NEEDS_REVISION: "Revisão solicitada",
+          PENDING_REVIEW: "Aguardando revisão"
+        }[status] || "Aguardando geração";
+      }
+
+      function clinicalSummaryTag(status) {
+        return status === "APPROVED" ? "ok" : status === "NEEDS_REVISION" ? "danger" : "warn";
+      }
+
+      function clinicalSeverityLabel(severity) {
+        return { LOW: "Baixa", MEDIUM: "Média", HIGH: "Alta", CRITICAL: "Crítica" }[severity] || "Atenção";
+      }
+
+      function clinicalAlertTag(severity) {
+        return ["HIGH", "CRITICAL"].includes(severity) ? "danger" : severity === "MEDIUM" ? "warn" : "ok";
+      }
+
+      function clinicalAlertStatusLabel(status) {
+        return { OPEN: "Aberto", ACKNOWLEDGED: "Em análise", RESOLVED: "Resolvido" }[status] || "Aberto";
+      }
+
+      function clinicalAlertCountLabel(count) {
+        return count === 1 ? "1 alerta" : `${count} alertas`;
+      }
+
       function renderDashboard(data, user) {
         const workspace = workspaceConfig(data);
         const patients = scopedPatients(data, user);
         const tasks = visibleTasks(data, user);
         const symptoms = data.symptoms.filter((item) => patients.some((patient) => patient.id === item.patientId));
         const measurements = data.measurements.filter((item) => patients.some((patient) => patient.id === item.patientId));
+        const alerts = (data.clinicalAlerts || []).filter((alert) => patients.some((patient) => patient.id === alert.patientId) && alert.status !== "RESOLVED");
         return `
           ${header("Dashboard", "Indicadores de acompanhamento, risco e rotina clínica.", roleLabel(user.role))}
           <section class="grid kpis">
             ${stat("Pacientes", patients.length, "patients")}
             ${stat("Sintomas", symptoms.length, "symptoms")}
             ${stat("Medidas", measurements.length, "measures")}
-            ${stat("Tarefas", tasks.filter((task) => task.status !== "Resolvido").length, "tasks")}
+            ${stat("Alertas abertos", alerts.length, "alert")}
           </section>
           <section class="grid two-col">
             <article class="card chart-card">
@@ -3948,11 +4167,12 @@
               ${patientTable(patients)}
             </article>
             <article class="card">
-              <h2>Resumo inteligente</h2>
+              <h2>Revisão assistencial</h2>
               <div class="list">
-                <div class="list-row"><div><strong>Prioridade da semana</strong><p>Revisar dor alta, exames pendentes e retornos próximos.</p></div>${icon("alert")}</div>
-                <div class="list-row"><div><strong>${escapeHtml(workspace.assistant.name)}</strong><p>Use o laboratório para validar linguagem antes de qualquer canal externo.</p></div>${icon("chat")}</div>
-                <div class="list-row"><div><strong>Dados fictícios</strong><p>Este preview não deve receber informações reais de pacientes.</p></div>${icon("settings")}</div>
+                ${alerts.slice(0, 4).map((alert) => {
+                  const patient = patients.find((item) => item.id === alert.patientId);
+                  return `<div class="list-row"><div><strong>${escapeHtml(alert.title)}</strong><p>${escapeHtml(patient?.name || "Paciente")} - ${escapeHtml(alert.details)}</p></div><span class="tag ${clinicalAlertTag(alert.severity)}">${escapeHtml(clinicalSeverityLabel(alert.severity))}</span></div>`;
+                }).join("") || `<div class="empty">Nenhum alerta clínico aberto.</div>`}
               </div>
             </article>
           </section>
@@ -4000,17 +4220,31 @@
         const initialAssessment = (data.checkins || []).find((item) => item.patientId === patient.id && item.type === "initial-assessment");
         const credential = patientCredential(data, patient.id);
         const canManageAccess = session()?.role !== "PATIENT";
+        const canReviewClinical = session()?.role !== "PATIENT";
+        const clinicalSummary = data.clinicalSummaries?.[patient.id] || null;
+        const clinicalAlerts = (data.clinicalAlerts || []).filter((alert) => alert.patientId === patient.id);
         const availableTabs = ["summary", "conversation", "symptoms", "measurements", "tasks", "history"];
         const activeTab = availableTabs.includes(data.patientTab) ? data.patientTab : "summary";
         const tabContent = {
           summary: `
             <div class="list">
-              <div class="list-row"><div><strong>Resumo clínico</strong><p>${escapeHtml(patient.summary)}</p></div></div>
+              <div class="list-row">
+                <div style="width: 100%;">
+                  <div class="patient-tab-heading"><strong>Resumo clínico</strong><span class="tag ${clinicalSummaryTag(clinicalSummary?.status)}">${escapeHtml(clinicalSummaryStatusLabel(clinicalSummary?.status))}</span></div>
+                  ${canReviewClinical ? `<textarea id="clinical-summary-editor" rows="5" aria-label="Resumo clínico para revisão">${escapeHtml(clinicalSummary?.narrative || patient.summary)}</textarea>
+                    <div class="inline-actions" style="margin-top: 12px;">
+                      <button class="btn" type="button" data-review-summary="APPROVED">Aprovar resumo</button>
+                      <button class="btn secondary" type="button" data-review-summary="NEEDS_REVISION">Solicitar revisão</button>
+                    </div>` : `<p>${escapeHtml(clinicalSummary?.narrative || patient.summary)}</p>`}
+                </div>
+              </div>
+              <div class="list-row"><div><strong>Alertas clínicos</strong><p>${clinicalAlerts.filter((alert) => alert.status !== "RESOLVED").length === 1 ? "1 alerta exige acompanhamento." : `${clinicalAlerts.filter((alert) => alert.status !== "RESOLVED").length} alertas exigem acompanhamento.`}</p></div><span class="tag ${clinicalAlerts.some((alert) => ["HIGH", "CRITICAL"].includes(alert.severity) && alert.status !== "RESOLVED") ? "danger" : "ok"}">${clinicalAlerts.filter((alert) => alert.status !== "RESOLVED").length === 1 ? "1 aberto" : `${clinicalAlerts.filter((alert) => alert.status !== "RESOLVED").length} abertos`}</span></div>
+              ${clinicalAlerts.map((alert) => `<div class="list-row"><div><strong>${escapeHtml(alert.title)}</strong><p>${escapeHtml(alert.details)}</p></div><div class="inline-actions"><span class="tag ${clinicalAlertTag(alert.severity)}">${escapeHtml(clinicalAlertStatusLabel(alert.status))}</span>${canReviewClinical && alert.status !== "RESOLVED" ? `<button class="btn secondary" type="button" data-review-alert="${escapeHtml(alert.id)}" data-alert-status="${alert.status === "OPEN" ? "ACKNOWLEDGED" : "RESOLVED"}">${alert.status === "OPEN" ? "Marcar como visto" : "Resolver"}</button>` : ""}</div></div>`).join("")}
               <div class="list-row"><div><strong>Avaliação inicial</strong><p>${initialAssessment ? escapeHtml(checkinSummary(initialAssessment)) : "Aguardando coleta pelo chat."}</p></div><span class="tag ${initialAssessment ? "ok" : "warn"}">${initialAssessment ? "Concluída" : "Pendente"}</span></div>
-              <div class="list-row"><div><strong>Sintomas registrados</strong><p>${symptoms.length} registros</p></div><span class="tag">${symptoms[0] ? `Dor ${symptoms[0].pain}/10` : "Sem dor"}</span></div>
-              <div class="list-row"><div><strong>Medidas registradas</strong><p>${measures.length} registros</p></div><span class="tag">${measures[0] ? escapeHtml(measurementHeadline(measures[0])) : "Sem medida"}</span></div>
-              <div class="list-row"><div><strong>Tarefas vinculadas</strong><p>${tasks.length} tarefas</p></div><span class="tag warn">${tasks.filter((task) => task.status !== "Resolvido").length} abertas</span></div>
-              <div class="list-row"><div><strong>Cadência ativa</strong><p>Planejamento às ${escapeHtml(patient.planningDay || workspace.automation.planningDay)}</p></div><span class="tag ok">${escapeHtml(patient.interactionFrequency || workspace.automation.interactionFrequency)}</span></div>
+              <div class="list-row"><div><strong>Sintomas registrados</strong><p>${symptoms.length} ${symptoms.length === 1 ? "registro" : "registros"}</p></div><span class="tag">${symptoms[0] ? `Dor ${symptoms[0].pain}/10` : "Sem dor"}</span></div>
+              <div class="list-row"><div><strong>Medidas registradas</strong><p>${measures.length} ${measures.length === 1 ? "registro" : "registros"}</p></div><span class="tag">${measures[0] ? escapeHtml(measurementHeadline(measures[0])) : "Sem medida"}</span></div>
+              <div class="list-row"><div><strong>Tarefas vinculadas</strong><p>${tasks.length} ${tasks.length === 1 ? "tarefa" : "tarefas"}</p></div><span class="tag warn">${tasks.filter((task) => task.status !== "Resolvido").length === 1 ? "1 aberta" : `${tasks.filter((task) => task.status !== "Resolvido").length} abertas`}</span></div>
+              <div class="list-row"><div><strong>Cadência ativa</strong><p>Planejamento: ${escapeHtml(patient.planningDay || workspace.automation.planningDay)}</p></div><span class="tag ok">${escapeHtml(patient.interactionFrequency || workspace.automation.interactionFrequency)}</span></div>
               <div class="list-row"><div><strong>Indicadores foco</strong><p>${(patient.focusMetrics || []).map((id) => workspace.metrics.find((metric) => metric.id === id)?.name).filter(Boolean).map(escapeHtml).join(", ") || "Ainda não definidos."}</p></div></div>
               <div class="list-row">
                 <div>
@@ -4210,6 +4444,7 @@
                 <h2>Resumo do paciente</h2>
                 <div class="list">
                   <div class="list-row"><div><strong>${escapeHtml(patient?.name || "Paciente")}</strong><p>${escapeHtml(patient?.summary || "Sem resumo.")}</p></div></div>
+                  <div class="list-row"><div><strong>Revisão clínica</strong><p>${escapeHtml(clinicalSummaryStatusLabel(data.clinicalSummaries?.[patient?.id]?.status))}</p></div><span class="tag ${clinicalSummaryTag(data.clinicalSummaries?.[patient?.id]?.status)}">${clinicalAlertCountLabel((data.clinicalAlerts || []).filter((alert) => alert.patientId === patient?.id && alert.status !== "RESOLVED").length)}</span></div>
                   <div class="list-row"><div><strong>Último check-in</strong><p>${escapeHtml(patient?.lastCheckin || "Sem registro")}</p></div></div>
                   <div class="list-row"><div><strong>Situação atual</strong><p>${escapeHtml(profile?.lastSituation || "Boas-vindas")}</p></div><span class="tag">${escapeHtml(profile?.frequency || "A definir")}</span></div>
                   <div class="list-row"><div><strong>Engajamento</strong><p>Leitura local para adaptar acolhimento e próximos passos.</p></div><span class="tag ${Number(profile?.engagement || 0) <= 4 ? "warn" : "ok"}">${Number(profile?.engagement || 0)}/10</span></div>
@@ -4701,11 +4936,22 @@
 
       function recentEvents(data, user) {
         const ids = scopedPatients(data, user).map((patient) => patient.id);
+        const messageEvents = Object.entries(data.chats || {}).flatMap(([patientId, messages]) => {
+          if (!ids.includes(patientId)) return [];
+          return messages.map((message) => ({
+            patientId,
+            date: message.date,
+            title: message.role === "user" ? "Mensagem da paciente" : message.role === "staff" ? "Resposta da equipe" : "Resposta do assistente",
+            detail: String(message.text || "Anexo enviado").slice(0, 180)
+          }));
+        });
         return [
           ...data.symptoms.filter((item) => ids.includes(item.patientId)).map((item) => ({ patientId: item.patientId, date: item.date, title: `Dor ${item.pain}/10`, detail: item.note })),
           ...data.measurements.filter((item) => ids.includes(item.patientId)).map((item) => ({ patientId: item.patientId, date: item.date, title: measurementHeadline(item), detail: measurementDetails(item) })),
           ...(data.checkins || []).filter((item) => ids.includes(item.patientId)).map((item) => ({ patientId: item.patientId, date: item.date, title: checkinTitle(item.type), detail: checkinSummary(item) })),
-          ...data.tasks.filter((item) => ids.includes(item.patientId)).map((item) => ({ patientId: item.patientId, date: item.due, title: item.title, detail: item.type }))
+          ...data.tasks.filter((item) => ids.includes(item.patientId)).map((item) => ({ patientId: item.patientId, date: item.due, title: item.title, detail: item.type })),
+          ...(data.clinicalAlerts || []).filter((item) => ids.includes(item.patientId)).map((item) => ({ patientId: item.patientId, date: item.detectedAt, title: item.title, detail: `${clinicalSeverityLabel(item.severity)} - ${clinicalAlertStatusLabel(item.status)}` })),
+          ...messageEvents
         ].sort((a, b) => String(b.date).localeCompare(String(a.date)));
       }
 
@@ -5548,6 +5794,7 @@
               history: recentAIHistory(messages),
               context: {
                 language: data.language,
+                patientId: patient?.id || null,
                 firstName: patient?.name?.split(" ")[0] || "Paciente",
                 frequency: profile.frequency,
                 stage: profile.stage,
@@ -6016,6 +6263,54 @@
             data.patientTab = button.dataset.tab;
             save(data);
             render();
+          });
+        });
+
+        document.querySelectorAll("[data-review-summary]").forEach((button) => {
+          button.addEventListener("click", async () => {
+            const data = state();
+            const patient = selectedPatient(data, user);
+            const editor = document.getElementById("clinical-summary-editor");
+            if (!patient || !editor || user.role === "PATIENT") return;
+            const narrative = editor.value.trim();
+            if (!narrative) {
+              alert("O resumo clínico não pode ficar vazio.");
+              return;
+            }
+            button.disabled = true;
+            try {
+              const payload = await apiRequest(`/clinical/patients/${encodeURIComponent(patient.id)}/summary`, {
+                method: "PATCH",
+                body: { status: button.dataset.reviewSummary, narrative }
+              });
+              const latest = state();
+              mergeClinicalInsights(latest, payload);
+              writeLocalState(latest);
+              render();
+            } catch (error) {
+              alert(error.message);
+              button.disabled = false;
+            }
+          });
+        });
+
+        document.querySelectorAll("[data-review-alert]").forEach((button) => {
+          button.addEventListener("click", async () => {
+            if (user.role === "PATIENT") return;
+            button.disabled = true;
+            try {
+              const payload = await apiRequest(`/clinical/alerts/${encodeURIComponent(button.dataset.reviewAlert)}`, {
+                method: "PATCH",
+                body: { status: button.dataset.alertStatus }
+              });
+              const latest = state();
+              mergeClinicalInsights(latest, payload);
+              writeLocalState(latest);
+              render();
+            } catch (error) {
+              alert(error.message);
+              button.disabled = false;
+            }
           });
         });
 
@@ -6547,6 +6842,7 @@
           const payload = await apiRequest("/auth/me");
           setSession(payload);
           await loadTenantWorkspace();
+          await loadClinicalState();
         } catch (error) {
           activeSession = null;
           if (error.status !== 401) bootstrapError = error.message;

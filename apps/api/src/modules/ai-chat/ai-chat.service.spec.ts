@@ -35,3 +35,20 @@ test("preserva limites clínicos e de práticas complementares", () => {
   assert.match(instructions, /não prometer drenagem, desintoxicação, equilíbrio hormonal ou cura/i);
   assert.match(instructions, /nunca como mecanismo biomédico comprovado/i);
 });
+
+test("inclui memória clínica sem perder os limites de revisão humana", () => {
+  const instructions = assistantInstructions({
+    ...request,
+    context: {
+      ...request.context,
+      clinicalSummary: "Dor 7/10 e sono 5/10.",
+      activePlan: { commitment: "Caminhar três vezes na semana." },
+      unresolvedQuestions: ["Confirmar a intensidade atual do inchaço."]
+    }
+  });
+
+  assert.match(instructions, /Dor 7\/10 e sono 5\/10/);
+  assert.match(instructions, /Caminhar três vezes na semana/);
+  assert.match(instructions, /Confirmar a intensidade atual do inchaço/);
+  assert.match(instructions, /revisão humana/i);
+});

@@ -19,6 +19,6 @@ export class AiChatController {
       console.warn("[ai-chat] Requisição rejeitada pela validação.");
       throw new BadRequestException("A mensagem enviada para a IA é inválida.");
     }
-    return this.aiChatService.createReply(parsed.data, request.auth.tenant.id);
+    return this.aiChatService.createReply(parsed.data, request.auth);
   }
 }

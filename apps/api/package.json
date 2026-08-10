@@ -9,7 +9,7 @@
     "start": "nest start",
     "start:prod": "node dist/main.js",
     "lint": "tsc -p tsconfig.json --noEmit",
-    "test": "npm run build && node --test dist/modules/auth/auth.schemas.spec.js dist/modules/ai-chat/ai-chat.service.spec.js",
+    "test": "npm run build && node --test dist/modules/auth/auth.schemas.spec.js dist/modules/ai-chat/ai-chat.service.spec.js dist/modules/clinical/clinical.service.spec.js",
     "prisma:generate": "prisma generate --schema prisma/schema.prisma",
     "prisma:migrate": "prisma migrate dev --schema prisma/schema.prisma",
     "prisma:seed": "node prisma/seed.mjs"

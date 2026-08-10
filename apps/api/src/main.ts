@@ -7,7 +7,7 @@ import { AppModule } from "./app.module.js";
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const config = app.get(ConfigService);
-  app.useBodyParser("json", { limit: "2mb" });
+  app.useBodyParser("json", { limit: "6mb" });
   const webUrl = config.get<string>("WEB_URL") ?? "http://localhost:3000";
   const allowedOrigins = new Set([webUrl, "http://localhost:3009"]);
 

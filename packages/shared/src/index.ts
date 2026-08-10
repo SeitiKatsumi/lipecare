@@ -103,6 +103,31 @@ export type AuthenticatedSession = {
   };
 };
 
+export type ClinicalSummaryStatus = "PENDING_REVIEW" | "APPROVED" | "NEEDS_REVISION";
+export type ClinicalAlertSeverity = "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+export type ClinicalAlertStatus = "OPEN" | "ACKNOWLEDGED" | "RESOLVED";
+
+export type ClinicalSummaryView = {
+  narrative: string;
+  structured: Record<string, unknown>;
+  sourceReferences: Array<{ type: string; id: string }>;
+  status: ClinicalSummaryStatus;
+  generatedAt: string;
+  reviewedAt: string | null;
+};
+
+export type ClinicalAlertView = {
+  id: string;
+  patientId: string;
+  type: string;
+  severity: ClinicalAlertSeverity;
+  status: ClinicalAlertStatus;
+  title: string;
+  details: string;
+  detectedAt: string;
+  reviewedAt: string | null;
+};
+
 export type LoginResult =
   | ({ status: "authenticated" } & AuthenticatedSession)
   | {

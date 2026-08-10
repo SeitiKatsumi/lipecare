@@ -13,20 +13,46 @@ enum UserRole {
   PATIENT
 }
 
-model Tenant {
-  id        String   @id @default(uuid())
-  name      String
-  slug      String   @unique
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+enum ClinicalSummaryStatus {
+  PENDING_REVIEW
+  APPROVED
+  NEEDS_REVISION
+}
 
-  users           User[]
-  professionals   Professional[]
-  patients        Patient[]
-  workspace       TenantWorkspace?
-  sessions        AuthSession[]
-  loginChallenges LoginChallenge[]
+enum ClinicalAlertSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum ClinicalAlertStatus {
+  OPEN
+  ACKNOWLEDGED
+  RESOLVED
+}
+
+model Tenant {
+  id                    String    @id @default(uuid())
+  name                  String
+  slug                  String    @unique
+  isActive              Boolean   @default(true)
+  clinicalInitializedAt DateTime?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  users                User[]
+  professionals        Professional[]
+  patients             Patient[]
+  workspace            TenantWorkspace?
+  sessions             AuthSession[]
+  loginChallenges      LoginChallenge[]
+  conversationMessages ConversationMessage[]
+  checkIns             CheckInRecord[]
+  clinicalMemories     ClinicalMemory[]
+  clinicalSummaries    ClinicalSummary[]
+  clinicalAlerts       ClinicalAlert[]
+  clinicalTasks        ClinicalTask[]
 }
 
 model User {
@@ -116,21 +142,33 @@ model LoginChallenge {
 }
 
 model Patient {
-  id        String    @id @default(uuid())
-  tenantId  String
-  userId    String?   @unique
-  fullName  String
-  birthDate DateTime?
-  phone     String?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id              String    @id @default(uuid())
+  tenantId        String
+  userId          String?   @unique
+  fullName        String
+  age             Int?
+  birthDate       DateTime?
+  phone           String?
+  email           String?
+  city            String?
+  status          String    @default("Avaliação pendente")
+  lastCheckInAt   DateTime?
+  clinicalSummary String?   @db.Text
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
-  tenant        Tenant                @relation(fields: [tenantId], references: [id])
-  user          User?                 @relation(fields: [userId], references: [id])
-  professionals PatientProfessional[]
-  symptoms      SymptomRecord[]
-  measurements  BodyMeasurement[]
-  files         PatientFile[]
+  tenant                Tenant                @relation(fields: [tenantId], references: [id])
+  user                  User?                 @relation(fields: [userId], references: [id])
+  professionals         PatientProfessional[]
+  symptoms              SymptomRecord[]
+  measurements          BodyMeasurement[]
+  files                 PatientFile[]
+  conversationMessages  ConversationMessage[]
+  checkIns              CheckInRecord[]
+  clinicalMemory        ClinicalMemory?
+  clinicalSummaryRecord ClinicalSummary?
+  clinicalAlerts        ClinicalAlert[]
+  clinicalTasks         ClinicalTask[]
 
   @@index([tenantId])
 }
@@ -153,6 +191,7 @@ model SymptomRecord {
   id         String   @id @default(uuid())
   tenantId   String
   patientId  String
+  externalId String
   painLevel  Int?
   notes      String?
   recordedAt DateTime @default(now())
@@ -160,6 +199,7 @@ model SymptomRecord {
 
   patient Patient @relation(fields: [patientId], references: [id])
 
+  @@unique([tenantId, externalId])
   @@index([tenantId, patientId, recordedAt])
 }
 
@@ -167,8 +207,11 @@ model BodyMeasurement {
   id         String   @id @default(uuid())
   tenantId   String
   patientId  String
+  externalId String
   weightKg   Decimal?
   heightCm   Decimal?
+  thighCm    Decimal?
+  legCm      Decimal?
   waistCm    Decimal?
   hipCm      Decimal?
   notes      String?
@@ -177,6 +220,7 @@ model BodyMeasurement {
 
   patient Patient @relation(fields: [patientId], references: [id])
 
+  @@unique([tenantId, externalId])
   @@index([tenantId, patientId, recordedAt])
 }
 
@@ -192,6 +236,134 @@ model PatientFile {
   patient Patient @relation(fields: [patientId], references: [id])
 
   @@index([tenantId, patientId])
+}
+
+model ConversationMessage {
+  id           String   @id @default(uuid())
+  tenantId     String
+  patientId    String
+  externalId   String
+  role         String
+  authorUserId String?
+  authorName   String?
+  text         String   @db.Text
+  attachments  Json
+  aiGenerated  Boolean  @default(false)
+  fallback     Boolean  @default(false)
+  sentAt       DateTime @default(now())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  tenant  Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  patient Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, externalId])
+  @@index([tenantId, patientId, sentAt])
+}
+
+model CheckInRecord {
+  id         String   @id @default(uuid())
+  tenantId   String
+  patientId  String
+  externalId String
+  type       String
+  frequency  String?
+  answers    Json
+  summary    String?  @db.Text
+  recordedAt DateTime @default(now())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  tenant  Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  patient Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, externalId])
+  @@index([tenantId, patientId, recordedAt])
+}
+
+model ClinicalMemory {
+  id                  String   @id @default(uuid())
+  tenantId            String
+  patientId           String   @unique
+  shortTermSummary    String   @db.Text
+  structured          Json
+  unresolvedQuestions Json
+  activePlan          Json
+  engagement          Int?
+  lastSituation       String?
+  frequency           String?
+  version             Int      @default(1)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  tenant  Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  patient Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, updatedAt])
+}
+
+model ClinicalSummary {
+  id               String                @id @default(uuid())
+  tenantId         String
+  patientId        String                @unique
+  narrative        String                @db.Text
+  structured       Json
+  sourceReferences Json
+  status           ClinicalSummaryStatus @default(PENDING_REVIEW)
+  generatedAt      DateTime              @default(now())
+  editedByUserId   String?
+  reviewedByUserId String?
+  reviewedAt       DateTime?
+  createdAt        DateTime              @default(now())
+  updatedAt        DateTime              @updatedAt
+
+  tenant  Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  patient Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, status, updatedAt])
+}
+
+model ClinicalAlert {
+  id               String                @id @default(uuid())
+  tenantId         String
+  patientId        String
+  sourceKey        String
+  type             String
+  severity         ClinicalAlertSeverity
+  status           ClinicalAlertStatus   @default(OPEN)
+  title            String
+  details          String                @db.Text
+  reviewedByUserId String?
+  reviewedAt       DateTime?
+  detectedAt       DateTime              @default(now())
+  createdAt        DateTime              @default(now())
+  updatedAt        DateTime              @updatedAt
+
+  tenant  Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  patient Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, sourceKey])
+  @@index([tenantId, patientId, status, detectedAt])
+}
+
+model ClinicalTask {
+  id         String    @id @default(uuid())
+  tenantId   String
+  patientId  String
+  externalId String
+  title      String
+  type       String
+  status     String
+  priority   String?
+  dueAt      DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  tenant  Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  patient Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, externalId])
+  @@index([tenantId, patientId, status, dueAt])
 }
 
 model AuditLog {

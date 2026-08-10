@@ -5,6 +5,8 @@ import { createDefaultTenantWorkspace } from "@lipecare/shared";
 import OpenAI from "openai";
 import { z } from "zod";
 import { PrismaService } from "../../database/prisma.service.js";
+import type { RequestAuth } from "../auth/auth.types.js";
+import { ClinicalService } from "../clinical/clinical.service.js";
 import { LIPECARE_DEFAULT_KNOWLEDGE } from "./lipecare-default-knowledge.js";
 
 const historyItemSchema = z.object({
@@ -38,6 +40,7 @@ export const aiChatRequestSchema = z.object({
   context: z
     .object({
       language: z.enum(["pt", "en", "es"]).optional(),
+      patientId: z.string().trim().max(100).nullable().optional(),
       firstName: z.string().trim().max(80).optional(),
       frequency: z.string().trim().max(40).nullable().optional(),
       stage: z.string().trim().max(60).nullable().optional(),
@@ -63,7 +66,10 @@ export const aiChatRequestSchema = z.object({
           monthlyReminder: z.boolean().optional(),
           lowEngagementAction: z.string().trim().max(1000).optional()
         })
-        .optional()
+        .optional(),
+      clinicalSummary: z.string().trim().max(6000).optional(),
+      activePlan: z.record(z.unknown()).optional(),
+      unresolvedQuestions: z.array(z.string().trim().max(500)).max(30).optional()
     })
     .default({})
 });
@@ -102,6 +108,12 @@ Regras obrigatórias:
 
 O objetivo é compreender a mensagem da paciente, responder naturalmente e conduzir o acompanhamento definido pelo profissional.
 
+Memória clínica centralizada:
+- Resumo atual: ${context.clinicalSummary || "Ainda não há resumo clínico consolidado."}
+- Plano ativo: ${JSON.stringify(context.activePlan || {})}
+- Questões pendentes: ${(context.unresolvedQuestions || []).join("; ") || "Nenhuma questão pendente registrada."}
+Use essa memória somente para dar continuidade ao acompanhamento. A mensagem atual tem prioridade; divergências importantes devem ser sinalizadas para revisão humana.
+
 ${LIPECARE_DEFAULT_KNOWLEDGE}`;
 }
 
@@ -112,20 +124,21 @@ export class AiChatService {
 
   constructor(
     config: ConfigService,
-    private readonly prisma: PrismaService
+    private readonly prisma: PrismaService,
+    private readonly clinicalService: ClinicalService
   ) {
     const apiKey = config.get<string>("OPENAI_API_KEY");
     this.client = apiKey ? new OpenAI({ apiKey }) : null;
     this.model = config.get<string>("OPENAI_CHAT_MODEL") ?? "gpt-5-mini";
   }
 
-  async createReply(request: AiChatRequest, tenantId: string) {
+  async createReply(request: AiChatRequest, auth: RequestAuth) {
     if (!this.client) {
       throw new ServiceUnavailableException("A IA não está configurada no servidor.");
     }
 
     const tenant = await this.prisma.tenant.findFirst({
-      where: { id: tenantId, isActive: true },
+      where: { id: auth.tenant.id, isActive: true },
       include: { workspace: true }
     });
     if (!tenant) throw new ServiceUnavailableException("A clínica não está disponível neste momento.");
@@ -142,6 +155,7 @@ export class AiChatService {
           automation: tenant.workspace.automation as unknown as TenantWorkspaceData["automation"]
         }
       : defaults;
+    const memory = await this.clinicalService.assistantMemory(auth, request.context.patientId);
     const trustedRequest: AiChatRequest = {
       ...request,
       context: {
@@ -168,11 +182,20 @@ export class AiChatService {
           answerType: question.answerType,
           frequency: question.frequency
         })),
-        automation: workspace.automation
+        automation: workspace.automation,
+        clinicalSummary: memory?.summary || "",
+        activePlan: (memory?.activePlan as Record<string, unknown> | undefined) || {},
+        unresolvedQuestions: Array.isArray(memory?.unresolvedQuestions)
+          ? memory.unresolvedQuestions.filter((item): item is string => typeof item === "string")
+          : []
       }
     };
 
-    const history = trustedRequest.history.map((item) => ({
+    const storedHistory = memory?.recentMessages.length ? memory.recentMessages : trustedRequest.history;
+    const effectiveHistory = storedHistory.at(-1)?.role === "user" && storedHistory.at(-1)?.text === trustedRequest.message
+      ? storedHistory.slice(0, -1)
+      : storedHistory;
+    const history = effectiveHistory.map((item) => ({
       role: item.role,
       content: item.text
     }));
