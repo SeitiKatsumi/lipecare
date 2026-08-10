@@ -3053,7 +3053,14 @@
         clinicalHydrated = false;
         const local = ensureClinicalIds(state());
         writeLocalState(local);
-        let payload = await apiRequest("/clinical/state");
+        let payload;
+        try {
+          payload = await apiRequest("/clinical/state");
+        } catch (error) {
+          if (error.status !== 404) throw error;
+          lastClinicalSnapshot = JSON.stringify(clinicalSnapshot(local));
+          return;
+        }
         if (!payload.initialized && activeSession?.user?.role !== "ADMIN") {
           const backupKey = `lipecare-clinical-import-backup:${activeSession.tenant.id}`;
           if (!localStorage.getItem(backupKey)) localStorage.setItem(backupKey, JSON.stringify(clinicalSnapshot(local)));
