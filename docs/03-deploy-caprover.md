@@ -56,7 +56,7 @@ Para o primeiro staging visual, o `captain-definition` da raiz aponta para `prev
 
 No deploy real, usar apps separados para web e API. Isso facilita escala, logs, variaveis e rollback independente.
 
-O serviço `lipecare-api-production` deve usar `deploy/captain-definition.api`, executar as migrations no início do contêiner e receber `DATABASE_URL` e `WEB_URL` pelo CapRover. A variável `LIPECARE_SEED_DEMO` deve ser habilitada somente no primeiro deploy de um banco vazio e removida em seguida.
+O serviço `lipecare-api-production` deve usar `apps/api/captain-definition`, executar as migrations no início do contêiner e receber `DATABASE_URL` e `WEB_URL` pelo CapRover. A variável `LIPECARE_SEED_DEMO` deve ser habilitada somente no primeiro deploy de um banco vazio e removida em seguida.
 
 ## Primeiro Deploy: Preview
 
