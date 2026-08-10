@@ -24,5 +24,5 @@ COPY --from=builder /app/apps/api/entrypoint.sh ./apps/api/entrypoint.sh
 COPY --from=builder /app/packages/shared ./packages/shared
 RUN chmod +x ./apps/api/entrypoint.sh
 EXPOSE 4000
-CMD ["./apps/api/entrypoint.sh"]
+CMD ["sh", "apps/api/entrypoint.sh"]
 
