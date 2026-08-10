@@ -2793,6 +2793,26 @@
         return payload;
       }
 
+      const BOOTSTRAP_RETRY_DELAYS = [500, 1200, 2500];
+
+      function shouldRetryBootstrapRequest(error) {
+        return error?.network || [502, 503, 504].includes(error?.status);
+      }
+
+      async function bootstrapRequest(path, options = {}) {
+        let lastError;
+        for (let attempt = 0; attempt <= BOOTSTRAP_RETRY_DELAYS.length; attempt += 1) {
+          try {
+            return await apiRequest(path, options);
+          } catch (error) {
+            lastError = error;
+            if (!shouldRetryBootstrapRequest(error) || attempt === BOOTSTRAP_RETRY_DELAYS.length) throw error;
+            await new Promise((resolve) => window.setTimeout(resolve, BOOTSTRAP_RETRY_DELAYS[attempt]));
+          }
+        }
+        throw lastError;
+      }
+
       function stateStorageKey() {
         return activeSession?.tenant?.id ? `lipecare-redesign-state:${activeSession.tenant.id}` : "lipecare-redesign-state:public";
       }
@@ -6817,7 +6837,7 @@
         route = routeInfo();
         if (route.type === "login" && route.slug) {
           try {
-            activePublicBrand = await apiRequest(`/tenants/${encodeURIComponent(route.slug)}/public`);
+            activePublicBrand = await bootstrapRequest(`/tenants/${encodeURIComponent(route.slug)}/public`);
             bootstrapError = "";
           } catch (error) {
             activePublicBrand = null;
@@ -6839,7 +6859,7 @@
         bootstrapComplete = false;
         render();
         try {
-          const payload = await apiRequest("/auth/me");
+          const payload = await bootstrapRequest("/auth/me");
           setSession(payload);
           await loadTenantWorkspace();
           await loadClinicalState();
