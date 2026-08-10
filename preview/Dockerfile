@@ -2,7 +2,7 @@ FROM nginx:1.27-alpine
 
 ARG LIPECARE_DEPLOY_VERSION=container
 ARG LIPECARE_COMMIT_SHA=sem-commit
-ARG LIPECARE_API_URL=https://lipecare-api.apps.dna11.com.br
+ARG LIPECARE_API_URL=/api
 ARG CAPROVER_GIT_COMMIT_SHA
 
 COPY package.json /tmp/package.json
