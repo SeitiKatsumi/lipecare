@@ -20,7 +20,9 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/apps/api/package*.json ./apps/api/
 COPY --from=builder /app/apps/api/dist ./apps/api/dist
 COPY --from=builder /app/apps/api/prisma ./apps/api/prisma
+COPY --from=builder /app/apps/api/entrypoint.sh ./apps/api/entrypoint.sh
 COPY --from=builder /app/packages/shared ./packages/shared
+RUN chmod +x ./apps/api/entrypoint.sh
 EXPOSE 4000
-CMD ["npm", "run", "start:prod", "-w", "@lipecare/api"]
+CMD ["./apps/api/entrypoint.sh"]
 
