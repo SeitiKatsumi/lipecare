@@ -1870,6 +1870,7 @@
       let tenantWorkspaceVersion = 1;
       let bootstrapComplete = false;
       let bootstrapError = "";
+      let bootstrapRetryTimer = null;
       let clinicalHydrated = false;
       let clinicalSyncTimer = null;
       let clinicalSyncPromise = Promise.resolve();
@@ -2811,6 +2812,13 @@
           }
         }
         throw lastError;
+      }
+
+      function syncBootstrapReconnect() {
+        window.clearTimeout(bootstrapRetryTimer);
+        bootstrapRetryTimer = null;
+        if (!bootstrapError || activeSession) return;
+        bootstrapRetryTimer = window.setTimeout(bootstrap, 5000);
       }
 
       function stateStorageKey() {
@@ -6852,9 +6860,12 @@
           activePublicBrand = null;
         }
         render();
+        syncBootstrapReconnect();
       }
 
       async function bootstrap() {
+        window.clearTimeout(bootstrapRetryTimer);
+        bootstrapRetryTimer = null;
         bootstrapError = "";
         bootstrapComplete = false;
         render();
