@@ -2127,6 +2127,12 @@
           "Endereço personalizado": "Custom address",
           "Confirmar senha": "Confirm password",
           "Criar clínica": "Create clinic",
+          "Informe o nome da clínica.": "Enter the clinic name.",
+          "Informe seu nome.": "Enter your name.",
+          "Use um endereço com pelo menos 3 caracteres, contendo apenas letras minúsculas, números e hífens.": "Use an address with at least 3 characters containing only lowercase letters, numbers, and hyphens.",
+          "Informe um e-mail válido.": "Enter a valid email address.",
+          "A senha precisa ter pelo menos 8 caracteres.": "The password must be at least 8 characters long.",
+          "As senhas não coincidem.": "The passwords do not match.",
           "Já tenho acesso": "I already have access",
           "Endereço da clínica": "Clinic address",
           "Compartilhe este link para abrir o login com a identidade da clínica.": "Share this link to open the sign-in page with the clinic identity.",
@@ -2416,6 +2422,12 @@
           "Endereço personalizado": "Dirección personalizada",
           "Confirmar senha": "Confirmar contraseña",
           "Criar clínica": "Crear clínica",
+          "Informe o nome da clínica.": "Ingresa el nombre de la clínica.",
+          "Informe seu nome.": "Ingresa tu nombre.",
+          "Use um endereço com pelo menos 3 caracteres, contendo apenas letras minúsculas, números e hífens.": "Usa una dirección de al menos 3 caracteres que contenga solo letras minúsculas, números y guiones.",
+          "Informe um e-mail válido.": "Ingresa un correo electrónico válido.",
+          "A senha precisa ter pelo menos 8 caracteres.": "La contraseña debe tener al menos 8 caracteres.",
+          "As senhas não coincidem.": "Las contraseñas no coinciden.",
           "Já tenho acesso": "Ya tengo acceso",
           "Endereço da clínica": "Dirección de la clínica",
           "Compartilhe este link para abrir o login com a identidade da clínica.": "Comparte este enlace para abrir el inicio de sesión con la identidad de la clínica.",
@@ -3763,8 +3775,7 @@
             <section class="login-card">
               <p class="eyebrow">Cadastro aberto · MVP</p>
               <h2>Nova clínica</h2>
-              <form class="form" id="register-form">
-                <div class="auth-feedback" id="auth-feedback" role="alert"></div>
+              <form class="form" id="register-form" novalidate>
                 <label>Nome da clínica <input name="clinicName" autocomplete="organization" required minlength="2" /></label>
                 <label>Seu nome <input name="adminName" autocomplete="name" required minlength="2" /></label>
                 <label>Endereço personalizado <input name="slug" required minlength="3" pattern="[a-z0-9]+(?:-[a-z0-9]+)*" /></label>
@@ -3772,6 +3783,7 @@
                 <label>E-mail <input name="email" type="email" autocomplete="email" required /></label>
                 <label>Senha <input name="password" type="password" autocomplete="new-password" minlength="8" required /></label>
                 <label>Confirmar senha <input name="passwordConfirmation" type="password" autocomplete="new-password" minlength="8" required /></label>
+                <div class="auth-feedback" id="auth-feedback" role="alert" aria-live="assertive" tabindex="-1"></div>
                 <button class="btn" type="submit">Criar clínica</button>
               </form>
               <div class="login-links"><a href="/login" data-navigate>Já tenho acesso</a></div>
@@ -3782,6 +3794,7 @@
         const form = document.getElementById("register-form");
         const clinicName = form.elements.clinicName;
         const slug = form.elements.slug;
+        const registrationFeedback = document.getElementById("auth-feedback");
         let slugEdited = false;
         const updatePreview = () => {
           document.getElementById("slug-preview").textContent = slug.value || "seu-endereco";
@@ -3795,34 +3808,63 @@
           slug.value = normalizeTenantSlug(slug.value);
           updatePreview();
         });
+        form.addEventListener("input", () => registrationFeedback.classList.remove("visible"));
         form.addEventListener("submit", async (event) => {
           event.preventDefault();
           const values = new FormData(form);
-          const feedback = document.getElementById("auth-feedback");
+          const feedback = registrationFeedback;
           const button = form.querySelector("button[type='submit']");
-          if (values.get("password") !== values.get("passwordConfirmation")) {
-            feedback.textContent = "As senhas não coincidem.";
+          const buttonLabel = button.textContent;
+          const showFeedback = (message) => {
+            feedback.textContent = translateInterfaceText(message, data.language);
             feedback.classList.add("visible");
+            feedback.focus({ preventScroll: true });
+            feedback.scrollIntoView({ behavior: "smooth", block: "nearest" });
+          };
+          const clinicNameValue = String(values.get("clinicName")).trim();
+          const adminNameValue = String(values.get("adminName")).trim();
+          const slugValue = String(values.get("slug")).trim();
+          const emailInput = form.elements.email;
+          const passwordValue = String(values.get("password"));
+          const passwordConfirmationValue = String(values.get("passwordConfirmation"));
+          const validationError = clinicNameValue.length < 2
+            ? "Informe o nome da clínica."
+            : adminNameValue.length < 2
+              ? "Informe seu nome."
+              : !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slugValue) || slugValue.length < 3
+                ? "Use um endereço com pelo menos 3 caracteres, contendo apenas letras minúsculas, números e hífens."
+                : !emailInput.validity.valid
+                  ? "Informe um e-mail válido."
+                  : passwordValue.length < 8
+                    ? "A senha precisa ter pelo menos 8 caracteres."
+                    : passwordValue !== passwordConfirmationValue
+                      ? "As senhas não coincidem."
+                      : "";
+          if (validationError) {
+            showFeedback(validationError);
             return;
           }
           button.disabled = true;
+          button.setAttribute("aria-busy", "true");
+          button.textContent = `${buttonLabel}...`;
           feedback.classList.remove("visible");
           try {
             const payload = await apiRequest("/auth/register-clinic", {
               method: "POST",
               body: {
-                clinicName: String(values.get("clinicName")).trim(),
-                adminName: String(values.get("adminName")).trim(),
-                slug: String(values.get("slug")).trim(),
+                clinicName: clinicNameValue,
+                adminName: adminNameValue,
+                slug: slugValue,
                 email: String(values.get("email")).trim().toLowerCase(),
-                password: String(values.get("password"))
+                password: passwordValue
               }
             });
             await completeAuthentication(payload, "settings");
           } catch (error) {
-            feedback.textContent = error.message;
-            feedback.classList.add("visible");
+            showFeedback(error.message);
             button.disabled = false;
+            button.removeAttribute("aria-busy");
+            button.textContent = buttonLabel;
           }
         });
         bindNavigationLinks();

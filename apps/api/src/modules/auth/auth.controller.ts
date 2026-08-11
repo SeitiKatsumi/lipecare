@@ -17,9 +17,9 @@ export class AuthController {
   @Post("register-clinic")
   async registerClinic(@Body() body: unknown, @Req() request: Request, @Res({ passthrough: true }) response: Response) {
     this.authService.assertTrustedOrigin(request);
-    this.authService.enforceRateLimit(`register:${request.ip}`, 3, 60 * 60 * 1000);
     try {
       const input = registerClinicSchema.parse(body);
+      this.authService.enforceRateLimit(`register:${request.ip}`, 10, 60 * 60 * 1000);
       const session = await this.authService.registerClinic(input);
       this.setSessionCookie(response, session.token);
       return { status: "authenticated" as const, ...session.payload };
