@@ -4452,6 +4452,10 @@
         `;
       }
 
+      function canResetStaffSimulation(user) {
+        return user.role === "ADMIN" || user.role === "PROFESSIONAL";
+      }
+
       function renderChat(data, user) {
         const workspace = workspaceConfig(data);
         const patient = selectedPatient(data, user);
@@ -4480,11 +4484,11 @@
               ${renderChatWindowBar(
                 data,
                 mode === "self" ? "Simulação da paciente" : `Conversa com ${patient?.name || "paciente"}`,
-                mode === "self" && user.role === "ADMIN"
+                mode === "self" && canResetStaffSimulation(user)
                   ? `<button class="btn secondary chat-reset-self-button" type="button" data-reset-self-chat title="Reiniciar chat">${icon("reset")}<span>Reiniciar chat</span></button>`
                   : ""
               )}
-              ${mode === "self" && user.role === "ADMIN" && data.chatResetConfirmUserId === user.id ? `
+              ${mode === "self" && canResetStaffSimulation(user) && data.chatResetConfirmUserId === user.id ? `
                 <div class="chat-reset-confirm" role="alert">
                   <p><strong>Reiniciar a simulação?</strong><br><span class="muted">O histórico e os registros clínicos de teste serão apagados.</span></p>
                   <div class="inline-actions">
@@ -6494,7 +6498,7 @@
 
         document.querySelector("[data-reset-self-chat]")?.addEventListener("click", () => {
           const data = state();
-          if (user.role !== "ADMIN" || data.chatMode !== "self") return;
+          if (!canResetStaffSimulation(user) || data.chatMode !== "self") return;
           data.chatResetConfirmUserId = user.id;
           save(data);
           render();
@@ -6509,7 +6513,7 @@
 
         document.querySelector("[data-confirm-reset-self-chat]")?.addEventListener("click", () => {
           const data = state();
-          if (user.role !== "ADMIN" || data.chatMode !== "self" || data.chatResetConfirmUserId !== user.id) return;
+          if (!canResetStaffSimulation(user) || data.chatMode !== "self" || data.chatResetConfirmUserId !== user.id) return;
 
           const simulationPatient = staffSimulationPatient(user);
           pendingChats.delete(`staff:${user.id}`);
