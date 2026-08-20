@@ -1561,6 +1561,44 @@
         grid-column: 1 / -1;
       }
 
+      .pillar-reference-files {
+        display: grid;
+        gap: 8px;
+        margin-top: 8px;
+      }
+
+      .pillar-file-picker {
+        align-items: center;
+        display: flex;
+        margin-top: 8px;
+        position: relative;
+      }
+
+      .pillar-file-picker input {
+        height: 1px;
+        opacity: 0;
+        overflow: hidden;
+        position: absolute;
+        width: 1px;
+      }
+
+      .pillar-reference-file {
+        align-items: center;
+        background: var(--surface-2);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        display: flex;
+        gap: 10px;
+        justify-content: space-between;
+        padding: 9px 10px;
+      }
+
+      .pillar-reference-file span {
+        color: var(--muted);
+        font-size: 0.78rem;
+        overflow-wrap: anywhere;
+      }
+
       .inline-actions {
         display: flex;
         flex-wrap: wrap;
@@ -1923,10 +1961,10 @@
           guidance: "Organizar sintomas e apoiar quatro pilares: alimentação e hidratação, movimento e fortalecimento, sono e ritmo biológico, gestão do estresse e autodesenvolvimento.",
           restrictions: "Não diagnosticar, prescrever, indicar doses, interpretar exames, prometer cura ou desintoxicação, impor restrições alimentares ou substituir avaliação médica. Práticas complementares não devem ser apresentadas como mecanismos biomédicos comprovados.",
           pillars: [
-            { id: "pillar-1", name: "Alimentação e hidratação", description: "Priorizar alimentos reais, variedade, fibras, hidratação e escolhas possíveis, sem culpa ou dietas rígidas.", mediaUrl: "" },
-            { id: "pillar-2", name: "Movimento e fortalecimento", description: "Valorizar força orientada, atividades de baixo impacto e mobilidade, respeitando limites e sinais do corpo.", mediaUrl: "" },
-            { id: "pillar-3", name: "Sono e ritmo biológico", description: "Construir uma rotina consistente de descanso, luz, desaceleração e ambiente noturno adequado.", mediaUrl: "" },
-            { id: "pillar-4", name: "Estresse e autodesenvolvimento", description: "Apoiar respiração, pausas, escrita, conexão social e reconhecimento de pequenos avanços.", mediaUrl: "" }
+            { id: "pillar-1", name: "Alimentação e hidratação", description: "Priorizar alimentos reais, variedade, fibras, hidratação e escolhas possíveis, sem culpa ou dietas rígidas.", mediaUrl: "", referenceUrl: "", referenceFiles: [] },
+            { id: "pillar-2", name: "Movimento e fortalecimento", description: "Valorizar força orientada, atividades de baixo impacto e mobilidade, respeitando limites e sinais do corpo.", mediaUrl: "", referenceUrl: "", referenceFiles: [] },
+            { id: "pillar-3", name: "Sono e ritmo biológico", description: "Construir uma rotina consistente de descanso, luz, desaceleração e ambiente noturno adequado.", mediaUrl: "", referenceUrl: "", referenceFiles: [] },
+            { id: "pillar-4", name: "Estresse e autodesenvolvimento", description: "Apoiar respiração, pausas, escrita, conexão social e reconhecimento de pequenos avanços.", mediaUrl: "", referenceUrl: "", referenceFiles: [] }
           ]
         },
         metrics: [
@@ -2056,6 +2094,11 @@
           "Adicionar pilar": "Add pillar",
           "Remover": "Remove",
           "Material de apoio": "Supporting material",
+          "Site de referência": "Reference website",
+          "Arquivos de referência": "Reference files",
+          "Selecionar arquivos": "Select files",
+          "Até 4 arquivos por pilar, com no máximo 1 MB cada.": "Up to 4 files per pillar, with a maximum of 1 MB each.",
+          "Nenhum arquivo anexado.": "No files attached.",
           "Descrição": "Description",
           "Salvar protocolo": "Save protocol",
           "Sintomas e indicadores": "Symptoms and indicators",
@@ -2184,6 +2227,7 @@
           "Confirmar reset": "Confirm reset",
           "Cancelar": "Cancel",
           "O histórico local desta conversa será apagado.": "The local history for this conversation will be deleted.",
+          "O histórico local desta conversa será apagado. Seus registros clínicos serão preservados.": "The local history for this conversation will be deleted. Your clinical records will be preserved.",
           "Conversa privada": "Private conversation",
           "Privado": "Private",
           "Digite uma mensagem...": "Type a message...",
@@ -2351,6 +2395,11 @@
           "Adicionar pilar": "Añadir pilar",
           "Remover": "Eliminar",
           "Material de apoio": "Material de apoyo",
+          "Site de referência": "Sitio web de referencia",
+          "Arquivos de referência": "Archivos de referencia",
+          "Selecionar arquivos": "Seleccionar archivos",
+          "Até 4 arquivos por pilar, com no máximo 1 MB cada.": "Hasta 4 archivos por pilar, con un máximo de 1 MB cada uno.",
+          "Nenhum arquivo anexado.": "No hay archivos adjuntos.",
           "Descrição": "Descripción",
           "Salvar protocolo": "Guardar protocolo",
           "Sintomas e indicadores": "Síntomas e indicadores",
@@ -2479,6 +2528,7 @@
           "Confirmar reset": "Confirmar reinicio",
           "Cancelar": "Cancelar",
           "O histórico local desta conversa será apagado.": "Se eliminará el historial local de esta conversación.",
+          "O histórico local desta conversa será apagado. Seus registros clínicos serão preservados.": "Se eliminará el historial local de esta conversación. Tus registros clínicos se conservarán.",
           "Conversa privada": "Conversación privada",
           "Privado": "Privado",
           "Digite uma mensagem...": "Escribe un mensaje...",
@@ -2907,6 +2957,7 @@
 
       function mergeWorkspace(workspace = {}) {
         const defaults = structuredClone(DEFAULT_WORKSPACE);
+        const pillars = Array.isArray(workspace.protocol?.pillars) ? workspace.protocol.pillars : defaults.protocol.pillars;
         return {
           ...defaults,
           ...workspace,
@@ -2916,7 +2967,12 @@
           protocol: {
             ...defaults.protocol,
             ...(workspace.protocol || {}),
-            pillars: Array.isArray(workspace.protocol?.pillars) ? workspace.protocol.pillars : defaults.protocol.pillars
+            pillars: pillars.map((pillar) => ({
+              ...pillar,
+              mediaUrl: String(pillar.mediaUrl || ""),
+              referenceUrl: String(pillar.referenceUrl || ""),
+              referenceFiles: Array.isArray(pillar.referenceFiles) ? pillar.referenceFiles : []
+            }))
           },
           metrics: Array.isArray(workspace.metrics) ? workspace.metrics : defaults.metrics,
           causeQuestions: Array.isArray(workspace.causeQuestions) ? workspace.causeQuestions : defaults.causeQuestions,
@@ -3428,6 +3484,21 @@
       function safeExternalUrl(value) {
         const source = String(value || "").trim();
         return /^https?:\/\//i.test(source) ? source : "";
+      }
+
+      function safeReferenceFileUrl(file) {
+        const allowedTypes = new Set([
+          "application/pdf",
+          "text/plain",
+          "application/msword",
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          "image/jpeg",
+          "image/png",
+          "image/webp"
+        ]);
+        const type = String(file?.type || "").toLowerCase();
+        const source = String(file?.dataUrl || "");
+        return allowedTypes.has(type) && source.startsWith(`data:${type};base64,`) ? source : "";
       }
 
       function renderPresentationMedia(identity) {
@@ -4552,7 +4623,16 @@
           <section class="patient-chat">
             ${header(`Olá, ${escapeHtml(patient?.name?.split(" ")[0] || user.name.split(" ")[0])}`, `Este é o seu espaço de acompanhamento com a equipe ${escapeHtml(workspace.identity.brandName)}.`, "Privado", "chat-page-header")}
             <article class="chat-window ${data.chatExpanded ? "expanded" : ""}" style="margin-top: 18px;">
-              ${renderChatWindowBar(data, "Minha conversa")}
+              ${renderChatWindowBar(data, "Minha conversa", `<button class="btn secondary chat-reset-self-button" type="button" data-reset-patient-chat title="Reiniciar chat">${icon("reset")}<span>Reiniciar chat</span></button>`)}
+              ${patient && data.chatResetConfirmPatientId === patient.id ? `
+                <div class="chat-reset-confirm" role="alert">
+                  <p><strong>Reiniciar seu chat?</strong><br><span class="muted">O histórico local desta conversa será apagado. Seus registros clínicos serão preservados.</span></p>
+                  <div class="inline-actions">
+                    <button class="btn danger" type="button" data-confirm-reset-patient-chat>Confirmar reinício</button>
+                    <button class="btn ghost" type="button" data-cancel-reset-patient-chat>Cancelar</button>
+                  </div>
+                </div>
+              ` : ""}
               <div class="chat-status-banner"><span class="status-dot ${control.aiEnabled ? "" : "paused"}"></span>${escapeHtml(patientStatus)}</div>
               <div class="chat-thread">
                 ${messages.map((message) => renderMessage(message, "Você", workspace.assistant.name, `Equipe ${workspace.identity.brandName}`)).join("")}
@@ -4770,8 +4850,16 @@
                     <div class="config-item-header"><strong>Pilar ${index + 1}</strong><button class="btn ghost" type="button" data-remove-pillar="${escapeHtml(pillar.id)}">Remover</button></div>
                     <div class="config-item-grid">
                       <label>Nome <input name="pillar-name-${escapeHtml(pillar.id)}" value="${escapeHtml(pillar.name)}" required /></label>
-                      <label class="wide">Material de apoio <input name="pillar-media-${escapeHtml(pillar.id)}" type="url" value="${escapeHtml(pillar.mediaUrl)}" placeholder="https://..." /></label>
+                      <label>Material de apoio <input name="pillar-media-${escapeHtml(pillar.id)}" type="url" value="${escapeHtml(pillar.mediaUrl)}" placeholder="https://..." /></label>
+                      <label>Site de referência <input name="pillar-reference-${escapeHtml(pillar.id)}" type="url" value="${escapeHtml(pillar.referenceUrl)}" placeholder="https://..." /></label>
                       <label class="wide">Descrição <textarea name="pillar-description-${escapeHtml(pillar.id)}" rows="3" required>${escapeHtml(pillar.description)}</textarea></label>
+                      <label class="wide">Arquivos de referência
+                        <span class="pillar-file-picker"><span class="btn secondary">${icon("paperclip")} Selecionar arquivos</span><input type="file" data-pillar-reference-input="${escapeHtml(pillar.id)}" accept=".pdf,.txt,.doc,.docx,.jpg,.jpeg,.png,.webp" multiple /></span>
+                        <span class="form-note">Até 4 arquivos por pilar, com no máximo 1 MB cada.</span>
+                        <span class="pillar-reference-files">
+                          ${(pillar.referenceFiles || []).map((file) => `<span class="pillar-reference-file"><span><strong>${escapeHtml(file.name)}</strong><br>${Math.max(1, Math.round(Number(file.size || 0) / 1024))} KB</span><span class="inline-actions">${safeReferenceFileUrl(file) ? `<a class="btn ghost" href="${escapeHtml(safeReferenceFileUrl(file))}" download="${escapeHtml(file.name)}">Abrir</a>` : ""}<button class="btn ghost" type="button" data-remove-pillar-file="${escapeHtml(pillar.id)}" data-pillar-file-id="${escapeHtml(file.id)}">Remover</button></span></span>`).join("") || `<span class="muted">Nenhum arquivo anexado.</span>`}
+                        </span>
+                      </label>
                     </div>
                   </div>
                 `).join("") || `<div class="empty">Adicione o primeiro pilar do protocolo.</div>`}
@@ -4780,6 +4868,27 @@
             <div class="inline-actions"><button class="btn" type="submit">Salvar protocolo</button></div>
           </form>
         `;
+      }
+
+      function applyProtocolFormDraft(formElement, workspace) {
+        if (!formElement) return workspace;
+        const form = new FormData(formElement);
+        workspace.protocol.name = String(form.get("protocolName") || workspace.protocol.name).trim();
+        workspace.protocol.foundation = String(form.get("foundation") || workspace.protocol.foundation).trim();
+        workspace.protocol.guidance = String(form.get("guidance") || workspace.protocol.guidance).trim();
+        workspace.protocol.restrictions = String(form.get("restrictions") || workspace.protocol.restrictions).trim();
+        workspace.assistant.name = String(form.get("assistantName") || workspace.assistant.name).trim();
+        workspace.assistant.welcomeMessage = String(form.get("welcomeMessage") || workspace.assistant.welcomeMessage).trim();
+        workspace.assistant.voiceStyle = String(form.get("voiceStyle") || workspace.assistant.voiceStyle).trim();
+        workspace.protocol.pillars = workspace.protocol.pillars.map((pillar) => ({
+          ...pillar,
+          name: String(form.get(`pillar-name-${pillar.id}`) ?? pillar.name).trim(),
+          description: String(form.get(`pillar-description-${pillar.id}`) ?? pillar.description).trim(),
+          mediaUrl: String(form.get(`pillar-media-${pillar.id}`) ?? pillar.mediaUrl).trim(),
+          referenceUrl: String(form.get(`pillar-reference-${pillar.id}`) ?? pillar.referenceUrl).trim(),
+          referenceFiles: Array.isArray(pillar.referenceFiles) ? pillar.referenceFiles : []
+        }));
+        return workspace;
       }
 
       function renderFollowupSettings(workspace) {
@@ -5559,6 +5668,33 @@
         });
       }
 
+      function readPillarReferenceFile(file) {
+        if (!file || !file.size) return Promise.resolve(null);
+        if (file.size > 1024 * 1024) return Promise.reject(new Error(`O arquivo ${file.name} ultrapassa o limite de 1 MB.`));
+        const allowedTypes = new Set([
+          "application/pdf",
+          "text/plain",
+          "application/msword",
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          "image/jpeg",
+          "image/png",
+          "image/webp"
+        ]);
+        if (!allowedTypes.has(file.type)) return Promise.reject(new Error(`O formato do arquivo ${file.name} não é aceito.`));
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.addEventListener("load", () => resolve({
+            id: crypto.randomUUID(),
+            name: file.name,
+            type: file.type || "application/octet-stream",
+            size: file.size,
+            dataUrl: String(reader.result)
+          }));
+          reader.addEventListener("error", () => reject(new Error(`Não foi possível ler o arquivo ${file.name}.`)));
+          reader.readAsDataURL(file);
+        });
+      }
+
       function recordingDuration(seconds) {
         const minutes = Math.floor(seconds / 60);
         return `${String(minutes).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
@@ -5891,7 +6027,12 @@
                 protocolFoundation: workspace.protocol.foundation,
                 protocolGuidance: workspace.protocol.guidance,
                 protocolRestrictions: workspace.protocol.restrictions,
-                pillars: workspace.protocol.pillars.map((pillar) => ({ name: pillar.name, description: pillar.description })),
+                pillars: workspace.protocol.pillars.map((pillar) => ({
+                  name: pillar.name,
+                  description: pillar.description,
+                  referenceUrl: pillar.referenceUrl,
+                  referenceFiles: (pillar.referenceFiles || []).map((file) => file.name)
+                })),
                 metrics: workspace.metrics.map((metric) => ({ name: metric.name, unit: metric.unit, direction: metric.direction, acceptable: metric.acceptable })),
                 causeQuestions: workspace.causeQuestions.map((question) => ({ group: question.group, question: question.question, answerType: question.answerType, frequency: question.frequency })),
                 automation: workspace.automation
@@ -6157,22 +6298,9 @@
 
         document.getElementById("protocol-settings-form")?.addEventListener("submit", async (event) => {
           event.preventDefault();
-          const form = new FormData(event.currentTarget);
           const data = state();
           const workspace = workspaceConfig(data);
-          workspace.protocol.name = String(form.get("protocolName") || "").trim();
-          workspace.protocol.foundation = String(form.get("foundation") || "").trim();
-          workspace.protocol.guidance = String(form.get("guidance") || "").trim();
-          workspace.protocol.restrictions = String(form.get("restrictions") || "").trim();
-          workspace.assistant.name = String(form.get("assistantName") || "").trim();
-          workspace.assistant.welcomeMessage = String(form.get("welcomeMessage") || "").trim();
-          workspace.assistant.voiceStyle = String(form.get("voiceStyle") || "").trim();
-          workspace.protocol.pillars = workspace.protocol.pillars.map((pillar) => ({
-            ...pillar,
-            name: String(form.get(`pillar-name-${pillar.id}`) || "").trim(),
-            description: String(form.get(`pillar-description-${pillar.id}`) || "").trim(),
-            mediaUrl: String(form.get(`pillar-media-${pillar.id}`) || "").trim()
-          }));
+          applyProtocolFormDraft(event.currentTarget, workspace);
           saveWorkspaceConfig(data, workspace);
           save(data);
           await commitWorkspaceChange(workspace, user, "protocol_updated", workspace.protocol.name);
@@ -6181,7 +6309,8 @@
         document.querySelector("[data-add-pillar]")?.addEventListener("click", () => {
           const data = state();
           const workspace = workspaceConfig(data);
-          workspace.protocol.pillars.push({ id: crypto.randomUUID(), name: "Novo pilar", description: "Descreva a orientação deste pilar.", mediaUrl: "" });
+          applyProtocolFormDraft(document.getElementById("protocol-settings-form"), workspace);
+          workspace.protocol.pillars.push({ id: crypto.randomUUID(), name: "Novo pilar", description: "Descreva a orientação deste pilar.", mediaUrl: "", referenceUrl: "", referenceFiles: [] });
           saveWorkspaceConfig(data, workspace);
           save(data);
           render();
@@ -6191,7 +6320,50 @@
           button.addEventListener("click", () => {
             const data = state();
             const workspace = workspaceConfig(data);
+            applyProtocolFormDraft(document.getElementById("protocol-settings-form"), workspace);
             workspace.protocol.pillars = workspace.protocol.pillars.filter((pillar) => pillar.id !== button.dataset.removePillar);
+            saveWorkspaceConfig(data, workspace);
+            save(data);
+            render();
+          });
+        });
+
+        document.querySelectorAll("[data-pillar-reference-input]").forEach((input) => {
+          input.addEventListener("change", async () => {
+            const files = [...(input.files || [])];
+            if (!files.length) return;
+            const data = state();
+            const workspace = workspaceConfig(data);
+            applyProtocolFormDraft(document.getElementById("protocol-settings-form"), workspace);
+            const pillar = workspace.protocol.pillars.find((item) => item.id === input.dataset.pillarReferenceInput);
+            if (!pillar) return;
+            const currentFiles = Array.isArray(pillar.referenceFiles) ? pillar.referenceFiles : [];
+            if (currentFiles.length + files.length > 4) {
+              alert("Cada pilar aceita no máximo 4 arquivos de referência.");
+              input.value = "";
+              return;
+            }
+            try {
+              const attachments = (await Promise.all(files.map(readPillarReferenceFile))).filter(Boolean);
+              pillar.referenceFiles = [...currentFiles, ...attachments];
+              saveWorkspaceConfig(data, workspace);
+              save(data);
+              render();
+            } catch (error) {
+              alert(error.message);
+              input.value = "";
+            }
+          });
+        });
+
+        document.querySelectorAll("[data-remove-pillar-file]").forEach((button) => {
+          button.addEventListener("click", () => {
+            const data = state();
+            const workspace = workspaceConfig(data);
+            applyProtocolFormDraft(document.getElementById("protocol-settings-form"), workspace);
+            const pillar = workspace.protocol.pillars.find((item) => item.id === button.dataset.removePillarFile);
+            if (!pillar) return;
+            pillar.referenceFiles = (pillar.referenceFiles || []).filter((file) => file.id !== button.dataset.pillarFileId);
             saveWorkspaceConfig(data, workspace);
             save(data);
             render();
@@ -6529,6 +6701,42 @@
             date: new Date().toLocaleString("pt-BR")
           });
           data.chatResetConfirmUserId = null;
+          save(data);
+          render();
+        });
+
+        document.querySelector("[data-reset-patient-chat]")?.addEventListener("click", () => {
+          const data = state();
+          const patient = selectedPatient(data, user);
+          if (user.role !== "PATIENT" || !patient || patient.id !== user.patientId) return;
+          data.chatResetConfirmPatientId = patient.id;
+          save(data);
+          render();
+        });
+
+        document.querySelector("[data-cancel-reset-patient-chat]")?.addEventListener("click", () => {
+          const data = state();
+          data.chatResetConfirmPatientId = null;
+          save(data);
+          render();
+        });
+
+        document.querySelector("[data-confirm-reset-patient-chat]")?.addEventListener("click", () => {
+          const data = state();
+          const patient = selectedPatient(data, user);
+          if (user.role !== "PATIENT" || !patient || patient.id !== user.patientId || data.chatResetConfirmPatientId !== patient.id) return;
+          pendingChats.delete(`patient:${patient.id}`);
+          data.chats ||= {};
+          data.chats[patient.id] = [];
+          data.conversationProfiles ||= {};
+          delete data.conversationProfiles[patient.id];
+          data.audit.unshift({
+            action: "patient_chat_reset",
+            actor: user.name,
+            resource: patient.name,
+            date: new Date().toLocaleString("pt-BR")
+          });
+          data.chatResetConfirmPatientId = null;
           save(data);
           render();
         });

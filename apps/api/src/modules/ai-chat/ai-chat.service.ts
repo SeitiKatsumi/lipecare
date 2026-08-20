@@ -16,7 +16,9 @@ const historyItemSchema = z.object({
 
 const protocolPillarSchema = z.object({
   name: z.string().trim().max(100),
-  description: z.string().trim().max(800)
+  description: z.string().trim().max(800),
+  referenceUrl: z.string().trim().max(2000).optional(),
+  referenceFiles: z.array(z.string().trim().max(160)).max(4).optional()
 });
 
 const metricSchema = z.object({
@@ -169,7 +171,12 @@ export class AiChatService {
         protocolFoundation: workspace.protocol.foundation,
         protocolGuidance: workspace.protocol.guidance,
         protocolRestrictions: workspace.protocol.restrictions,
-        pillars: workspace.protocol.pillars.map((pillar) => ({ name: pillar.name, description: pillar.description })),
+        pillars: workspace.protocol.pillars.map((pillar) => ({
+          name: pillar.name,
+          description: pillar.description,
+          referenceUrl: pillar.referenceUrl || "",
+          referenceFiles: (pillar.referenceFiles || []).map((file) => file.name)
+        })),
         metrics: workspace.metrics.map((metric) => ({
           name: metric.name,
           unit: metric.unit,

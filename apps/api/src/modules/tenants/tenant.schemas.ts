@@ -6,6 +6,21 @@ const optionalUrl = z.string().trim().max(2_000).refine((value) => !value || val
 const logoSource = z.string().trim().max(2_000_000).refine((value) => !value || value.startsWith("/") || value.startsWith("assets/") || /^https?:\/\//i.test(value) || /^data:image\//i.test(value), "Informe uma imagem válida.");
 const color = z.string().regex(/^#[0-9a-f]{6}$/i, "Informe uma cor hexadecimal.");
 const direction = z.enum(["up", "down", "neutral"]);
+const referenceFile = z.object({
+  id: shortText,
+  name: shortText.min(1),
+  type: z.enum([
+    "application/pdf",
+    "text/plain",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "image/jpeg",
+    "image/png",
+    "image/webp"
+  ]),
+  size: z.number().int().nonnegative().max(1_048_576),
+  dataUrl: z.string().max(1_500_000).refine((value) => /^data:(application\/pdf|text\/plain|application\/msword|application\/vnd\.openxmlformats-officedocument\.wordprocessingml\.document|image\/(jpeg|png|webp));base64,/i.test(value), "Informe um arquivo válido.")
+}).strict();
 
 const identitySchema = z.object({
   professionalName: shortText.min(2),
@@ -55,7 +70,9 @@ export const workspaceSchema = z.object({
       id: shortText,
       name: shortText.min(1),
       description: z.string().trim().max(1_500),
-      mediaUrl: optionalUrl
+      mediaUrl: optionalUrl,
+      referenceUrl: optionalUrl.default(""),
+      referenceFiles: z.array(referenceFile).max(4).default([])
     }).strict()).max(24)
   }).strict(),
   metrics: z.array(z.object({

@@ -44,8 +44,8 @@ const workspace = {
     guidance: "Organizar sintomas, rotina, movimento, alimentação, sono e pontos de atenção para apoiar a consulta.",
     restrictions: "Não diagnosticar, prescrever, indicar doses, interpretar exames ou substituir avaliação médica.",
     pillars: [
-      { id: "pillar-1", name: "Escuta do corpo", description: "Reconhecer sintomas, mudanças e situações que merecem atenção.", mediaUrl: "" },
-      { id: "pillar-2", name: "Rotina possível", description: "Transformar orientações em ações pequenas e consistentes.", mediaUrl: "" }
+      { id: "pillar-1", name: "Escuta do corpo", description: "Reconhecer sintomas, mudanças e situações que merecem atenção.", mediaUrl: "", referenceUrl: "", referenceFiles: [] },
+      { id: "pillar-2", name: "Rotina possível", description: "Transformar orientações em ações pequenas e consistentes.", mediaUrl: "", referenceUrl: "", referenceFiles: [] }
     ]
   },
   metrics: [

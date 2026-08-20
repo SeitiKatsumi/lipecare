@@ -52,7 +52,14 @@ export type TenantWorkspaceData = {
     foundation: string;
     guidance: string;
     restrictions: string;
-    pillars: Array<{ id: string; name: string; description: string; mediaUrl: string }>;
+    pillars: Array<{
+      id: string;
+      name: string;
+      description: string;
+      mediaUrl: string;
+      referenceUrl: string;
+      referenceFiles: Array<{ id: string; name: string; type: string; size: number; dataUrl: string }>;
+    }>;
   };
   metrics: Array<{
     id: string;
@@ -183,10 +190,10 @@ export function createDefaultTenantWorkspace(input?: {
       guidance: "Organizar sintomas e apoiar quatro pilares: alimentação e hidratação, movimento e fortalecimento, sono e ritmo biológico, gestão do estresse e autodesenvolvimento.",
       restrictions: "Não diagnosticar, prescrever, indicar doses, interpretar exames, prometer cura ou desintoxicação, impor restrições alimentares ou substituir avaliação médica. Práticas complementares não devem ser apresentadas como mecanismos biomédicos comprovados.",
       pillars: [
-        { id: "pillar-1", name: "Alimentação e hidratação", description: "Priorizar alimentos reais, variedade, fibras, hidratação e escolhas possíveis, sem culpa ou dietas rígidas.", mediaUrl: "" },
-        { id: "pillar-2", name: "Movimento e fortalecimento", description: "Valorizar força orientada, atividades de baixo impacto e mobilidade, respeitando limites e sinais do corpo.", mediaUrl: "" },
-        { id: "pillar-3", name: "Sono e ritmo biológico", description: "Construir uma rotina consistente de descanso, luz, desaceleração e ambiente noturno adequado.", mediaUrl: "" },
-        { id: "pillar-4", name: "Estresse e autodesenvolvimento", description: "Apoiar respiração, pausas, escrita, conexão social e reconhecimento de pequenos avanços.", mediaUrl: "" }
+        { id: "pillar-1", name: "Alimentação e hidratação", description: "Priorizar alimentos reais, variedade, fibras, hidratação e escolhas possíveis, sem culpa ou dietas rígidas.", mediaUrl: "", referenceUrl: "", referenceFiles: [] },
+        { id: "pillar-2", name: "Movimento e fortalecimento", description: "Valorizar força orientada, atividades de baixo impacto e mobilidade, respeitando limites e sinais do corpo.", mediaUrl: "", referenceUrl: "", referenceFiles: [] },
+        { id: "pillar-3", name: "Sono e ritmo biológico", description: "Construir uma rotina consistente de descanso, luz, desaceleração e ambiente noturno adequado.", mediaUrl: "", referenceUrl: "", referenceFiles: [] },
+        { id: "pillar-4", name: "Estresse e autodesenvolvimento", description: "Apoiar respiração, pausas, escrita, conexão social e reconhecimento de pequenos avanços.", mediaUrl: "", referenceUrl: "", referenceFiles: [] }
       ]
     },
     metrics: [
